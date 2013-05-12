@@ -30,7 +30,19 @@ class Bot extends XmppClient
         $this->onMessage->add(new Delegate(array($this, '_parseCommand')));
         $this->onIq->add(new Delegate(array($this, '_parseIq')));
 
+        $this->onReady->add(new Delegate(array($this, '_joinRooms')));
+
         Language::loadDir('Languages');
+    }
+
+    public function _joinRooms()
+    {
+        foreach ($this->config->channels->channel as $channel) {
+            $nick    = isset($channel['nick']) ? $channel->nick : $this->config->xmpp->nickname;
+            $channel = new Jid($channel['name'], $channel['server']);
+
+            $this->join($channel, $nick);
+        }
     }
 
     public function _parseIq($query)
@@ -65,23 +77,32 @@ class Bot extends XmppClient
             $content = substr($message->body, strlen($prompt));
             $params  = new Params($content);
 
-            $command = arrayDeepSearch($this->_commands, strtolower($params[0]));
+            $command = $this->getCommand($params[0]);
 
             if ($command === false) return;
 
             if (is_array($command)) {
-                $str = "Command {$params[0]} is ambiguous!\n";
+                $str = __('commandAmbiguous', $this->_lang, 'default', array('command' => $params[0]));
                 foreach ($command as $package => $class) {
-                    $str .= "\t$package-{$params[0]} refers to $class\n";
+                    $str .= "\t$package-{$params[0]} - $class\n";
                 }
                 $author->room->message($str);
 
                 return;
             }
 
+            // TODO: private commands support.
             if ($command) {
                 $command = new $command($this, $author, 'pl', $message);
-                $command->execute($params, true);
+                try {
+                    $result = $command->execute($params, true);
+
+                    if ($result !== null) {
+                        $author->room->message($result);
+                    }
+                } catch (CommandException $exception) {
+                    $author->room->message($exception->getMessage());
+                }
             }
         }
     }
@@ -101,5 +122,19 @@ class Bot extends XmppClient
     public function getCommands()
     {
         return $this->_commands;
+    }
+
+    public function getCommand($name)
+    {
+        $name = explode('-', $name, 1);
+        if (count($name) == 2) {
+            $search = $this->_commands[$name[0]];
+            $name   = $name[1];
+        } else {
+            $search = $this->_commands;
+            $name   = $name[0];
+        }
+
+        return arrayDeepSearch($search, $name);
     }
 }

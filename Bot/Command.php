@@ -5,7 +5,7 @@ namespace XPBot\Bot;
 use XPBot\System\Xmpp\User;
 use XPBot\System\Xmpp\XmppClient;
 
-class commandException extends \Exception
+class CommandException extends \Exception
 {
     protected $_consoleMessage;
 
@@ -74,6 +74,7 @@ abstract class Command
      * @param $args
      * @param $type
      * @throws commandException
+     * @return string
      */
     public function execute($args, $type)
     {
@@ -87,7 +88,7 @@ abstract class Command
      */
     public static function getHelp($lang)
     {
-        return \__('shortHelp', $lang, get_called_class());
+        return \__('help', $lang, get_called_class());
     }
 
     /**

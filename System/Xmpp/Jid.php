@@ -26,7 +26,7 @@ class Jid
      * @param string $resource
      * @param string|null $server
      */
-    public function __construct($name, $resource = null, $server = null)
+    public function __construct($name, $server = null, $resource = null)
     {
         if (preg_match('#([^@\/\"\'\s\&\:><]+)\@([a-z_\-\.]*[a-z]{2,3})(\/[^@\/\"\'\&\:><]*)?#si', $name, $matches)) {
             $this->name     = $matches[1];
@@ -69,7 +69,7 @@ class Jid
     public function fromChannel()
     {
         return preg_match(
-            '/^[^@\/\\\"\'\s\&\:><]+@(conference|chat|irc)\.[a-z\_\-\.]*\.[a-z]{2,3}(\/[^@\/\\\"\'\s\&\:><]*)?$/',
+            '/^[^@\/\\\"\'\s\&\:><]+@(conference|chat|irc)\.[a-z\_\-\.]*\.[a-z]{2,3}\/[^@\/\\\"\'\s\&\:><]*?$/',
             $this->__toString()
         );
     }

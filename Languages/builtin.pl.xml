@@ -1,4 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phrases lang="pl">
+    <phrase id="shortHelp">Ta komenda nie została udokumentowana</phrase>
+    <phrase id="help">Ta komenda nie została udokumentowana</phrase>
+    <phrase id="commandAmbiguous">Komenda {%command} nie jest jednoznaczna, wybierz jedną z poniższych:</phrase>
 
+    <phrase id="shortHelp" ns="XPBot\Bot\Commands\Help">Wyświetla pomoc bota</phrase>
+    <phrase id="help" ns="XPBot\Bot\Commands\Help">
+        Wyświetla pomoc bota, oraz listę wszystkich dostępnych komend.
+
+        {%P}help [komenda lub moduł]
+
+        Dodatkowo możesz użyć następujących przełączników:
+
+        -m - Wyświetla listę modułów.
+        -m nazwa - Wyświetla komendy z danego modułu.
+
+        -r regex - Wyświetla wszystkie komendy pasujące do danego regexa.
+        -p - Rezultat działania komendy zostaje wysłany jako wiadomość prywatna.
+    </phrase>
+    <phrase id="commands" ns="XPBot\Bot\Commands\Help">
+        Aby uruchomić daną komendę wpisz {%P}komenda lub {%P}komenda-moduł.
+        Jeżeli nie wiesz jak obsługuje się daną komendę po prostu wpisz {%P}help komenda.
+
+        {%commands}
+    </phrase>
+    <phrase id="modules" ns="XPBot\Bot\Commands\Help">Dostępne moduły: {%modules}</phrase>
 </phrases>
