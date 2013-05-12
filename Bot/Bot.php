@@ -3,6 +3,7 @@ namespace XPBot\Bot;
 
 use XPBot\System\Utils\Delegate;
 use XPBot\System\Utils\Language;
+use XPBot\System\Utils\Logger;
 use XPBot\System\Utils\Params;
 use XPBot\System\Utils\XmlBranch;
 use XPBot\System\Xmpp\Jid;
@@ -42,6 +43,8 @@ class Bot extends XmppClient
             $channel = new Jid($channel['name'], $channel['server']);
 
             $this->join($channel, $nick);
+
+            Logger::info('Joined to ' . $channel->bare() . ' as ' . $nick . '.');
         }
     }
 
@@ -93,7 +96,8 @@ class Bot extends XmppClient
 
             // TODO: private commands support.
             if ($command) {
-                $command = new $command($this, $author, 'pl', $message);
+                $commandName = $command;
+                $command     = new $commandName($this, $author, 'pl', $message);
                 try {
                     $result = $command->execute($params, true);
 
@@ -102,6 +106,7 @@ class Bot extends XmppClient
                     }
                 } catch (CommandException $exception) {
                     $author->room->message($exception->getMessage());
+                    Logger::warning("'{$exception->getConsoleMessage()}' in $commandName launched by {$author->jid}");
                 }
             }
         }
@@ -126,8 +131,11 @@ class Bot extends XmppClient
 
     public function getCommand($name)
     {
-        $name = explode('-', $name, 1);
+        $name = explode('-', $name, 2);
         if (count($name) == 2) {
+            if (!isset($this->_commands[$name[0]]))
+                return false;
+
             $search = $this->_commands[$name[0]];
             $name   = $name[1];
         } else {

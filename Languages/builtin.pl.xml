@@ -3,6 +3,8 @@
     <phrase id="shortHelp">Ta komenda nie została udokumentowana</phrase>
     <phrase id="help">Ta komenda nie została udokumentowana</phrase>
     <phrase id="commandAmbiguous">Komenda {%command} nie jest jednoznaczna, wybierz jedną z poniższych:</phrase>
+    <phrase id="errCommandNotExists">Nie ma takiej komendy.</phrase>
+    <phrase id="errModuleNotExists">Moduł {%module} nie istnieje, może nie został zainstalowany?</phrase>
 
     <phrase id="shortHelp" ns="XPBot\Bot\Commands\Help">Wyświetla pomoc bota</phrase>
     <phrase id="help" ns="XPBot\Bot\Commands\Help">
@@ -25,4 +27,23 @@
         {%commands}
     </phrase>
     <phrase id="modules" ns="XPBot\Bot\Commands\Help">Dostępne moduły: {%modules}</phrase>
+
+    <phrase id="shortHelp" ns="XPBot\Bot\Commands\Ping">Sprawdza czas odpowiedzi danego usera</phrase>
+    <phrase id="help" ns="XPBot\Bot\Commands\Ping">
+        Sprawdza czas odpowiedzi danego usera.
+
+        {%P}ping użytkownik
+    </phrase>
+    <phrase id="ping" ns="XPBot\Bot\Commands\Ping">Czas odpowiedzi od {%user} wynosi {%time}ms.</phrase>
+
+    <phrase id="shortHelp" ns="XPBot\Bot\Commands\Version">Sprawdza wersję komunikatora danego użytkownika</phrase>
+    <phrase id="help" ns="XPBot\Bot\Commands\Version">
+        Sprawdza wersję komunikatora danego użytkownika
+
+        {%P}version użytkownik
+    </phrase>
+    <phrase id="reply" ns="XPBot\Bot\Commands\Version">
+        Użytkownik {%user} używa {%name} {%version}
+        {%os}
+    </phrase>
 </phrases>

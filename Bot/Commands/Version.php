@@ -10,6 +10,7 @@
 namespace XPBot\Bot\Commands;
 
 use XPBot\Bot\Command;
+use XPBot\Bot\CommandException;
 use XPBot\System\Utils\Delegate;
 use XPBot\System\Xmpp\Jid;
 
@@ -17,15 +18,23 @@ class Version extends Command
 {
     public function execute($args, $groupchat)
     {
-        $jid = new Jid($args[1]);
+        $jid = isset($this->_author->room->users[$args[1]]) ?
+            $this->_author->room->users[$args[1]]->jid :
+            $args[1];
 
-        $this->_bot->version($jid, new Delegate(function ($reply) {
+        if (!Jid::isJid($jid))
+            throw new CommandException('Given jid is not valid.', __('errJidNotValid', $this->_lang));
+
+        $jid = new Jid($jid);
+        $this->_bot->version($jid, new Delegate(function ($reply) use ($args) {
             if ($reply['type'] != 'result') return;
 
-            $str = "Komunikator {$reply->query->name} {$reply->query->version}";
-            if (isset($reply->query->os)) $str .= "\n{$reply->query->os}";
-
-            $this->_author->room->message($str);
+            $this->_author->room->message(__('reply', $this->_lang, __CLASS__, array(
+                'name'    => $reply->query->name,
+                'version' => $reply->query->version,
+                'os'      => (isset($reply->query->os) ? $reply->query->os : ''),
+                'user'    => $args[1]
+            )));
         }));
     }
 }

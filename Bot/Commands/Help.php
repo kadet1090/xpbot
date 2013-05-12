@@ -48,7 +48,7 @@ class Help extends Command
         $commands = $this->_bot->getCommands();
 
         if (!isset($commands[$module]))
-            throw new CommandException('Specified module not exists.', __('errModuleNotExists', $this->_lang, __CLASS__));
+            throw new CommandException('Specified module not exists.', __('errModuleNotExists', $this->_lang));
 
         $commands = $commands[$module];
         $str      = '';
@@ -70,7 +70,8 @@ class Help extends Command
     private function _commandHelp($command)
     {
         $command = $this->_bot->getCommand($command);
-        if ($command === false) return __('commandAmbiguous', $this->_lang);
+        if ($command === false)
+            throw new CommandException('Specified command not exists.', __('errCommandNotExists', $this->_lang));
 
         if (is_array($command)) {
             $str = __('commandAmbiguous', $this->_lang, 'default', array('command' => $command));
