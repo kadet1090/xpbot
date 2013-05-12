@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phrases lang="pl">
+    <phrase id="test1">good</phrase>
+    <phrase id="test2" ns="test">very</phrase>
+</phrases>

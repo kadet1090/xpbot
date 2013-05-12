@@ -16,6 +16,11 @@ class test
     {
         return \XPBot\System\Utils\Language::get('test2', 'pl');
     }
+
+    public static function bar()
+    {
+        return \XPBot\System\Utils\Language::get('test1', 'pl');
+    }
 }
 
 class LanguageTest extends PHPUnit_Framework_TestCase
@@ -31,11 +36,20 @@ class LanguageTest extends PHPUnit_Framework_TestCase
 
     public function testPhrases()
     {
-        \XPBot\System\Utils\Language::load('../Languages/builtin.pl.xml');
+        \XPBot\System\Utils\Language::load('Data/Language.xml');
 
         $this->assertEquals('good', \XPBot\System\Utils\Language::get('test1', 'pl'));
-        $this->assertEquals('#default:test2', \XPBot\System\Utils\Language::get('test2', 'pl'));
+        $this->assertEquals('#default:test2', \XPBot\System\Utils\Language::get('test2', 'pl')); // non-existing phrase in default namespace
+    }
+
+    public function testNamespaces()
+    {
         $this->assertEquals('very', \XPBot\System\Utils\Language::get('test2', 'pl', 'test'));
+    }
+
+    public function testAutoNamespacing()
+    {
         $this->assertEquals('very', test::foo());
+        $this->assertEquals('good', test::bar());
     }
 }

@@ -51,20 +51,15 @@ namespace XPBot\System\Utils {
             foreach ($arguments as $name => $value)
                 $prepared['{%' . $name . '}'] = $value;
 
-            if ($namespace == 'default' && isset(self::$_phrases[$lang][getCaller() . ':' . $phrase]))
+            if ($namespace == 'default')
                 $namespace = getCaller();
+
+            if (!isset(self::$_phrases[$lang][$namespace . ':' . $phrase]))
+                $namespace = 'default';
 
             if (isset(self::$_phrases[$lang][$namespace . ':' . $phrase]))
                 return str_replace(array_keys($prepared), array_values($prepared), self::$_phrases[$lang][$namespace . ':' . $phrase]);
             else return '#' . $namespace . ':' . $phrase;
         }
-    }
-}
-
-namespace
-{
-    function __($phrase, $lang, $namespace = 'default', $arguments = array())
-    {
-        return XPBot\System\Utils\Language::get($phrase, $lang, $namespace, $arguments);
     }
 }

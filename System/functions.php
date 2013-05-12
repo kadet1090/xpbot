@@ -37,3 +37,8 @@ function getCaller()
         $backtrace[2]['class'] :
         null;
 }
+
+function __($phrase, $lang, $namespace = 'default', $arguments = array())
+{
+    return XPBot\System\Utils\Language::get($phrase, $lang, $namespace, $arguments);
+}
