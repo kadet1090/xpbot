@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phrases lang="pl">
+    <phrase id="test1">dobrze</phrase>
+    <phrase id="test2" ns="test">bardzo</phrase>
+    <phrase id="hello">Cześć {%name}!</phrase>
+    <phrase id="prompt">Znak zachęty to {%prompt}.</phrase>
+</phrases>

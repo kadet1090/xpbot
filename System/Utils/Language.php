@@ -10,6 +10,8 @@
 namespace XPBot\System\Utils {
     class Language
     {
+        private static $_variables = array();
+
         private static $_phrases = array();
 
         static function load($filename)
@@ -27,7 +29,7 @@ namespace XPBot\System\Utils {
                 $namespace = isset($phrase['ns']) ? $phrase['ns'] : 'default';
                 $name      = $phrase['id'];
 
-                self::$_phrases[$lang][$namespace . ':' . $name] = (string)$phrase;
+                self::$_phrases[$lang][$namespace . ':' . $name] = multilineTrim((string)$phrase);
             }
         }
 
@@ -47,7 +49,9 @@ namespace XPBot\System\Utils {
 
         static function get($phrase, $lang, $namespace = 'default', $arguments = array())
         {
-            $prepared = array();
+            $prepared  = array();
+            $arguments = array_merge($arguments, self::$_variables);
+
             foreach ($arguments as $name => $value)
                 $prepared['{%' . $name . '}'] = $value;
 
@@ -60,6 +64,11 @@ namespace XPBot\System\Utils {
             if (isset(self::$_phrases[$lang][$namespace . ':' . $phrase]))
                 return str_replace(array_keys($prepared), array_values($prepared), self::$_phrases[$lang][$namespace . ':' . $phrase]);
             else return '#' . $namespace . ':' . $phrase;
+        }
+
+        static function setGlobalVar($name, $value)
+        {
+            self::$_variables[$name] = $value;
         }
     }
 }

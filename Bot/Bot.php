@@ -2,6 +2,7 @@
 namespace XPBot\Bot;
 
 use XPBot\System\Utils\Delegate;
+use XPBot\System\Utils\Language;
 use XPBot\System\Utils\Params;
 use XPBot\System\Utils\XmlBranch;
 use XPBot\System\Xmpp\Jid;
@@ -28,6 +29,8 @@ class Bot extends XmppClient
         $this->findCommands('./Bot/Commands/', 'builtin', 'XPBot\\Bot\\Commands');
         $this->onMessage->add(new Delegate(array($this, '_parseCommand')));
         $this->onIq->add(new Delegate(array($this, '_parseIq')));
+
+        Language::loadDir('Languages');
     }
 
     public function _parseIq($query)
@@ -55,6 +58,8 @@ class Bot extends XmppClient
         $prompt = !empty($author->room->configuration->prompt) ?
             $author->room->configuration->prompt :
             $this->config->MUCPrompt;
+
+        Language::setGlobalVar('P', $prompt);
 
         if (substr($message->body, 0, strlen($prompt)) == $prompt) {
             $content = substr($message->body, strlen($prompt));

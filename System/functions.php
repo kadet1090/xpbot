@@ -42,3 +42,8 @@ function __($phrase, $lang, $namespace = 'default', $arguments = array())
 {
     return XPBot\System\Utils\Language::get($phrase, $lang, $namespace, $arguments);
 }
+
+function multilineTrim($string)
+{
+    return implode("\n", array_map('trim', explode("\n", $string)));
+}

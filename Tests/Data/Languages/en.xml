@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phrases lang="pl">
+<phrases lang="en">
     <phrase id="test1">good</phrase>
     <phrase id="test2" ns="test">very</phrase>
+    <phrase id="hello">Hello {%name}!</phrase>
+    <phrase id="prompt">The Prompt is {%prompt}.</phrase>
 </phrases>
