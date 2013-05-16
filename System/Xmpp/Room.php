@@ -3,8 +3,6 @@
 namespace XPBot\System\Xmpp;
 
 use XPBot\System\Utils\Event;
-use XPBot\System\Utils\Event;
-use XPBot\System\Xmpp\Jid;
 use XPBot\System\Xmpp\Jid;
 
 class Room

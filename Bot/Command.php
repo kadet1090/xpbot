@@ -3,8 +3,6 @@
 namespace XPBot\Bot;
 
 use XPBot\System\Xmpp\User;
-use XPBot\System\Xmpp\User;
-use XPBot\System\Xmpp\XmppClient;
 use XPBot\System\Xmpp\XmppClient;
 
 class CommandException extends \Exception

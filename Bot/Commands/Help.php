@@ -10,8 +10,6 @@
 namespace XPBot\Bot\Commands;
 
 use XPBot\Bot\Command;
-use XPBot\Bot\Command;
-use XPBot\Bot\CommandException;
 use XPBot\Bot\CommandException;
 
 class Help extends Command

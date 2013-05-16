@@ -2,16 +2,10 @@
 namespace XPBot\System\Xmpp;
 
 use XPBot\System\Network\XmppSocket;
-use XPBot\System\Network\XmppSocket;
-use XPBot\System\Utils\Delegate;
 use XPBot\System\Utils\Delegate;
 use XPBot\System\Utils\Event;
-use XPBot\System\Utils\Event;
-use XPBot\System\Utils\Timer;
 use XPBot\System\Utils\Timer;
 use XPBot\System\Utils\XmlBranch;
-use XPBot\System\Utils\XmlBranch;
-use XPBot\System\Xmpp\Jid;
 use XPBot\System\Xmpp\Jid;
 
 /**

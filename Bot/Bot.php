@@ -2,22 +2,13 @@
 namespace XPBot\Bot;
 
 use XPBot\System\Utils\Delegate;
-use XPBot\System\Utils\Delegate;
-use XPBot\System\Utils\Language;
 use XPBot\System\Utils\Language;
 use XPBot\System\Utils\Logger;
-use XPBot\System\Utils\Logger;
-use XPBot\System\Utils\Params;
 use XPBot\System\Utils\Params;
 use XPBot\System\Utils\XmlBranch;
-use XPBot\System\Utils\XmlBranch;
-use XPBot\System\Xmpp\Jid;
 use XPBot\System\Xmpp\Jid;
 use XPBot\System\Xmpp\Room;
-use XPBot\System\Xmpp\Room;
 use XPBot\System\Xmpp\User;
-use XPBot\System\Xmpp\User;
-use XPBot\System\Xmpp\XmppClient;
 use XPBot\System\Xmpp\XmppClient;
 
 class Bot extends XmppClient
