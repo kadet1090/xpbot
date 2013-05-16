@@ -3,6 +3,8 @@
 namespace XPBot\Bot;
 
 use XPBot\System\Xmpp\User;
+use XPBot\System\Xmpp\User;
+use XPBot\System\Xmpp\XmppClient;
 use XPBot\System\Xmpp\XmppClient;
 
 class CommandException extends \Exception
@@ -56,6 +58,12 @@ abstract class Command
     protected $_author;
 
     /**
+     * Command type, chat or groupchat.
+     * @var User
+     */
+    protected $_type;
+
+    /**
      * @param Bot $client Jabber client.
      * @param User $author User who executed this command.
      * @param string $lang Commands language.
@@ -67,16 +75,16 @@ abstract class Command
         $this->_packet = $packet;
         $this->_lang   = $lang;
         $this->_author = $author;
+        $this->_type   = $packet['type'];
     }
 
     /**
      * Executes command in XMPP.
      * @param $args
-     * @param $type
      * @throws commandException
      * @return string
      */
-    public function execute($args, $type)
+    public function execute($args)
     {
         throw new commandException('This command is not assumed to be performed in XMPP');
     }
@@ -99,5 +107,17 @@ abstract class Command
     public static function getShortHelp($lang)
     {
         return \__('shortHelp', $lang, get_called_class());
+    }
+
+    /**
+     * Checks if user has permission to execute command.
+     * @param User $user
+     * @return bool
+     */
+    public static function hasPermission(User $user)
+    {
+        $class = get_called_class();
+
+        return $user->permission >= $class::PERMISSION;
     }
 }

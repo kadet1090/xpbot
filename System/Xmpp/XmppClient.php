@@ -2,10 +2,16 @@
 namespace XPBot\System\Xmpp;
 
 use XPBot\System\Network\XmppSocket;
+use XPBot\System\Network\XmppSocket;
+use XPBot\System\Utils\Delegate;
 use XPBot\System\Utils\Delegate;
 use XPBot\System\Utils\Event;
+use XPBot\System\Utils\Event;
+use XPBot\System\Utils\Timer;
 use XPBot\System\Utils\Timer;
 use XPBot\System\Utils\XmlBranch;
+use XPBot\System\Utils\XmlBranch;
+use XPBot\System\Xmpp\Jid;
 use XPBot\System\Xmpp\Jid;
 
 /**
@@ -65,7 +71,22 @@ class XmppClient extends XmppSocket
      */
     public $onMessage;
 
+    /**
+     * Event fired when user joins to room.
+     * Takes two arguments:
+     * Room $room
+     * User $user
+     * bool $afterBroadcast
+     * @var \XPBot\System\Utils\Event
+     */
     public $onJoin;
+
+    /**
+     * Event fired when user leaves room.
+     * Takes two arguments:
+     * Room $room
+     * User $user
+     */
     public $onLeave;
 
     /**
@@ -229,11 +250,7 @@ class XmppClient extends XmppSocket
 
         if ($packet['type'] != 'unavailable') {
             $user = $this->rooms[$channelJid]->addUser(User::fromPresence($packet, $this));
-
-            // avoid firing event on presence broadcast
-            if($this->rooms[$channelJid]->subject !== false)
-                $this->onJoin->run($this->rooms[$channelJid], $user);
-
+            $this->onJoin->run($this->rooms[$channelJid], $user, $this->rooms[$channelJid]->subject === false);
         } else {
             $user = $this->rooms[$channelJid]->users[substr(strstr($packet['from'], '/'), 1)];
             $this->onLeave->run($this->rooms[$channelJid], $user);
@@ -243,11 +260,11 @@ class XmppClient extends XmppSocket
 
     public function _onMessage(\SimpleXMLElement $packet)
     {
-        $jid  = new Jid($packet['from']);
+        $jid = new Jid($packet['from']);
 
         if ($packet['type'] != 'groupchat' || !isset($this->rooms[$jid->bare()])) return;
 
-        if(isset($packet->subject))
+        if (isset($packet->subject))
             $this->rooms[$jid->bare()]->setSubject($packet->subject);
     }
 
@@ -270,7 +287,8 @@ class XmppClient extends XmppSocket
     /**
      * Connects client to the server.
      */
-    public function connect($blocking = false) {
+    public function connect($blocking = false)
+    {
         parent::connect($blocking);
     }
 
@@ -278,8 +296,10 @@ class XmppClient extends XmppSocket
      * @param Jid $user
      * @return User|null
      */
-    public function getUserByJid(Jid $user) {
-        if(!$user->fromChannel()) return null;
+    public function getUserByJid(Jid $user)
+    {
+        if (!$user->fromChannel()) return null;
+
         return $this->rooms[$user->bare()]->users[$user->resource];
     }
 

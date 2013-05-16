@@ -22,7 +22,8 @@ class User
      */
     private $_client;
 
-    public function __construct($client) {
+    public function __construct($client)
+    {
         $this->_client = $client;
     }
 
@@ -41,7 +42,7 @@ class User
         $user->nick        = (string)substr(strstr($presence['from'], '/'), 1);
         $user->affiliation = (string)self::_getAffiliation($presence);
         $user->role        = (string)self::_getRole($presence);
-        $user->jid         = (string)self::_getJid($presence);
+        $user->jid         = self::_getJid($presence);
         $user->show        = (isset($presence->show) ? (string)$presence->show : 'available');
         $user->status      = (string)$presence->status;
 
@@ -90,13 +91,15 @@ class User
         return $aff;
     }
 
-    public function roomJid() {
-        if(!isset($this->room)) return $this->jid;
+    public function roomJid()
+    {
+        if (!isset($this->room)) return $this->jid;
 
         return new Jid($this->room->jid->name, $this->room->jid->server, $this->nick);
     }
 
-    public function privateMessage($content) {
+    public function privateMessage($content)
+    {
         $this->_client->message($this->roomJid(), $content);
     }
 }

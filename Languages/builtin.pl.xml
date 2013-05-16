@@ -15,9 +15,11 @@
         Dodatkowo możesz użyć następujących przełączników:
 
         -m - Wyświetla listę modułów.
-        -m nazwa - Wyświetla komendy z danego modułu.
+        -m nazwa - Wyświetla komendy z danego modułu,
+        -a - wyświetla wszystkie komendy, nawet te, do których nie mamy uprawnień,
+        -l - dodatkowo wypisuje wymagany poziom uprawnień.
 
-        -r regex - Wyświetla wszystkie komendy pasujące do danego regexa.
+        -r regex - Wyświetla wszystkie komendy pasujące do danego regexa,
         -p - Rezultat działania komendy zostaje wysłany jako wiadomość prywatna.
     </phrase>
     <phrase id="commands" ns="XPBot\Bot\Commands\Help">

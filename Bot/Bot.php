@@ -2,11 +2,22 @@
 namespace XPBot\Bot;
 
 use XPBot\System\Utils\Delegate;
+use XPBot\System\Utils\Delegate;
+use XPBot\System\Utils\Language;
 use XPBot\System\Utils\Language;
 use XPBot\System\Utils\Logger;
+use XPBot\System\Utils\Logger;
+use XPBot\System\Utils\Params;
 use XPBot\System\Utils\Params;
 use XPBot\System\Utils\XmlBranch;
+use XPBot\System\Utils\XmlBranch;
 use XPBot\System\Xmpp\Jid;
+use XPBot\System\Xmpp\Jid;
+use XPBot\System\Xmpp\Room;
+use XPBot\System\Xmpp\Room;
+use XPBot\System\Xmpp\User;
+use XPBot\System\Xmpp\User;
+use XPBot\System\Xmpp\XmppClient;
 use XPBot\System\Xmpp\XmppClient;
 
 class Bot extends XmppClient
@@ -15,10 +26,12 @@ class Bot extends XmppClient
 
     protected $_commands = array();
     public $config;
+    public $users;
 
     public function __construct($config = './Config/Config.xml')
     {
         $this->config = simplexml_load_file($config);
+        $this->users  = simplexml_load_file('./Config/Users.xml');
 
         parent::__construct(
             new Jid("{$this->config->xmpp->login}@{$this->config->xmpp->server}/{$this->config->xmpp->resource}"),
@@ -32,8 +45,32 @@ class Bot extends XmppClient
         $this->onIq->add(new Delegate(array($this, '_parseIq')));
 
         $this->onReady->add(new Delegate(array($this, '_joinRooms')));
+        $this->onJoin->add(new Delegate(array($this, '_onJoin')));
 
         Language::loadDir('Languages');
+    }
+
+    public function _onJoin(Room $room, User $user, $broadcast)
+    {
+        switch ($user->affiliation) {
+            case 'owner':
+                $user->permission = 8;
+                break;
+            case 'admin':
+                $user->permission = 6;
+                break;
+            case 'member':
+                $user->permission = 4;
+                break;
+            case 'none':
+                $user->permission = 2;
+                break;
+        }
+
+        if ($users = $this->users->xpath("//user[@jid='{$user->jid->bare()}']") && isset($users[0]['permission']))
+            $user->permission = (int)$users[0]['permission'];
+
+        Logger::debug($user->nick . ' joined to ' . $room->jid->name . ' with permission ' . $user->permission);
     }
 
     public function _joinRooms()
@@ -43,8 +80,6 @@ class Bot extends XmppClient
             $channel = new Jid($channel['name'], $channel['server']);
 
             $this->join($channel, $nick);
-
-            Logger::info('Joined to ' . $channel->bare() . ' as ' . $nick . '.');
         }
     }
 
@@ -97,13 +132,19 @@ class Bot extends XmppClient
             // TODO: private commands support.
             if ($command) {
                 $commandName = $command;
-                $command     = new $commandName($this, $author, 'pl', $message);
                 try {
-                    $result = $command->execute($params, true);
 
-                    if ($result !== null) {
+                    if (!$command::hasPermission($author))
+                        throw new CommandException(
+                            'User has no permission to run this command.',
+                            __('errNoPermission', 'pl')
+                        );
+
+                    $command = new $commandName($this, $author, 'pl', $message);
+
+                    if ($result = $command->execute($params))
                         $author->room->message($result);
-                    }
+
                 } catch (CommandException $exception) {
                     $author->room->message($exception->getMessage());
                     Logger::warning("'{$exception->getConsoleMessage()}' in $commandName launched by {$author->jid}");

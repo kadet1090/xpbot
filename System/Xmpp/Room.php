@@ -3,6 +3,8 @@
 namespace XPBot\System\Xmpp;
 
 use XPBot\System\Utils\Event;
+use XPBot\System\Utils\Event;
+use XPBot\System\Xmpp\Jid;
 use XPBot\System\Xmpp\Jid;
 
 class Room
@@ -47,16 +49,16 @@ class Room
      */
     public function __construct(XmppClient $client, Jid $jid)
     {
-        $this->_client  = $client;
-        $this->jid      = $jid;
+        $this->_client          = $client;
+        $this->jid              = $jid;
         $this->onSubjectChanged = new Event();
 
-        if(empty(self::$config))
+        if (empty(self::$config))
             self::$config = simplexml_load_file('./Config/Rooms.xml');
 
         $this->configuration = self::$config->xpath("/rooms/room[@jid='{$this->jid->bare()}']");
 
-        if(empty($this->configuration)) {
+        if (empty($this->configuration)) {
             self::$config->addChild('room');
             self::$config->room[count(self::$config->room) - 1]->addAttribute('jid', $this->jid->bare());
             $this->configuration = self::$config->room[count(self::$config->room) - 1];
@@ -159,7 +161,7 @@ class Room
      * Removes user from the room.
      * @param User $user
      */
-    public function removeUser($user)
+    public function removeUser(User $user)
     {
         unset($this->users[$user->nick]);
     }
@@ -170,7 +172,8 @@ class Room
         $this->onSubjectChanged->run($this, $subject);
     }
 
-    public static function save() {
+    public static function save()
+    {
         self::$config->asXML('./Config/Rooms.xml');
     }
 }
