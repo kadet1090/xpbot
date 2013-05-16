@@ -10,12 +10,8 @@
 namespace XPBot\Bot\Commands;
 
 use XPBot\Bot\Command;
-use XPBot\Bot\Command;
-use XPBot\Bot\CommandException;
 use XPBot\Bot\CommandException;
 use XPBot\System\Utils\Delegate;
-use XPBot\System\Utils\Delegate;
-use XPBot\System\Xmpp\Jid;
 use XPBot\System\Xmpp\Jid;
 
 class Version extends Command
