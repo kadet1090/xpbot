@@ -63,9 +63,14 @@ class Help extends Command
         $str      = '';
         foreach ($commands as $command => $class) {
             if (!$this->_all && !$class::hasPermission($this->_author)) continue;
+            $aliases = $this->_bot->getCommandAliases($module.'-'.$command);
 
             if (preg_match($this->_regex, $command))
-                $str .= "\t" . ($this->_permissions ? '[' . $class::PERMISSION . '] ' : '') . "$command - " . $class::getShortHelp($this->_lang) . "\n";
+                $str .= "\t" .
+                    ($this->_permissions ? '[' . $class::PERMISSION . '] ' : ' ') .
+                    $command .
+                    ($aliases ? ' (' . implode(', ', $aliases) . ') ' : ' ') .
+                    ' - ' . $class::getShortHelp($this->_lang) . "\n";
         }
 
         return $str;

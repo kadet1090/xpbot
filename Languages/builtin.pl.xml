@@ -5,6 +5,9 @@
     <phrase id="commandAmbiguous">Komenda {%command} nie jest jednoznaczna, wybierz jedną z poniższych:</phrase>
     <phrase id="errCommandNotExists">Nie ma takiej komendy.</phrase>
     <phrase id="errModuleNotExists">Moduł {%module} nie istnieje, może nie został zainstalowany?</phrase>
+    <phrase id="errArgumentInvalid">Podany argument nie jest prawidłowy.</phrase>
+    <phrase id="errTooFewArguments">Podano za mało argumentów.</phrase>
+    <phrase id="errInvalidAction">Nieprawidłowa akcja.</phrase>
 
     <phrase id="shortHelp" ns="XPBot\Bot\Commands\Help">Wyświetla pomoc bota</phrase>
     <phrase id="help" ns="XPBot\Bot\Commands\Help">
@@ -58,4 +61,17 @@
         -a człon - dodaje nowy człon na końcu tematu, po |,
         -p człon - dodaje nowy człon na początku tematu, separując od aktualnego tematu poprzez znak |
     </phrase>
+
+    <phrase id="shortHelp" ns="XPBot\Bot\Commands\Alias">Zarządza aliasami komend</phrase>
+    <phrase id="help" ns="XPBot\Bot\Commands\Alias">
+        Zarządza aliasami komend w bocie.
+
+        {%P}{%command} add alias komenda - dodaje nowy alias,
+        {%P}{%command} remove alias - usuwa dany alias,
+        {%P}{%command} command komenda - wyświetla aliasy danej komendy,
+        {%P}{%command} - wyświetla wszystkie aliasy.
+    </phrase>
+    <phrase id="errAliasNotExists" ns="XPBot\Bot\Commands\Aliases">Taki alias nie istnieje.</phrase>
+    <phrase id="errAliasNotExists" ns="XPBot\Bot\Commands\Aliases">Taki alias nie istnieje.</phrase>
+
 </phrases>

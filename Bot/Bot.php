@@ -2,6 +2,7 @@
 namespace XPBot\Bot;
 
 use XPBot\System\Utils\Delegate;
+use XPBot\System\Utils\Ini;
 use XPBot\System\Utils\Language;
 use XPBot\System\Utils\Logger;
 use XPBot\System\Utils\Params;
@@ -18,11 +19,13 @@ class Bot extends XmppClient
     protected $_commands = array();
     public $config;
     public $users;
+    public $aliases;
 
     public function __construct($config = './Config/Config.xml')
     {
         $this->config = simplexml_load_file($config);
         $this->users  = simplexml_load_file('./Config/Users.xml');
+        $this->aliases = new Ini('./Config/Aliases.ini', true);
 
         parent::__construct(
             new Jid("{$this->config->xmpp->login}@{$this->config->xmpp->server}/{$this->config->xmpp->resource}"),
@@ -161,8 +164,11 @@ class Bot extends XmppClient
         return $this->_commands;
     }
 
-    public function getCommand($name)
+    public function getCommand($name, $aliasing = true)
     {
+        if($aliasing && isset($this->aliases[$name]))
+            $name = $this->aliases[$name];
+
         $name = explode('-', $name, 2);
         if (count($name) == 2) {
             if (!isset($this->_commands[$name[0]]))
@@ -176,5 +182,43 @@ class Bot extends XmppClient
         }
 
         return arrayDeepSearch($search, $name);
+    }
+
+    public function commandExists($command) {
+        $commands = $this->getCommand($command, false);
+        return ($commands && !is_array($commands));
+    }
+
+    public function getFullCommandName($command) {
+        if(strstr($command, '-')) return $command; // Command is already fully named.
+
+        $iterator = new \RecursiveIteratorIterator(
+            new \RecursiveArrayIterator($this->_commands), \RecursiveIteratorIterator::SELF_FIRST
+        );
+
+        $results = array();
+        $parent  = '';
+        foreach ($iterator as $key => $value) {
+            if ($iterator->callHasChildren()) {
+                $parent = $key;
+                continue;
+            }
+
+            if ($key == $command)
+                $results[$parent] = $value;
+        }
+
+        if (count($results) == 1)
+            return $parent.'-'.$command;
+
+        return false;
+    }
+
+    public function getCommandAliases($command) {
+        $command = $this->getFullCommandName($command);
+
+        return array_keys(array_filter($this->aliases->asArray(), function ($value) use ($command) {
+            return $value == $command;
+        }));
     }
 }

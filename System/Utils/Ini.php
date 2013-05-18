@@ -113,4 +113,9 @@ class Ini implements \ArrayAccess, \IteratorAggregate {
     {
         return new \ArrayIterator($this->_data);
     }
+
+    public function asArray()
+    {
+        return $this->_data;
+    }
 }
