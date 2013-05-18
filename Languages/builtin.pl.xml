@@ -10,7 +10,7 @@
     <phrase id="help" ns="XPBot\Bot\Commands\Help">
         Wyświetla pomoc bota, oraz listę wszystkich dostępnych komend.
 
-        {%P}help [komenda lub moduł]
+        {%P}{%command} [komenda lub moduł]
 
         Dodatkowo możesz użyć następujących przełączników:
 
@@ -34,7 +34,7 @@
     <phrase id="help" ns="XPBot\Bot\Commands\Ping">
         Sprawdza czas odpowiedzi danego usera.
 
-        {%P}ping użytkownik
+        {%P}{%command} użytkownik
     </phrase>
     <phrase id="ping" ns="XPBot\Bot\Commands\Ping">Czas odpowiedzi od {%user} wynosi {%time}ms.</phrase>
 
@@ -42,10 +42,20 @@
     <phrase id="help" ns="XPBot\Bot\Commands\Version">
         Sprawdza wersję komunikatora danego użytkownika
 
-        {%P}version użytkownik
+        {%P}{%command} użytkownik
     </phrase>
     <phrase id="reply" ns="XPBot\Bot\Commands\Version">
         Użytkownik {%user} używa {%name} {%version}
         {%os}
+    </phrase>
+
+    <phrase id="shortHelp" ns="XPBot\Bot\Commands\Subject">Zarządza tematem</phrase>
+    <phrase id="help" ns="XPBot\Bot\Commands\Subject">
+        Zarządza tematem pokoju, umożliwiając jego wyświetlenie i zmianę.
+
+        {%P}{%command} [-a|-p] [temat]
+
+        -a człon - dodaje nowy człon na końcu tematu, po |,
+        -p człon - dodaje nowy człon na początku tematu, separując od aktualnego tematu poprzez znak |
     </phrase>
 </phrases>

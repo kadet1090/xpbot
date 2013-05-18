@@ -90,11 +90,12 @@ abstract class Command
     /**
      * Gets help string of command.
      * @param string $lang
+     * @param string $command
      * @return string
      */
-    public static function getHelp($lang)
+    public static function getHelp($lang, $command)
     {
-        return \__('help', $lang, get_called_class());
+        return \__('help', $lang, get_called_class(), array('command' => $command));
     }
 
     /**

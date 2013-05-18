@@ -101,6 +101,10 @@ class XmppClient extends XmppSocket
      */
     public $isReady;
 
+    /**
+     * Rooms list.
+     * @var array
+     */
     public $rooms = array();
 
     /**
@@ -235,6 +239,12 @@ class XmppClient extends XmppSocket
         }
     }
 
+    /**
+     * Should be private, but... php sucks!
+     * DO NOT RUN IT, TRUST ME.
+     *
+     * @param \SimpleXMLElement $packet
+     */
     public function _onPresence(\SimpleXMLElement $packet)
     {
         $channelJid = strstr($packet['from'], '/', true);
@@ -252,14 +262,19 @@ class XmppClient extends XmppSocket
         }
     }
 
+    /**
+     * Should be private, but... php sucks!
+     * DO NOT RUN IT, TRUST ME.
+     *
+     * @param \SimpleXMLElement $packet
+     */
     public function _onMessage(\SimpleXMLElement $packet)
     {
         $jid = new Jid($packet['from']);
-
         if ($packet['type'] != 'groupchat' || !isset($this->rooms[$jid->bare()])) return;
 
         if (isset($packet->subject))
-            $this->rooms[$jid->bare()]->setSubject($packet->subject);
+            $this->rooms[$jid->bare()]->subject = $packet->subject;
     }
 
     /**
@@ -330,6 +345,11 @@ class XmppClient extends XmppSocket
         $this->write($xml->asXML());
     }
 
+    /**
+     * Checks client version.
+     * @param Jid $jid user jid.
+     * @param Delegate $delegate Delegate to be executed after proper packet came.
+     */
     public function version(Jid $jid, Delegate $delegate)
     {
         $id  = uniqid('osversion_');
@@ -345,6 +365,11 @@ class XmppClient extends XmppSocket
         $this->wait('iq', $id, $delegate);
     }
 
+    /**
+     * Pings user.
+     * @param Jid $jid user jid.
+     * @param Delegate $delegate Delegate to be executed after proper packet came.
+     */
     public function ping(Jid $jid, Delegate $delegate)
     {
         $id  = uniqid('ping_');
@@ -360,6 +385,13 @@ class XmppClient extends XmppSocket
         $this->wait('iq', $id, $delegate);
     }
 
+    /**
+     * Joins to room.
+     * @param Jid $room
+     * @param $nick
+     * @return Room
+     * @throws \InvalidArgumentException
+     */
     public function join(Jid $room, $nick)
     {
         if (!$room->isChannel()) throw new \InvalidArgumentException('room'); // YOU SHALL NOT PASS
@@ -374,6 +406,11 @@ class XmppClient extends XmppSocket
         return $this->rooms[$room->__toString()] = new Room($this, $room);
     }
 
+    /**
+     * Leaves room.
+     * @param Jid $room
+     * @throws \InvalidArgumentException
+     */
     public function leave(Jid $room)
     {
         if (!$room->isChannel() || !isset($this->rooms[$room->bare()])) throw new \InvalidArgumentException('room');
@@ -388,6 +425,14 @@ class XmppClient extends XmppSocket
         unset($this->rooms[$room->bare()]);
     }
 
+    /**
+     * Changes user role.
+     * @param Jid $room
+     * @param $nick
+     * @param $role
+     * @param string $reason
+     * @throws \InvalidArgumentException
+     */
     public function role(Jid $room, $nick, $role, $reason = '')
     {
         if (!in_array($role, array('visitor', 'none', 'participant', 'moderator')))
@@ -409,6 +454,14 @@ class XmppClient extends XmppSocket
         $this->write($xml->asXML());
     }
 
+    /**
+     * Changes user affiliation.
+     * @param Jid $room
+     * @param Jid $user
+     * @param $affiliation
+     * @param string $reason
+     * @throws \InvalidArgumentException
+     */
     public function affiliate(Jid $room, Jid $user, $affiliation, $reason = '')
     {
         if (!in_array($affiliation, array('none', 'outcast', 'member', 'admin', 'owner')))
@@ -428,5 +481,19 @@ class XmppClient extends XmppSocket
         if (!empty($reason)) $xml->query[0]->item[0]->addChild(new xmlBranch("reason"))->setContent($reason);
 
         $this->write($xml->asXML());
+    }
+
+    /**
+     * Sets room (or conversation) subject.
+     * @param Jid $jid
+     * @param $subject
+     */
+    public function setSubject(Jid $jid, $subject) {
+        $msg = new XmlBranch('message');
+        $msg->addAttribute('from', $this->jid->__toString())
+            ->addAttribute('to', $jid->__toString())
+            ->addAttribute('type', $jid->isChannel() ? 'groupchat' : 'chat');
+        $msg->addChild(new XmlBranch('subject'))->setContent($subject);
+        $this->write($msg->asXML());
     }
 }

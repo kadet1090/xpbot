@@ -80,19 +80,19 @@ class Help extends Command
 
     private function _commandHelp($command)
     {
-        $command = $this->_bot->getCommand($command);
-        if ($command === false)
+        $result = $this->_bot->getCommand($command);
+        if ($result === false)
             throw new CommandException('Specified command not exists.', __('errCommandNotExists', $this->_lang));
 
-        if (is_array($command)) {
+        if (is_array($result)) {
             $str = __('commandAmbiguous', $this->_lang, 'default', array('command' => $command));
-            foreach ($command as $package => $class) {
+            foreach ($result as $package => $class) {
                 $str .= "\t$package-$command - $class\n";
             }
 
             return $str;
         }
 
-        return $command::getHelp($this->_lang);
+        return $result::getHelp($this->_lang, $command);
     }
 }

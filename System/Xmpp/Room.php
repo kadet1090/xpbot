@@ -31,8 +31,6 @@ class Room
      */
     public $subject = false;
 
-    public $onSubjectChanged;
-
     /**
      * Stores room configuration with additional client data (ie. join time)
      * @var array
@@ -49,7 +47,6 @@ class Room
     {
         $this->_client          = $client;
         $this->jid              = $jid;
-        $this->onSubjectChanged = new Event();
 
         if (empty(self::$config))
             self::$config = simplexml_load_file('./Config/Rooms.xml');
@@ -164,12 +161,18 @@ class Room
         unset($this->users[$user->nick]);
     }
 
+    /**
+     * Sets room subject.
+     * @param $subject
+     */
     public function setSubject($subject)
     {
-        $this->subject = $subject;
-        $this->onSubjectChanged->run($this, $subject);
+        $this->_client->setSubject($this->jid, $subject);
     }
 
+    /**
+     * Saves rooms configuration to file.
+     */
     public static function save()
     {
         self::$config->asXML('./Config/Rooms.xml');
