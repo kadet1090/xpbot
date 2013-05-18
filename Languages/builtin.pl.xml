@@ -23,7 +23,7 @@
         -p - Rezultat działania komendy zostaje wysłany jako wiadomość prywatna.
     </phrase>
     <phrase id="commands" ns="XPBot\Bot\Commands\Help">
-        Aby uruchomić daną komendę wpisz {%P}komenda lub {%P}komenda-moduł.
+        Aby uruchomić daną komendę wpisz {%P}komenda lub {%P}moduł-komenda.
         Jeżeli nie wiesz jak obsługuje się daną komendę po prostu wpisz {%P}help komenda.
 
         {%commands}
