@@ -18,6 +18,8 @@ class Bot extends XmppClient
 
     protected $_commands = array();
     protected $_plugins;
+    protected $_macros = array();
+
     public $config;
     public $users;
     public $aliases;
@@ -42,6 +44,10 @@ class Bot extends XmppClient
 
         $this->onReady->add(new Delegate(array($this, '_joinRooms')));
         $this->onJoin->add(new Delegate(array($this, '_onJoin')));
+
+        $this->addMacro('me'  , new Delegate('XPBot\\Bot\\Bot::getNick'));
+        $this->addMacro('date', new Delegate('XPBot\\Bot\\Bot::getDate'));
+        $this->addMacro('time', new Delegate('XPBot\\Bot\\Bot::getTime'));
 
         Language::loadDir('Languages');
     }
@@ -106,6 +112,10 @@ class Bot extends XmppClient
             $this->config->MUCPrompt;
 
         Language::setGlobalVar('P', $prompt);
+
+        foreach($this->_macros as $macro => $func)
+            $message->body = str_replace('!'.$macro, $func->run($message, $this), $message->body);
+
 
         if (substr($message->body, 0, strlen($prompt)) == $prompt) {
             $content = substr($message->body, strlen($prompt));
@@ -237,5 +247,31 @@ class Bot extends XmppClient
                 $this->_plugins[$matches[1]]->load();
             }
         }
+    }
+
+    public function addMacro($name, Delegate $delegate) {
+        $this->_macros[$name] = $delegate;
+    }
+
+    public function removeMacro($name) {
+        unset($this->_macros[$name]);
+    }
+
+    // MACROS
+    public static function getNick($packet, Bot $bot)
+    {
+        $user = $bot->getUserByJid(new Jid($packet['from']));
+        if($user) return $user->nick;
+        return false;
+    }
+
+    public static function getDate($packet, Bot $bot)
+    {
+        return date('d.m.Y');
+    }
+
+    public static function getTime($packet, Bot $bot)
+    {
+        return date('H:i:s');
     }
 }
