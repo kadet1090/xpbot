@@ -14,9 +14,10 @@ use XPBot\System\Xmpp\XmppClient;
 
 class Bot extends XmppClient
 {
-    const BOT_VERSION = '0.1 Beta';
+    const BOT_VERSION = 'Beta 0.2';
 
     protected $_commands = array();
+    protected $_plugins;
     public $config;
     public $users;
     public $aliases;
@@ -35,6 +36,7 @@ class Bot extends XmppClient
         );
 
         $this->findCommands('./Bot/Commands/', 'builtin', 'XPBot\\Bot\\Commands');
+        $this->_loadPlugins();
         $this->onMessage->add(new Delegate(array($this, '_parseCommand')));
         $this->onIq->add(new Delegate(array($this, '_parseIq')));
 
@@ -220,5 +222,20 @@ class Bot extends XmppClient
         return array_keys(array_filter($this->aliases->asArray(), function ($value) use ($command) {
             return $value == $command;
         }));
+    }
+
+    private function _loadPlugins() {
+        $iterator = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator(
+            'Plugins/',
+            \RecursiveDirectoryIterator::SKIP_DOTS || \RecursiveDirectoryIterator::UNIX_PATHS
+        ));
+
+        foreach ($iterator as $file) {
+            if(preg_match('/(.*Plugin).php$/', $file->getFilename(), $matches)) {
+                $class = 'XPBot\\'.str_replace(DIRECTORY_SEPARATOR, '\\', $file->getPath()).'\\'.$matches[1];
+                $this->_plugins[$matches[1]] = new $class($this);
+                $this->_plugins[$matches[1]]->load();
+            }
+        }
     }
 }

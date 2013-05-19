@@ -16,6 +16,8 @@ use XPBot\System\Xmpp\Jid;
 
 class Alias extends Command
 {
+    const PERMISSION = 8;
+
     public function execute($args)
     {
         if(!isset($args[1]))

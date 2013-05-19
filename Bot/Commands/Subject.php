@@ -16,6 +16,8 @@ use XPBot\System\Xmpp\Jid;
 
 class Subject extends Command
 {
+    const PERMISSION = 6;
+
     public function execute($args)
     {
         if($this->_type != 'groupchat') return;
