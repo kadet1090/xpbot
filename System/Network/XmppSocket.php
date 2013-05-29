@@ -3,6 +3,7 @@ namespace XPBot\System\Network;
 
 use XPBot\System\Utils\Delegate;
 use XPBot\System\Utils\Event;
+use XPBot\System\Utils\Logger;
 use XPBot\System\Utils\Timer;
 
 abstract class XmppSocket extends BaseSocket
@@ -34,6 +35,8 @@ abstract class XmppSocket extends BaseSocket
             $result .= $content;
         } while (!preg_match("/(\'\/|\"\/|iq|ge|ce|am|.\'|.\")>/", substr($result, -3)) && !empty($result));
         $this->_parse(trim($result));
+
+        if(!empty($result)) Logger::debug($result);
     }
 
     /**

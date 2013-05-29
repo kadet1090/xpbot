@@ -1,6 +1,7 @@
 <?php
 namespace XPBot\System\Network;
 use XPBot\System\Utils\Event;
+use XPBot\System\Utils\Logger;
 
 /**
  * Class BaseSocket
@@ -95,6 +96,7 @@ abstract class BaseSocket
     {
         if (!fwrite($this->_socket, $text))
             $this->raiseError();
+        Logger::debug($text);
     }
 
     /**

@@ -1,5 +1,5 @@
 <?php
-define('DEBUG_MODE', 1);
+define('DEBUG_MODE', 2);
 
 include 'system/functions.php';
 

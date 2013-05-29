@@ -2,7 +2,7 @@
 
 namespace XPBot\System\Utils;
 
-class Params extends \ArrayObject
+class Params extends \ArrayObject implements \Countable
 {
     protected $_pure;
     protected $_prepared;
@@ -74,6 +74,15 @@ class Params extends \ArrayObject
     public function asArray()
     {
         return $this->_prepared;
+    }
+
+    public function count()
+    {
+        $count = 0;
+        foreach($this->_prepared as $key => $value)
+            if(is_int($key)) $count++;
+
+        return $count;
     }
 }
 

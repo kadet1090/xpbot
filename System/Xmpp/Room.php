@@ -2,6 +2,7 @@
 
 namespace XPBot\System\Xmpp;
 
+use XPBot\System\Utils\Delegate;
 use XPBot\System\Utils\Event;
 use XPBot\System\Xmpp\Jid;
 
@@ -130,6 +131,11 @@ class Room
         }
 
         $this->_client->affiliate($this->jid, $who, $affiliation, $reason);
+    }
+
+    public function affiliationList($affiliation, Delegate $delegate)
+    {
+        $this->_client->affiliationList($this->jid, $affiliation, $delegate);
     }
 
     /**

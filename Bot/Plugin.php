@@ -27,6 +27,6 @@ abstract class Plugin implements PluginInterface {
      */
     public function toggle()
     {
-        $this->_loaded ? $this->unload() : $this->load();
+        $this->_loaded ? $this->unload() : $this->load(); // Best code line EVAH.
     }
 }

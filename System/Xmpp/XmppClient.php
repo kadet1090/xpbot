@@ -496,4 +496,30 @@ class XmppClient extends XmppSocket
         $msg->addChild(new XmlBranch('subject'))->setContent($subject);
         $this->write($msg->asXML());
     }
+
+    /**
+     * Gets user affiliation list.
+     * @param Jid $room
+     * @param $affiliation
+     * @param Delegate $delegate
+     * @throws \InvalidArgumentException
+     */
+    public function affiliationList(Jid $room, $affiliation, Delegate $delegate) {
+        if (!in_array($affiliation, array('none', 'outcast', 'member', 'admin', 'owner')))
+            throw new \InvalidArgumentException('affiliation');
+
+        $xml = new xmlBranch("iq");
+        $id = uniqid('affiliate_');
+        $xml->addAttribute("type", "get")
+            ->addAttribute('from', $this->jid->__toString())
+            ->addAttribute("to", $room->__toString())
+            ->addAttribute("id", $id);
+        $xml->addChild(new xmlBranch("query"));
+        $xml->query[0]->addAttribute("xmlns", "http://jabber.org/protocol/muc#admin");
+        $xml->query[0]->addChild(new xmlBranch("item"));
+        $xml->query[0]->item[0]->addAttribute("affiliation", $affiliation);
+        $this->write($xml->asXML());
+
+        $this->wait('iq', $id, $delegate);
+    }
 }
