@@ -102,4 +102,9 @@ class User
     {
         $this->_client->message($this->roomJid(), $content);
     }
+
+    public function message($content)
+    {
+        $this->_client->message($this->jid, $content);
+    }
 }

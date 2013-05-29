@@ -107,6 +107,8 @@ class Bot extends XmppClient
     {
         if (isset($message->delay['stamp'])) return; // message is from history, forgot about it.
         $author = $this->getUserByJid(new Jid($message['from']));
+        if(!$author) return null;
+
         $prompt = !empty($author->room->configuration->prompt) ?
             $author->room->configuration->prompt :
             $this->config->MUCPrompt;
@@ -116,6 +118,11 @@ class Bot extends XmppClient
         foreach($this->_macros as $macro => $func)
             $message->body = str_replace('!'.$macro, $func->run($message, $this), $message->body);
 
+        $reply = function ($msg) use ($message, $author) {
+            $message['type'] == 'groupchat' ?
+                $author->room->message($msg) :
+                $this->message(new Jid($message['from']), $msg);
+        };
 
         if (substr($message->body, 0, strlen($prompt)) == $prompt) {
             $content = substr($message->body, strlen($prompt));
@@ -130,8 +137,7 @@ class Bot extends XmppClient
                 foreach ($command as $package => $class) {
                     $str .= "\t$package-{$params[0]} - $class\n";
                 }
-                $author->room->message($str);
-
+                $reply($str);
                 return;
             }
 
@@ -149,7 +155,7 @@ class Bot extends XmppClient
                     $command = new $commandName($this, $author, 'pl', $message);
 
                     if ($result = $command->execute($params))
-                        $author->room->message($result);
+                        $reply($result);
 
                 } catch (CommandException $exception) {
                     $author->room->message($exception->getMessage());
