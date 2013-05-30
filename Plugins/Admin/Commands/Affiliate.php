@@ -30,13 +30,12 @@ class Affiliate extends Command
     }
 
     private function _set($args) {
-        $reason = isset($args[3]) ? $args[3] : '';
         $jid = isset($this->_author->room->users[$args[2]]) ?
             $this->_author->room->users[$args[2]]->jid :
             $args[2];
 
         try {
-            $this->_author->room->affiliate($jid, $args[1], $reason);
+            $this->_author->room->affiliate($jid, $args[1], $args[3]);
         } catch (\InvalidArgumentException $exception) {
             if($exception->getMessage() == 'affiliation')
                 throw new commandException('Wrong affiliation.', __('errWrongAffiliation', $this->_lang));
