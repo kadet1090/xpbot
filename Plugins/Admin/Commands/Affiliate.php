@@ -47,11 +47,11 @@ class Affiliate extends Command
             $this->_author->room->affiliationList($args[1], new Delegate(function ($packet) use ($args) {
                 $users = array();
                 foreach($packet->query->item as $user)
-                    $users[] = $args['j'] ? $user['jid'] : strstr($user['jid'], '@', true);
+                    $users[] = $args['j'] ? $user['jid'] : strstr($user['jid'], '@', true).(!empty($user->reason) && $args['r'] ? " - {$user->reason}" : '');
 
                 $args['p'] ?
-                    $this->_author->room->message(implode(', ', $users)) :
-                    $this->_author->privateMessage(implode(', ', $users));
+                    $this->_author->room->message(implode(", \n", $users)) :
+                    $this->_author->privateMessage(implode(", \n", $users));
             }));
         } catch (\InvalidArgumentException $exception) {
             if($exception->getMessage() == 'affiliation')
