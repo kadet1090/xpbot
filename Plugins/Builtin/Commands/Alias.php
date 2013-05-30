@@ -7,7 +7,7 @@
  * @license WTFPL
  */
 
-namespace XPBot\Bot\Commands;
+namespace XPBot\Plugins\Builtin\Commands;
 
 use XPBot\Bot\Command;
 use XPBot\Bot\CommandException;

@@ -9,8 +9,8 @@
     <phrase id="errTooFewArguments">Podano za mało argumentów.</phrase>
     <phrase id="errInvalidAction">Nieprawidłowa akcja.</phrase>
 
-    <phrase id="shortHelp" ns="XPBot\Bot\Commands\Help">Wyświetla pomoc bota</phrase>
-    <phrase id="help" ns="XPBot\Bot\Commands\Help">
+    <phrase id="shortHelp" ns="XPBot\Plugins\Builtin\Commands\Help">Wyświetla pomoc bota</phrase>
+    <phrase id="help" ns="XPBot\Plugins\Builtin\Commands\Help">
         Wyświetla pomoc bota, oraz listę wszystkich dostępnych komend.
 
         {%P}{%command} [komenda lub moduł]
@@ -25,35 +25,35 @@
         -r regex - Wyświetla wszystkie komendy pasujące do danego regexa,
         -p - Rezultat działania komendy zostaje wysłany jako wiadomość prywatna.
     </phrase>
-    <phrase id="commands" ns="XPBot\Bot\Commands\Help">
+    <phrase id="commands" ns="XPBot\Plugins\Builtin\Commands\Help">
         Aby uruchomić daną komendę wpisz {%P}komenda lub {%P}moduł-komenda.
         Jeżeli nie wiesz jak obsługuje się daną komendę po prostu wpisz {%P}help komenda.
 
         {%commands}
     </phrase>
-    <phrase id="modules" ns="XPBot\Bot\Commands\Help">Dostępne moduły: {%modules}</phrase>
+    <phrase id="modules" ns="XPBot\Plugins\Builtin\Commands\Help">Dostępne moduły: {%modules}</phrase>
 
-    <phrase id="shortHelp" ns="XPBot\Bot\Commands\Ping">Sprawdza czas odpowiedzi danego usera</phrase>
-    <phrase id="help" ns="XPBot\Bot\Commands\Ping">
+    <phrase id="shortHelp" ns="XPBot\Plugins\Builtin\Commands\Ping">Sprawdza czas odpowiedzi danego usera</phrase>
+    <phrase id="help" ns="XPBot\Plugins\Builtin\Commands\Ping">
         Sprawdza czas odpowiedzi danego usera.
 
         {%P}{%command} użytkownik
     </phrase>
-    <phrase id="ping" ns="XPBot\Bot\Commands\Ping">Czas odpowiedzi od {%user} wynosi {%time}ms.</phrase>
+    <phrase id="ping" ns="XPBot\Plugins\Builtin\Commands\Ping">Czas odpowiedzi od {%user} wynosi {%time}ms.</phrase>
 
-    <phrase id="shortHelp" ns="XPBot\Bot\Commands\Version">Sprawdza wersję komunikatora danego użytkownika</phrase>
-    <phrase id="help" ns="XPBot\Bot\Commands\Version">
+    <phrase id="shortHelp" ns="XPBot\Plugins\Builtin\Commands\Version">Sprawdza wersję komunikatora danego użytkownika</phrase>
+    <phrase id="help" ns="XPBot\Plugins\Builtin\Commands\Version">
         Sprawdza wersję komunikatora danego użytkownika
 
         {%P}{%command} użytkownik
     </phrase>
-    <phrase id="reply" ns="XPBot\Bot\Commands\Version">
+    <phrase id="reply" ns="XPBot\Plugins\Builtin\Commands\Version">
         Użytkownik {%user} używa {%name} {%version}
         {%os}
     </phrase>
 
-    <phrase id="shortHelp" ns="XPBot\Bot\Commands\Subject">Zarządza tematem</phrase>
-    <phrase id="help" ns="XPBot\Bot\Commands\Subject">
+    <phrase id="shortHelp" ns="XPBot\Plugins\Builtin\Commands\Subject">Zarządza tematem</phrase>
+    <phrase id="help" ns="XPBot\Plugins\Builtin\Commands\Subject">
         Zarządza tematem pokoju, umożliwiając jego wyświetlenie i zmianę.
 
         {%P}{%command} [-a|-p] [temat]
@@ -62,8 +62,8 @@
         -p człon - dodaje nowy człon na początku tematu, separując od aktualnego tematu poprzez znak |
     </phrase>
 
-    <phrase id="shortHelp" ns="XPBot\Bot\Commands\Alias">Zarządza aliasami komend</phrase>
-    <phrase id="help" ns="XPBot\Bot\Commands\Alias">
+    <phrase id="shortHelp" ns="XPBot\Plugins\Builtin\Commands\Alias">Zarządza aliasami komend</phrase>
+    <phrase id="help" ns="XPBot\Plugins\Builtin\Commands\Alias">
         Zarządza aliasami komend w bocie.
 
         {%P}{%command} add alias komenda - dodaje nowy alias,
@@ -71,7 +71,5 @@
         {%P}{%command} command komenda - wyświetla aliasy danej komendy,
         {%P}{%command} - wyświetla wszystkie aliasy.
     </phrase>
-    <phrase id="errAliasNotExists" ns="XPBot\Bot\Commands\Aliases">Taki alias nie istnieje.</phrase>
-    <phrase id="errAliasNotExists" ns="XPBot\Bot\Commands\Aliases">Taki alias nie istnieje.</phrase>
-
+    <phrase id="errAliasNotExists" ns="XPBot\Plugins\Builtin\Commands\Aliases">Taki alias nie istnieje.</phrase>
 </phrases>

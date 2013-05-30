@@ -37,7 +37,6 @@ class Bot extends XmppClient
             (string)$this->config->xmpp->timeout
         );
 
-        $this->findCommands('./Bot/Commands/', 'builtin', 'XPBot\\Bot\\Commands');
         $this->_loadPlugins();
         $this->onMessage->add(new Delegate(array($this, '_parseCommand')));
         $this->onIq->add(new Delegate(array($this, '_parseIq')));
