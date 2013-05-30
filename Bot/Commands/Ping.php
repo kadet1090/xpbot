@@ -18,6 +18,9 @@ class Ping extends Command
 {
     public function execute($args)
     {
+        if(!isset($args[1]))
+            throw new commandException('Too few arguments.', __('errTooFewArguments', $this->_lang));
+
         $jid = isset($this->_author->room->users[$args[1]]) ?
             $this->_author->room->users[$args[1]]->jid :
             $args[1];

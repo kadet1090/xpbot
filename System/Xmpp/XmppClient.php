@@ -418,7 +418,8 @@ class XmppClient extends XmppSocket
         $xml = new xmlBranch("presence");
         $xml->addAttribute("from", $this->jid->__toString())
             ->addAttribute("to", $room->bare())
-            ->addAttribute("id", uniqid('mucout_'));
+            ->addAttribute("id", uniqid('mucout_'))
+            ->addAttribute("type", 'unavailable');
         $xml->addChild(new xmlBranch("x"))->addAttribute("xmlns", "http://jabber.org/protocol/muc");
         $this->write($xml->asXML());
 

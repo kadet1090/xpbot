@@ -69,7 +69,8 @@ class Bot extends XmppClient
                 break;
         }
 
-        if ($users = $this->users->xpath("//user[@jid='{$user->jid->bare()}']") && isset($users[0]['permission']))
+        $users = $this->users->xpath("//user[@jid='{$user->jid->bare()}']");
+        if ($users && isset($users[0]['permission']))
             $user->permission = (int)$users[0]['permission'];
 
         Logger::debug($user->nick . ' joined to ' . $room->jid->name . ' with permission ' . $user->permission);
