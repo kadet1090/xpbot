@@ -4,11 +4,43 @@ namespace XPBot\System\Xmpp;
 
 class User
 {
+    /**
+     * MUC ONLY
+     * Users nick on room.
+     * @var string
+     */
     public $nick;
+
+    /**
+     * MUC ONLY
+     * Users affiliation on room (outcast, none, member, admin, owner)
+     * @var string
+     */
     public $affiliation;
+
+    /**
+     * MUC ONLY
+     * Users role on room (visitor, none, participant, moderator)
+     * @var string
+     */
     public $role;
+
+    /**
+     * Users jid
+     * @var Jid
+     */
     public $jid;
+
+    /**
+     * Users show status, available, away, dnd, xa (extended away), unavailable
+     * @var string
+     */
     public $show;
+
+    /**
+     * Users status (description)
+     * @var string
+     */
     public $status;
 
     /**
