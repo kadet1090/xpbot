@@ -91,6 +91,10 @@ class User
         return $aff;
     }
 
+    /**
+     * Gets room jid of user.
+     * @return Jid
+     */
     public function roomJid()
     {
         if (!isset($this->room)) return $this->jid;
@@ -98,11 +102,19 @@ class User
         return new Jid($this->room->jid->name, $this->room->jid->server, $this->nick);
     }
 
+    /**
+     * Sends private message over MUC to user.
+     * @param $content
+     */
     public function privateMessage($content)
     {
         $this->_client->message($this->roomJid(), $content);
     }
 
+    /**
+     * Sends message to user.
+     * @param $content
+     */
     public function message($content)
     {
         $this->_client->message($this->jid, $content);

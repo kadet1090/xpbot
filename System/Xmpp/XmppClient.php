@@ -2,6 +2,7 @@
 namespace XPBot\System\Xmpp;
 
 use XPBot\System\Network\XmppSocket;
+use XPBot\System\Sasl\SaslFactory;
 use XPBot\System\Utils\Delegate;
 use XPBot\System\Utils\Event;
 use XPBot\System\Utils\Timer;
@@ -143,15 +144,22 @@ class XmppClient extends XmppSocket
      */
     public function _onConnect()
     {
+        $this->startStream();
+        $this->wait('features', '', new Delegate(array($this->onStreamOpen, 'run')));
+        $this->work();
+    }
+
+    /**
+     * Starts stream
+     */
+    private function startStream() {
         $stream = new XmlBranch('stream:stream');
         $stream
-            ->addAttribute('to', 'aqq.eu')
+            ->addAttribute('to', $this->jid->server)
             ->addAttribute('xmlns', 'jabber:client')
+            ->addAttribute('version', '1.0')
             ->addAttribute('xmlns:stream', 'http://etherx.jabber.org/streams');
         $this->write(XmlBranch::XML . "\n" . str_replace('/>', '>', $stream->asXML()));
-        $this->wait('stream', '', new Delegate(array($this->onStreamOpen, 'run')));
-
-        $this->work();
     }
 
     /**
@@ -160,35 +168,85 @@ class XmppClient extends XmppSocket
      */
     public function _onStreamOpen()
     {
-        $iq = new xmlBranch("iq");
-        $iq->addAttribute("type", "set");
-        $iq->addAttribute("id", "auth");
-        $iq->addAttribute("to", $this->jid->server);
-        $iq->addChild(new xmlBranch("query"));
-        $iq->query[0]->addAttribute("xmlns", "jabber:iq:auth");
-        $iq->query[0]->addChild(new xmlBranch("username"))->setContent($this->jid->name);
-        $iq->query[0]->addChild(new xmlBranch("password"))->setContent($this->password);
-        $iq->query[0]->addChild(new xmlBranch("resource"))->setContent($this->jid->resource);
-        $this->write($iq->asXML());
+        if(isset($this->_features->mechanisms)) $this->auth();
+    }
 
-        $this->wait('iq', 'auth', new Delegate(array($this->onAuth, 'run')));
+    /**
+     * Auths client on server using SASL
+     * @throws \RuntimeException
+     */
+    private function auth() {
+
+        $xml = new XmlBranch('auth');
+        $xml->addAttribute('xmlns', 'urn:ietf:params:xml:ns:xmpp-sasl');
+
+        $mechanism = null;
+        foreach($this->_features->mechanisms->mechanism as $current) {
+            if($mechanism = SaslFactory::get((string)$current))
+                break;
+        }
+
+        if(!$mechanism)
+            throw new \RuntimeException('This client is not supporting any of server auth mechanisms.');
+
+        $xml->addAttribute('mechanism', $current);
+        $xml->setContent($mechanism->get($this->jid, $this->password));
+
+        $this->write($xml);
     }
 
     /**
      * Should be private, but... php sucks!
      * DO NOT RUN IT, TRUST ME.
+     *
+     * @param \SimpleXMLElement $result
+     * @throws \RuntimeException
      */
     public function _onAuth($result)
     {
-        if ($result['type'] == 'result') {
+        if($result->getName() == 'success') {
+            $this->startStream();
+            $this->_bind();
+        }
+        else
+            throw new \RuntimeException('Authorization failed.');
+    }
+
+    /**
+     * Binds resource.
+     */
+    private function _bind() {
+        $xml = new XmlBranch('iq');
+        $id = uniqid('bind_');
+        $xml->addAttribute('id', $id)
+            ->addAttribute('type', 'set');
+
+        $xml->addChild(new XmlBranch('bind'))
+            ->addAttribute('xmlns', 'urn:ietf:params:xml:ns:xmpp-bind')
+            ->addChild(new XmlBranch('resource'))
+            ->setContent($this->jid->resource);
+
+        $this->write($xml);
+        $this->wait('iq', $id, new Delegate(array($this, '_bindResult')));
+    }
+
+    /**
+     * Resource binding result.
+     * @param $packet
+     * @throws \RuntimeException
+     */
+    public function _bindResult($packet) {
+        if($packet['type'] == 'result') {
             $iq = new xmlBranch("iq");
             $iq->addAttribute("type", "set");
-            $iq->addAttribute("id", "sess");
+            $iq->addAttribute("id", uniqid('sess_'));
             $iq->addChild(new xmlBranch("session"))->addAttribute("xmlns", "urn:ietf:params:xml:ns:xmpp-session");
             $this->write($iq->asXML());
             $this->isReady = true;
             $this->onReady->run();
         }
+        else
+            throw new \RuntimeException('Resource binding error.');
     }
 
     /**
@@ -235,6 +293,12 @@ class XmppClient extends XmppSocket
                 break;
             case 'message':
                 $this->onMessage->run($packet);
+                break;
+
+            # SASL
+            case 'success':
+            case 'failure':
+                $this->onAuth->run($packet);
                 break;
         }
     }

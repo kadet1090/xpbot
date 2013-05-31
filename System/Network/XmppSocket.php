@@ -11,6 +11,8 @@ abstract class XmppSocket extends BaseSocket
     public $onPacket;
 
     private $_waiting = array();
+    protected $_features;
+    protected $_stream;
 
     /**
      * @param $address
@@ -33,10 +35,9 @@ abstract class XmppSocket extends BaseSocket
         do {
             $content = stream_get_contents($this->_socket);
             $result .= $content;
-        } while (!preg_match("/(\'\/|\"\/|iq|ge|ce|am|.\'|.\")>/", substr($result, -3)) && !empty($result));
-        $this->_parse(trim($result));
-
+        } while (!preg_match("/('\/|\"\/|iq|ge|ce|am|es|se|ss|ge|re|.'|.\")>$/", substr($result, -3)) && !empty($result));
         if(!empty($result)) Logger::debug($result);
+        $this->_parse(trim($result));
     }
 
     /**
@@ -44,12 +45,12 @@ abstract class XmppSocket extends BaseSocket
      */
     private function _parse($xml)
     {
-        $packets = preg_split("/<(stream|iq|presence|message)/", $xml, -1, PREG_SPLIT_DELIM_CAPTURE);
+        $packets = preg_split("/<(\/stream:stream|stream|iq|presence|message|proceed|failure|challange|response|success)/", $xml, -1, PREG_SPLIT_DELIM_CAPTURE);
         for ($i = 1, $c = count($packets); $i < $c; $i += 2) {
             $xml = "<" . $packets[$i] . $packets[($i + 1)];
 
             if (strpos($xml, '<stream:stream') !== false) $xml .= '</stream:stream>';
-            $this->onPacket->run(simplexml_load_string($xml));
+            $this->onPacket->run(@simplexml_load_string($xml));
         }
     }
 
@@ -72,6 +73,11 @@ abstract class XmppSocket extends BaseSocket
      */
     public function _onPacket(\SimpleXMLElement $packet)
     {
+        if($packet->getName() == 'features')
+            $this->_features = $packet;
+        elseif($packet->getName() == 'stream')
+            $this->_stream = $packet;
+
         foreach ($this->_waiting as &$wait) {
             if (
                 (empty($wait['tag']) || $packet->getName() == $wait['tag']) &&

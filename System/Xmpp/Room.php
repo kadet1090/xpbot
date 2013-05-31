@@ -22,7 +22,7 @@ class Room
 
     /**
      * Stores data of room users accessed by nick.
-     * @var array[string]User
+     * @var User[]
      */
     public $users = array();
 
@@ -34,7 +34,7 @@ class Room
 
     /**
      * Stores room configuration with additional client data (ie. join time)
-     * @var array
+     * @var \SimpleXMLElement
      */
     public $configuration = array();
 
@@ -79,21 +79,23 @@ class Room
     /**
      * Kicks out specified user from channel.
      * @param string $nick
+     * @param string $reason
      */
-    public function kick($nick)
+    public function kick($nick, $reason = '')
     {
-        $this->role($nick, 'none');
+        $this->role($nick, 'none', $reason);
     }
 
     /**
      * Changes specified user role on channel.
      * @param string $nick
      * @param string $role Must be one of: visitor (no voice), none (aka kick), participant (standard role), moderator (can kick out users)
+     * @param string $reason
      */
-    public function role($nick, $role)
+    public function role($nick, $role, $reason = '')
     {
         if (!isset($this->users[$nick])) return; // Exception maybe?
-        $this->_client->role($this->jid, $nick, $role);
+        $this->_client->role($this->jid, $nick, $role, $reason);
     }
 
     /**
@@ -133,6 +135,11 @@ class Room
         $this->_client->affiliate($this->jid, $who, $affiliation, $reason);
     }
 
+    /**
+     * Gets user list with who has specified affiliation.
+     * @param $affiliation
+     * @param Delegate $delegate
+     */
     public function affiliationList($affiliation, Delegate $delegate)
     {
         $this->_client->affiliationList($this->jid, $affiliation, $delegate);
