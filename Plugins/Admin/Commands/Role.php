@@ -13,6 +13,7 @@ use XPBot\Bot\Command;
 use XPBot\Bot\CommandException;
 use XPBot\System\Utils\Delegate;
 use XPBot\System\Xmpp\Jid;
+use XPBot\System\Xmpp\Room;
 
 class Role extends Command
 {
@@ -28,6 +29,24 @@ class Role extends Command
 
         try {
             $this->_author->room->role($args[2], $args[1], $args[3]);
+
+            if($args['a']) {
+                if(!isset($this->_author->room->configuration->auto))
+                    $this->_author->room->configuration->addChild('auto');
+
+                $jid = $this->_author->room->users[$args[2]]->jid;
+                $users = $this->_author->room->configuration->auto->xpath("//user[@jid='{$jid->bare()}']");
+                if($users) {
+                    $user = $users[0];
+                } else {
+                    $user = $this->_author->room->configuration->auto->addChild('user');
+                    $user->addAttribute('jid', $jid->bare());
+                }
+
+                $user['role'] = $args[1];
+
+                Room::save(); // save config
+            }
         } catch (\InvalidArgumentException $exception) {
             if($exception->getMessage() == 'affiliation')
                 throw new commandException('Wrong affiliation.', __('errWrongAffiliation', $this->_lang));
