@@ -14,7 +14,7 @@ use XPBot\Bot\CommandException;
 use XPBot\System\Utils\Delegate;
 use XPBot\System\Xmpp\Jid;
 
-class Clean extends Command
+class Clear extends Command
 {
     const PERMISSION = 4;
 

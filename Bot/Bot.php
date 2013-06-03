@@ -53,6 +53,8 @@ class Bot extends XmppClient
 
     public function _onJoin(Room $room, User $user, $broadcast)
     {
+        $user->jointime = time();
+
         switch ($user->affiliation) {
             case 'owner':
                 $user->permission = 8;
