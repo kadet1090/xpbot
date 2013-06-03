@@ -248,6 +248,22 @@ class Bot extends XmppClient
         else return $default;
     }
 
+    public function setInConfig($var, $namespace, $value) {
+        if(!isset($this->config->plugins)) $this->config->addChild('plugins');
+
+        $result = $this->config->xpath("//plugins/var[@name='$var' and @namespace='$namespace']");
+
+        if($result) {
+            $result[0]->{0} = $value;
+        } else {
+            $result = $this->config->plugins->addChild('var', $value);
+            $result->addAttribute('name', $var);
+            $result->addAttribute('namespace', $namespace);
+        }
+
+        $this->config->asXML('./Config/Config.xml');
+    }
+
     private function _loadPlugins() {
         $iterator = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator(
             'Plugins/',
