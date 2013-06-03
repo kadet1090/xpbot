@@ -63,3 +63,14 @@ function printColouredText($color, $text)
     if (isset($colors[$color])) echo $colors[$color] . $text . $colors['normal'] . PHP_EOL;
     else echo $text . PHP_EOL;
 }
+
+function parseNumber($number) {
+    if (is_numeric($number)) return $number;
+
+    switch(substr($number, 0, 2)) {
+        case '0x': return intval(substr($number, 2), 16);
+        case '0b': return intval(substr($number, 2), 10);
+        case '0o': return intval(substr($number, 2), 8);
+        default:   return (int)$number;
+    }
+}

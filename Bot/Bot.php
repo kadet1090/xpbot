@@ -14,7 +14,7 @@ use XPBot\System\Xmpp\XmppClient;
 
 class Bot extends XmppClient
 {
-    const BOT_VERSION = 'Beta 0.2';
+    const BOT_VERSION = 'Beta 0.3';
 
     protected $_commands = array();
     protected $_plugins;
@@ -238,6 +238,12 @@ class Bot extends XmppClient
         return array_keys(array_filter($this->aliases->asArray(), function ($value) use ($command) {
             return $value == $command;
         }));
+    }
+
+    public function getFromConfig($var, $namespace, $default = nulll) {
+        $result = $this->config->xpath("//plugins/var[@name='$var' and @namespace='$namespace']");
+        if($result) return (string)$result[0];
+        else return $default;
     }
 
     private function _loadPlugins() {

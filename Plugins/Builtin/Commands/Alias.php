@@ -31,6 +31,12 @@ class Alias extends Command
         if(!isset($args[3]) || !isset($args[2]))
             throw new commandException('Too few arguments.', __('errTooFewArguments', $this->_lang));
 
+        if(!preg_match('/^[^\s]{0,32}/si', $args[2]))
+            throw new commandException(
+                'Alias contains not allowed characters.',
+                __('errAliasContainsNotAllowedCharacters', $this->_lang, __CLASS__)
+            );
+
         if(!$this->_bot->commandExists($args[3]))
             throw new commandException('Specified command not exists.', __('errCommandNotExist', $this->_lang));
 
