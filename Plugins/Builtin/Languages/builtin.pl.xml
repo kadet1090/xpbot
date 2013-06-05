@@ -23,7 +23,6 @@
         -l - dodatkowo wypisuje wymagany poziom uprawnień.
 
         -r regex - Wyświetla wszystkie komendy pasujące do danego regexa,
-        -p - Rezultat działania komendy zostaje wysłany jako wiadomość prywatna.
     </phrase>
     <phrase id="commands" ns="XPBot\Plugins\Builtin\Commands\Help">
         Aby uruchomić daną komendę wpisz {%P}komenda lub {%P}moduł-komenda.
@@ -72,4 +71,71 @@
         {%P}{%command} - wyświetla wszystkie aliasy.
     </phrase>
     <phrase id="errAliasNotExists" ns="XPBot\Plugins\Builtin\Commands\Aliases">Taki alias nie istnieje.</phrase>
+
+    <phrase id="shortHelp" ns="XPBot\Plugins\Builtin\Commands\Clear">Czyści log pokoju</phrase>
+    <phrase id="help" ns="XPBot\Plugins\Builtin\Commands\Clear">
+        Czyści log pokoju aby dołączajacy użytkownicy nie widzieli poprzednich wiadomości.
+
+        {%P}{%command} [ilość] [-m wiadomość czyszcząca] [-s tryb cichy]
+
+        Konfiguracja:
+        builtin:defaultClearCount "5"
+        builtin:defaultClearMessage "\0"
+    </phrase>
+
+    <phrase id="shortHelp" ns="XPBot\Plugins\Builtin\Commands\Close">Wyłącza bota</phrase>
+    <phrase id="help" ns="XPBot\Plugins\Builtin\Commands\Close">
+        Wyłącza bota.
+
+        {%P}{%command} [wiadomość]
+    </phrase>
+
+    <phrase id="shortHelp" ns="XPBot\Plugins\Builtin\Commands\Join">Wrzuca bota na podany pokój</phrase>
+    <phrase id="help" ns="XPBot\Plugins\Builtin\Commands\Join">
+        Wrzuca bota na podany pokój.
+
+        {%P}{%command} pokój [nick]
+    </phrase>
+
+    <phrase id="shortHelp" ns="XPBot\Plugins\Builtin\Commands\Leave">Nakazuje botowi wyjść z danego pokoju</phrase>
+    <phrase id="help" ns="XPBot\Plugins\Builtin\Commands\Leave">
+        Nakazuje botowi wyjść z danego pokoju.
+
+        {%P}{%command} [pokój=aktualny pokój]
+    </phrase>
+
+    <phrase id="shortHelp" ns="XPBot\Plugins\Builtin\Commands\Say">Wypisuje podany tekst</phrase>
+    <phrase id="help" ns="XPBot\Plugins\Builtin\Commands\Say">
+        Wysyła wiadomość z podanym tekstem.
+
+        {%P}{%command} tekst
+    </phrase>
+
+    <phrase id="shortHelp" ns="XPBot\Plugins\Builtin\Commands\Users">Wypisuje użytkowników w pokoju</phrase>
+    <phrase id="help" ns="XPBot\Plugins\Builtin\Commands\Users">
+        Wypisuje listę użytkowników w pokoju wg. podanego wzoru.
+
+        {%P}{%command} wzór
+
+        Tagi do użycia we wzorze:
+        %c - Kanał,
+        %n - Nick,
+        %a - Przynależność,
+        %r - Rola,
+        %p - Poziom uprawnień,
+        %j - JID,
+        %s - Status,
+        %d - Opis,
+        %t - Czas jaki użytkownik spędził na kanale.
+
+        Przykład:
+        {%P}{%command} "%n - %s"
+
+        Da następujący wynik dla 2 użytkowników (Admin i Bot)
+        Admin - Available
+        Bot	- Available
+
+        Konfiguracja:
+        builtin:defaultUserPattern "%n - %a [%r] %s"
+    </phrase>
 </phrases>

@@ -11,6 +11,7 @@ namespace XPBot\Plugins\Builtin;
 
 
 use XPBot\Bot\Plugin;
+use XPBot\System\Utils\Language;
 use XPBot\System\Xmpp\Room;
 use XPBot\System\Xmpp\User;
 
@@ -24,6 +25,7 @@ class BuiltinPlugin extends Plugin{
     public function load()
     {
         $this->_bot->findCommands('Plugins/Builtin/Commands/', 'builtin', 'XPBot\\Plugins\\Builtin\\Commands');
+        Language::loadDir('Plugins/Builtin/Languages/');
     }
 
     public function unload()

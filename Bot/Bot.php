@@ -47,8 +47,6 @@ class Bot extends XmppClient
         $this->addMacro('me'  , new Delegate('XPBot\\Bot\\Bot::getNick'));
         $this->addMacro('date', new Delegate('XPBot\\Bot\\Bot::getDate'));
         $this->addMacro('time', new Delegate('XPBot\\Bot\\Bot::getTime'));
-
-        Language::loadDir('Languages');
     }
 
     public function _onJoin(Room $room, User $user, $broadcast)

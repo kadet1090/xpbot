@@ -70,7 +70,7 @@ class Help extends Command
                     ($this->_permissions ? '[' . $class::PERMISSION . '] ' : ' ') .
                     $command .
                     ($aliases ? ' (' . implode(', ', $aliases) . ') ' : ' ') .
-                    ' - ' . $class::getShortHelp($this->_lang) . "\n";
+                    '- ' . $class::getShortHelp($this->_lang) . "\n";
         }
 
         return $str;
