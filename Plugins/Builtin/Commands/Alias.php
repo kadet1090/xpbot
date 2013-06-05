@@ -81,6 +81,6 @@ class Alias extends Command
 
     public function __call($name, $arguments)
     {
-        throw new commandException('Invalid action.', __('errInvalidAction', $this->_lang, __CLASS__));
+        throw new commandException('Invalid action.', __('errInvalidAction', $this->_lang));
     }
 }
