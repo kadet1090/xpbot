@@ -240,7 +240,7 @@ class Bot extends XmppClient
         }));
     }
 
-    public function getFromConfig($var, $namespace, $default = nulll) {
+    public function getFromConfig($var, $namespace, $default = null) {
         $result = $this->config->xpath("//plugins/var[@name='$var' and @namespace='$namespace']");
         if($result) return (string)$result[0];
         else return $default;
@@ -260,6 +260,15 @@ class Bot extends XmppClient
         }
 
         $this->config->asXML('./Config/Config.xml');
+    }
+
+    public function removeFromConfig($var, $namespace) {
+        $result = $this->config->xpath("//plugins/var[@name='$var' and @namespace='$namespace']");
+
+        if($result) {
+            unset($result[0][0]);
+            $this->config->asXML('./Config/Config.xml');
+        }
     }
 
     private function _loadPlugins() {

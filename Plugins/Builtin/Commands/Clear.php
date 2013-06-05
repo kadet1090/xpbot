@@ -21,7 +21,7 @@ class Clear extends Command
     public function execute($args)
     {
         $count   = min(isset($args[1]) ? parseNumber($args[1]) : $this->_bot->getFromConfig('defaultClearCount', 'builtin', 5), 10);
-        $message = isset($args['m']) ? $args['m'] : $this->_bot->getFromConfig('defaultClearMsg', 'builtin', "\0");
+        $message = isset($args['m']) ? $args['m'] : $this->_bot->getFromConfig('defaultClearMessage', 'builtin', "\0");
 
         for($i = 0; $i < $count; $i++) {
             $this->_author->room->message($message);
