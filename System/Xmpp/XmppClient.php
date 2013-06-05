@@ -104,7 +104,7 @@ class XmppClient extends XmppSocket
 
     /**
      * Rooms list.
-     * @var array
+     * @var Room[]
      */
     public $rooms = array();
 

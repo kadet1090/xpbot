@@ -16,7 +16,7 @@ use XPBot\System\Xmpp\Jid;
 
 class Leave extends Command
 {
-    const PERMISSION = 9;
+    const PERMISSION = 8;
 
     public function execute($args)
     {

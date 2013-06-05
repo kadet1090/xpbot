@@ -52,21 +52,7 @@ class Bot extends XmppClient
     public function _onJoin(Room $room, User $user, $broadcast)
     {
         $user->jointime = time();
-
-        switch ($user->affiliation) {
-            case 'owner':
-                $user->permission = 8;
-                break;
-            case 'admin':
-                $user->permission = 6;
-                break;
-            case 'member':
-                $user->permission = 4;
-                break;
-            case 'none':
-                $user->permission = 2;
-                break;
-        }
+        $user->permission = $this->getAffiliationPermission($user->affiliation);
 
         $users = $this->users->xpath("//user[@jid='{$user->jid->bare()}']");
         if ($users && isset($users[0]['permission']))
@@ -269,6 +255,37 @@ class Bot extends XmppClient
             unset($result[0][0]);
             $this->config->asXML('./Config/Config.xml');
         }
+    }
+
+    private function getAffiliationPermission($affiliation) {
+        switch ($affiliation) {
+            case 'owner':
+                return 8;
+            case 'admin':
+                return 6;
+            case 'member':
+                return 4;
+            case 'none':
+                return 2;
+        }
+    }
+
+    /**
+     * @param Jid $jid
+     * @return null
+     */
+    public function updatePermission(Jid $jid)
+    {
+        $users = $this->users->xpath("//user[@jid='{$jid->bare()}']");
+        if ($users && isset($users[0]['permission']))
+            $permission = (int)$users[0]['permission'];
+
+        foreach($this->rooms as $room)
+            foreach($room->users as $user)
+                if($user->jid->bare() == $jid->bare())
+                    $user->permission = isset($permission) ?
+                        $permission :
+                        $this->getAffiliationPermission($user->affiliation);
     }
 
     private function _loadPlugins() {
