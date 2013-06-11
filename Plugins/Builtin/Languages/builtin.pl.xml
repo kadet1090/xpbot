@@ -138,4 +138,22 @@
         Konfiguracja:
         builtin:defaultUserPattern "%n - %a [%r] %s"
     </phrase>
+
+    <phrase id="shortHelp" ns="XPBot\Plugins\Builtin\Commands\About">Informcje o bocie</phrase>
+    <phrase id="help" ns="XPBot\Plugins\Builtin\Commands\About">
+        Informacje o bocie.
+
+        {%P}{%command}
+    </phrase>
+    <phrase id="about">
+        Xmpp Php BOT {%VERSION}
+        Bot stworzony przez Kadeta w PHP.
+        Napisany przy pomocy świetnego IDE - PHPStorma,
+        na mniej świetnym systemie Windowsie.
+
+        Kontakt z autorem:
+        jabber: kadet1090@aqq.eu (pamiętaj aby najpierw poprosić o autoryzację :)
+        gg:     12881099
+        e-mail: kadet1090@gmail.com
+    </phrase>
 </phrases>
