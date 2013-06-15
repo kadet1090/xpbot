@@ -1,0 +1,46 @@
+<?php
+/**
+ * Created by JetBrains PhpStorm.
+ *
+ * @author Kadet <kadet1090@gmail.com>
+ * @package 
+ * @license WTFPL
+ */
+
+namespace XPBot\Plugins\Math;
+
+include "Lib/RpnParser.php";
+
+use XPBot\Bot\Plugin;
+use XPBot\System\Utils\Delegate;
+use XPBot\System\Xmpp\Room;
+use XPBot\System\Xmpp\User;
+
+class MathPlugin extends Plugin {
+
+    public function getInfo()
+    {
+        // TODO: Implement getInfo() method.
+    }
+
+    public function load()
+    {
+        $this->_bot->findCommands('Plugins/Math/Commands/', 'admin', 'XPBot\\Plugins\\Math\\Commands');
+        $this->_bot->onJoin->add(new Delegate(array($this, '_auto')));
+    }
+
+    public function unload()
+    {
+        // TODO: Implement unload() method.
+    }
+
+    public function _auto(Room $room, User $user, $broadcast) {
+        $users = $room->configuration->xpath("//auto/user[@jid='{$user->jid->bare()}']");
+        try {
+            if($users) {
+                if($users[0]['role']) $room->role($user->nick, $users[0]['role']);
+                if($users[0]['affiliation']) $room->affiliate($user->nick, $users[0]['affiliation']);
+            }
+        } catch (\Exception $e) {}
+    }
+}

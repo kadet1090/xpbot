@@ -53,6 +53,9 @@ class Ini implements \ArrayAccess, \IteratorAggregate {
      */
     public function offsetGet($offset)
     {
+        if(is_serialized($this->_data[$offset]))
+            $this->_data[$offset] = unserialize($this->_data[$offset]);
+
         return $this->_data[$offset];
     }
 
@@ -97,7 +100,7 @@ class Ini implements \ArrayAccess, \IteratorAggregate {
     public function save() {
         $str = '';
         foreach($this->_data as $key => $value)
-            $str .= $key . ' = "' . $value . '"' . PHP_EOL;
+            $str .= $key . ' = "' . (is_array($value) || is_object($value) ? serialize($value) : $value) . '"' . PHP_EOL;
 
         file_put_contents($this->_filename, trim($str));
     }
