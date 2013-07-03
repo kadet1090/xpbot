@@ -68,7 +68,7 @@ class Room
     }
 
     /**
-     * Sends message to channel.
+     * Sends message to the channel.
      * @param string $content
      */
     public function message($content)
@@ -77,7 +77,7 @@ class Room
     }
 
     /**
-     * Kicks out specified user from channel.
+     * Kicks out specified user from the channel.
      * @param string $nick
      * @param string $reason
      */
@@ -87,7 +87,7 @@ class Room
     }
 
     /**
-     * Changes specified user role on channel.
+     * Changes specified user role on the channel.
      * @param string $nick
      * @param string $role Must be one of: visitor (no voice), none (aka kick), participant (standard role), moderator (can kick out users)
      * @param string $reason
@@ -99,7 +99,7 @@ class Room
     }
 
     /**
-     * Bans user on channel.
+     * Bans user on the channel.
      * @param Jid|string $who
      * @param string $reason
      */
@@ -109,7 +109,7 @@ class Room
     }
 
     /**
-     * Unbans user on channel.
+     * Unbans user on the channel.
      * @param Jid|string $who
      * @param string $reason
      */
@@ -119,7 +119,7 @@ class Room
     }
 
     /**
-     * Changes user affiliation on channel.
+     * Changes user affiliation on the channel.
      * @param Jid|string $who
      * @param string $affiliation Must be one of: owner (channels god), admin, outcast (aka ban), member (vip, or something), none (standard)
      * @param string $reason

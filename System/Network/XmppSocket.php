@@ -45,7 +45,7 @@ abstract class XmppSocket extends BaseSocket
      */
     private function _parse($xml)
     {
-        $packets = preg_split("/<(\/stream:stream|stream|iq|presence|message|proceed|failure|challange|response|success)/", $xml, -1, PREG_SPLIT_DELIM_CAPTURE);
+        $packets = preg_split("/<(\/stream:stream|stream|iq|presence|message|proceed|failure|challenge|response|success)/", $xml, -1, PREG_SPLIT_DELIM_CAPTURE);
         for ($i = 1, $c = count($packets); $i < $c; $i += 2) {
             $xml = "<" . $packets[$i] . $packets[($i + 1)];
 
