@@ -30,7 +30,7 @@ class Role extends Command
         try {
             $this->_author->room->role($args[2], $args[1], $args[3]);
 
-            if($args['a']) {
+            if(isset($args['a'])) {
                 if(!isset($this->_author->room->configuration->auto))
                     $this->_author->room->configuration->addChild('auto');
 
