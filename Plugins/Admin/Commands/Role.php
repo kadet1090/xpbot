@@ -24,7 +24,7 @@ class Role extends Command
         if(count($args) < 3)
             throw new commandException('Too few arguments.', __('errTooFewArguments', $this->_lang));
 
-        if(!isset($this->_author->room->users[$args[2]]))
+        if(!isset($this->_author->room->users[$args[2]]) && !isset($args['a']))
             throw new commandException('This user is not present on that channel.', __('errUserNotPresent', $this->_lang));
 
         try {
