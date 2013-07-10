@@ -18,6 +18,7 @@ class About extends Command
 
     public function execute($args)
     {
+        echo __('about', $this->_lang);
         return __('about', $this->_lang, 'default', array(
             'version' => Bot::BOT_VERSION,
         ));

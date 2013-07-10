@@ -40,7 +40,7 @@ class Alias extends Command
         if(!$this->_bot->commandExists($args[3]))
             throw new commandException('Specified command not exists.', __('errCommandNotExist', $this->_lang));
 
-        $this->_bot->aliases[$args[2]] = $this->_bot->getFullCommandName($args[3]);
+        $this->_bot->aliases[$args[2]] = $this->_bot->getFullyQualifiedCommand($args[3]);
     }
 
     private function remove($args)

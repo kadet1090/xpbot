@@ -146,7 +146,7 @@
         {%P}{%command}
     </phrase>
     <phrase id="about">
-        Xmpp Php BOT {%VERSION}
+        Xmpp Php BOT {%version}
         Bot stworzony przez Kadeta w PHP.
         Napisany przy pomocy świetnego IDE - PHPStorma,
         na mniej świetnym systemie Windowsie.

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phrases lang="pl">
+    <phrase id="shortHelp" ns="XPBot\Plugins\Internet\Commands\Weather">Informacje o pogodzie</phrase>
+    <phrase id="help" ns="XPBot\Plugins\Internet\Commands\Weather">
+        Pobiera i wyświetla informacje o pogodzie.
+        Informacje pochodzą z serwisu http://worldweatheronline.com/
+
+        {%P}{%command} Adres
+    </phrase>
+    <phrase id="weather" ns="XPBot\Plugins\Internet\Commands\Weather">
+        Pogoda w {%city}:
+        {%temp}°C - {%desc}, zachmurzenie: {%cloudcover}%, opady: {%precipitation}
+        Widoczność: {%visibility}km, ciśnienie: {%pressure}hPa, wilgotność: {%humidity}%
+        Wiatr: {%windspeed}km/h {%winddir16} ({%winddirdeg}°)
+    </phrase>
+</phrases>
