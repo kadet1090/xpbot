@@ -23,14 +23,14 @@ namespace XPBot\System\Utils {
             if (!isset($xml['lang']) || empty($xml['lang'])) throw new \Exception(''); //todo: Exception type for parse errors.
 
             $lang                  = (string)$xml['lang'];
-            self::$_phrases[$lang] = array();
-
             foreach ($xml->phrase as $phrase) {
                 $namespace = isset($phrase['ns']) ? $phrase['ns'] : 'default';
                 $name      = $phrase['id'];
 
                 self::$_phrases[$lang][$namespace . ':' . $name] = multilineTrim((string)$phrase);
             }
+
+            var_dump(self::$_phrases);
         }
 
         static function loadDir($dir)
