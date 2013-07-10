@@ -14,7 +14,7 @@ use XPBot\System\Xmpp\XmppClient;
 
 class Bot extends XmppClient
 {
-    const BOT_VERSION = 'Beta 0.3';
+    const BOT_VERSION = 'Beta 0.5';
 
     protected $_commands = array();
     protected $_plugins;
@@ -24,6 +24,9 @@ class Bot extends XmppClient
     public $users;
     public $aliases;
 
+    /**
+     * @param string $config Config to use in bot.
+     */
     public function __construct($config = './Config/Config.xml')
     {
         $this->config = simplexml_load_file($config);
@@ -49,6 +52,9 @@ class Bot extends XmppClient
         $this->addMacro('time', new Delegate('XPBot\\Bot\\Bot::getTime'));
     }
 
+    /**
+     * @ignore
+     */
     public function _onJoin(Room $room, User $user, $broadcast)
     {
         $user->jointime = time();
@@ -61,6 +67,9 @@ class Bot extends XmppClient
         Logger::debug($user->nick . ' joined to ' . $room->jid->name . ' with permission ' . $user->permission);
     }
 
+    /**
+     * @ignore
+     */
     public function _joinRooms()
     {
         foreach ($this->config->channels->channel as $channel) {
@@ -71,16 +80,19 @@ class Bot extends XmppClient
         }
     }
 
+    /**
+     * @ignore
+     */
     public function _parseIq($query)
     {
-        if (preg_match('/xmlns=("|\')jabber:iq:version("|\')/si', $query->asXML())) {
+        if ($query['type'] == 'get' && preg_match('/xmlns=("|\')jabber:iq:version("|\')/si', $query->asXML())) {
             $xml = new XmlBranch('iq');
             $xml->addAttribute('from', $this->jid->__toString())
                 ->addAttribute('to', $query['from'])
                 ->addAttribute('type', 'result')
                 ->addAttribute('id', $query['id']);
 
-            $xml->addChild(new XmlBranch('query'));
+            $xml->addChild(new XmlBranch('query'))->addAttribute('xmlns', 'jabber:iq:version');
             $xml->query[0]->addChild(new XmlBranch('name'))->setContent('Xmpp Php Bot');
             $xml->query[0]->addChild(new XmlBranch('version'))->setContent(self::BOT_VERSION);
             $xml->query[0]->addChild(new XmlBranch('os'))->setContent(php_uname('s') . ' ' . php_uname('m') . ' ' . php_uname('v') . ' with PHP ' . PHP_VERSION);
@@ -89,6 +101,9 @@ class Bot extends XmppClient
         }
     }
 
+    /**
+     * @ignore
+     */
     public function _parseCommand($message)
     {
         if (isset($message->delay['stamp'])) return; // message is from history, forgot about it.
@@ -151,6 +166,13 @@ class Bot extends XmppClient
         }
     }
 
+    /**
+     * Registers all commands in directory.
+     *
+     * @param string $dir       Dir to search.
+     * @param string $package   Commands package.
+     * @param string $namespace Commands namespace.
+     */
     public function findCommands($dir, $package, $namespace)
     {
         $iterator = new \RecursiveDirectoryIterator(
@@ -159,15 +181,29 @@ class Bot extends XmppClient
         );
 
         foreach ($iterator as $file) {
-            $this->_commands[$package][strtolower(strstr($file->getFilename(), '.', true))] = $namespace . '\\' . strstr($file->getFilename(), '.', true);
+            $class = strstr($file->getFilename(), '.', true);
+            $this->registerCommand($namespace . '\\' . $class, $package);
         }
     }
 
+    /**
+     * Gets command list.
+     *
+     * @return array
+     */
     public function getCommands()
     {
         return $this->_commands;
     }
 
+    /**
+     * Gets command class.
+     *
+     * @param string $name     Command name.
+     * @param bool   $aliasing Check aliases too?
+     *
+     * @return array|bool|string Command class list if name is ambiguous or class.
+     */
     public function getCommand($name, $aliasing = true)
     {
         if($aliasing && isset($this->aliases[$name]))
@@ -188,13 +224,27 @@ class Bot extends XmppClient
         return arrayDeepSearch($search, $name);
     }
 
+    /**
+     * Checks if specified command exists and its name is unambiguous.
+     *
+     * @param string $command Command name.
+     *
+     * @return bool
+     */
     public function commandExists($command) {
         $commands = $this->getCommand($command, false);
         return ($commands && !is_array($commands));
     }
 
-    public function getFullCommandName($command) {
-        if(strstr($command, '-')) return $command; // Command is already fully named.
+    /**
+     * Gets fully qualified command name.
+     *
+     * @param string $command Command name.
+     *
+     * @return bool|string Fully qualified command name.
+     */
+    public function getFullyQualifiedCommand($command) {
+        if(strstr($command, '-')) return $command; // Command is already fully qualified command.
 
         $iterator = new \RecursiveIteratorIterator(
             new \RecursiveArrayIterator($this->_commands), \RecursiveIteratorIterator::SELF_FIRST
@@ -218,20 +268,41 @@ class Bot extends XmppClient
         return false;
     }
 
+    /**
+     * Gets list of command aliases.
+     *
+     * @param string $command Command name.
+     *
+     * @return array Command aliases list.
+     */
     public function getCommandAliases($command) {
-        $command = $this->getFullCommandName($command);
+        $command = $this->getFullyQualifiedCommand($command);
 
         return array_keys(array_filter($this->aliases->asArray(), function ($value) use ($command) {
             return $value == $command;
         }));
     }
 
+    /**
+     * @param string     $var       Variable name
+     * @param string     $namespace Variable namespace
+     * @param null|mixed $default   Value to return if variable doesn't exist.
+     *
+     * @return mixed
+     */
     public function getFromConfig($var, $namespace, $default = null) {
         $result = $this->config->xpath("//plugins/var[@name='$var' and @namespace='$namespace']");
         if($result) return (string)$result[0];
         else return $default;
     }
 
+    /**
+     * Sets variable in config to given value.
+     *
+     * @param string $var       Variable name
+     * @param string $namespace Variable namespace
+     * @param mixed  $value     Variable new value
+     */
     public function setInConfig($var, $namespace, $value) {
         if(!isset($this->config->plugins)) $this->config->addChild('plugins');
 
@@ -248,6 +319,12 @@ class Bot extends XmppClient
         $this->config->asXML('./Config/Config.xml');
     }
 
+    /**
+     * Removes configuration value.
+     *
+     * @param string $var       Variable name
+     * @param string $namespace Variable namespace
+     */
     public function removeFromConfig($var, $namespace) {
         $result = $this->config->xpath("//plugins/var[@name='$var' and @namespace='$namespace']");
 
@@ -257,6 +334,34 @@ class Bot extends XmppClient
         }
     }
 
+    /**
+     * Registers command in bot.
+     *
+     * @param string      $class   Class name with namespace.
+     * @param string      $package Command package (eg builtin)
+     * @param string|null $command Command name, if null class name will be used.
+     *
+     * @throws \InvalidArgumentException
+     */
+    public function registerCommand($class, $package, $command = null) {
+        if(!class_exists($class))
+            throw new \InvalidArgumentException('class');
+
+        if(empty($command)) {
+            $chunks  = explode('\\', $class);
+            $command = end($chunks);
+        }
+
+        $this->_commands[$package][strtolower($command)] = $class;
+    }
+
+    /**
+     * Gets proper permission level according to affiliation.
+     *
+     * @param string $affiliation
+     *
+     * @return int Permission according to given affiliation.
+     */
     private function getAffiliationPermission($affiliation) {
         switch ($affiliation) {
             case 'owner':
@@ -271,7 +376,10 @@ class Bot extends XmppClient
     }
 
     /**
-     * @param Jid $jid
+     * Updates permission array in bot after permission change.
+     *
+     * @param Jid $jid Jid to refresh.
+     *
      * @return null
      */
     public function updatePermission(Jid $jid)
@@ -303,15 +411,33 @@ class Bot extends XmppClient
         }
     }
 
+    /**
+     * Adds new macro to bot.
+     *
+     * @param string   $name     Macros name
+     * @param Delegate $delegate Delegate to macros function.
+     */
     public function addMacro($name, Delegate $delegate) {
         $this->_macros[$name] = $delegate;
     }
 
+    /**
+     * Removes macro from bot.
+     *
+     * @param string $name Macros name.
+     */
     public function removeMacro($name) {
         unset($this->_macros[$name]);
     }
 
     // MACROS
+    /**
+     * @param \SimpleXMLElement $packet
+     * @param Bot $bot
+     * @return bool|string
+     *
+     * @ignore
+     */
     public static function getNick($packet, Bot $bot)
     {
         $user = $bot->getUserByJid(new Jid($packet['from']));
@@ -319,11 +445,25 @@ class Bot extends XmppClient
         return false;
     }
 
+    /**
+     * @param \SimpleXMLElement $packet
+     * @param Bot $bot
+     * @return bool|string
+     *
+     * @ignore
+     */
     public static function getDate($packet, Bot $bot)
     {
         return date('d.m.Y');
     }
 
+    /**
+     * @param \SimpleXMLElement $packet
+     * @param Bot $bot
+     * @return bool|string
+     *
+     * @ignore
+     */
     public static function getTime($packet, Bot $bot)
     {
         return date('H:i:s');
