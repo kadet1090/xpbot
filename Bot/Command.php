@@ -2,19 +2,40 @@
 
 namespace XPBot\Bot;
 
+use XPBot\System\Utils\Params;
 use XPBot\System\Xmpp\User;
 use XPBot\System\Xmpp\XmppClient;
 
+/**
+ * Exception thrown by commands when some error occurs.
+ *
+ * @package XPBot\Bot
+ */
 class CommandException extends \Exception
 {
+    /**
+     * Message printed to console (english localized!)
+     * @var string
+     */
     protected $_consoleMessage;
 
+    /**
+     * @param string $cmdMsg  Message that will be added to console and log, in english.
+     * @param string $message Localized message that will be sent to client as response.
+     * @param int    $code    Exception code.
+     * @param CommandException|null $previous Previous exception.
+     */
     public function __construct($cmdMsg, $message = '', $code = 0, $previous = null)
     {
         $this->_consoleMessage = $cmdMsg;
         parent::__construct($message, $code, $previous);
     }
 
+    /**
+     * Gets english localized message for console and logging.
+     *
+     * @return string
+     */
     public function getConsoleMessage()
     {
         return $this->_consoleMessage;
@@ -22,13 +43,27 @@ class CommandException extends \Exception
 }
 
 /**
- * Class Command
+ * Abstract command class.
+ *
+ * Base of all commands.
+ *
  * @package XPBot\Bot
  */
 abstract class Command
 {
+    /**
+     * Permission needed to run this command.
+     */
     const PERMISSION = 2;
+
+    /**
+     * Set to true if command can be launched on chat mode.
+     */
     const CHAT       = true;
+
+    /**
+     * Set to true if command can be launched on chat mode.
+     */
     const GROUPCHAT  = true;
 
     /**
@@ -62,9 +97,9 @@ abstract class Command
     protected $_type;
 
     /**
-     * @param Bot $client Jabber client.
-     * @param User $author User who executed this command.
-     * @param string $lang Commands language.
+     * @param Bot               $client Jabber client.
+     * @param User              $author User who executed this command.
+     * @param string            $lang   Commands language.
      * @param \SimpleXMLElement $packet Commands packet.
      */
     public function __construct(Bot $client, $author, $lang, $packet)
@@ -78,9 +113,12 @@ abstract class Command
 
     /**
      * Executes command in XMPP.
-     * @param $args
+     *
+     * @param Params $args Arguments provided by user.
+     *
      * @throws commandException
-     * @return string
+     *
+     * @return string Response sent to client.
      */
     public function execute($args)
     {
@@ -89,9 +127,11 @@ abstract class Command
 
     /**
      * Gets help string of command.
-     * @param string $lang
-     * @param string $command
-     * @return string
+     *
+     * @param  string $lang    Language of help localization.
+     * @param  string $command Command access string.
+     *
+     * @return string Localized help string.
      */
     public static function getHelp($lang, $command)
     {
@@ -100,7 +140,9 @@ abstract class Command
 
     /**
      * Gets short help string of command.
-     * @param string $lang
+     *
+     * @param string $lang Language of help localization.
+     *
      * @return string
      */
     public static function getShortHelp($lang)
@@ -110,7 +152,9 @@ abstract class Command
 
     /**
      * Checks if user has permission to execute command.
+     *
      * @param User $user
+     *
      * @return bool
      */
     public static function hasPermission(User $user)

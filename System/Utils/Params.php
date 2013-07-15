@@ -7,6 +7,9 @@ class Params extends \ArrayObject implements \Countable
     protected $_pure;
     protected $_prepared;
 
+    /**
+     * @param array|null|object $command Command string.
+     */
     public function __construct($command)
     {
         $this->_pure = str_getcsv($command, ' ', '"', "\\");
@@ -71,6 +74,10 @@ class Params extends \ArrayObject implements \Countable
         unset($this->_prepared[$index]);
     }
 
+    /**
+     * Gets all arguments in array.
+     * @return mixed Array of arguments.
+     */
     public function asArray()
     {
         return $this->_prepared;

@@ -34,7 +34,10 @@ class Role extends Command
                 if(!isset($this->_author->room->configuration->auto))
                     $this->_author->room->configuration->addChild('auto');
 
-                $jid = $this->_author->room->users[$args[2]]->jid;
+                $jid = isset($this->_author->room->users[$args[2]]) ?
+                    $this->_author->room->users[$args[2]]->jid :
+                    new Jid($args[2]);
+
                 $users = $this->_author->room->configuration->auto->xpath("//user[@jid='{$jid->bare()}']");
                 if($users) {
                     $user = $users[0];

@@ -11,12 +11,12 @@ class Event
 
     /**
      * Delegates array.
-     * @var array[int]\XPBot\System\Utils\Delegate
+     * @var \XPBot\System\Utils\Delegate[int]
      */
     private $_delegates = array();
 
     /**
-     * @param array $arguments
+     * @param array $arguments Argument what delegate must accept.
      */
     public function __construct($arguments = array())
     {
@@ -24,7 +24,8 @@ class Event
     }
 
     /**
-     * @param Delegate $delegate
+     * @param Delegate $delegate Delegate to run when event is fired.
+     *
      * @throws \InvalidArgumentException
      */
     public function add(Delegate $delegate)
@@ -35,7 +36,8 @@ class Event
     }
 
     /**
-     * @param $arguments
+     * @param array $arguments Arguments provided to delegates.
+     *
      * @throws \OutOfRangeException
      * @throws \InvalidArgumentException
      */
@@ -54,10 +56,17 @@ class Event
     }
 
     /**
-     * Runs event.
+     * Run event.
      */
     public function run()
     {
+        $this->runArray(func_get_args());
+    }
+
+    /**
+     * Run event.
+     */
+    public function __invoke() {
         $this->runArray(func_get_args());
     }
 }

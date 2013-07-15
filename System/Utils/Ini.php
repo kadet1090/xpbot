@@ -14,8 +14,20 @@ use Traversable;
 class Ini implements \ArrayAccess, \IteratorAggregate {
     private $_data;
     private $_filename;
+
+    /**
+     * Auto save.
+     * If set to true, file will be saved when any changes occurs.
+     * @var bool
+     */
     public $autoSave;
 
+    /**
+     * @param string $filename Ini file name.
+     * @param bool   $autoSave If set to true, file will be saved when any changes occurs.
+     *
+     * @throws \InvalidArgumentException
+     */
     public function __construct($filename, $autoSave = false) {
         $this->autoSave = $autoSave;
         $this->_filename = $filename;
@@ -117,6 +129,11 @@ class Ini implements \ArrayAccess, \IteratorAggregate {
         return new \ArrayIterator($this->_data);
     }
 
+    /**
+     * Get data as array.
+     *
+     * @return array Data as array.
+     */
     public function asArray()
     {
         return $this->_data;

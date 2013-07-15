@@ -5,22 +5,22 @@ namespace XPBot\System\Xmpp;
 class User
 {
     /**
-     * MUC ONLY
      * Users nick on room.
+     * MJC ONLY
      * @var string
      */
     public $nick;
 
     /**
-     * MUC ONLY
      * Users affiliation on room (outcast, none, member, admin, owner)
+     * MUC ONLY
      * @var string
      */
     public $affiliation;
 
     /**
-     * MUC ONLY
      * Users role on room (visitor, none, participant, moderator)
+     * MUC ONLY
      * @var string
      */
     public $role;
@@ -50,10 +50,15 @@ class User
     public $room;
 
     /**
+     * Xmpp Client instance.
+     *
      * @var XmppClient
      */
     private $_client;
 
+    /**
+     * @param XmppClient $client Xmpp Client instance.
+     */
     public function __construct($client)
     {
         $this->_client = $client;
@@ -61,10 +66,13 @@ class User
 
     /**
      * Makes user object from presence packet.
-     * @param \SimpleXMLElement $presence
-     * @param XmppClient $client
+     *
+     * @param \SimpleXMLElement $presence Presence element.
+     * @param XmppClient        $client   XmppClient instance.
+     *
      * @throws \InvalidArgumentException
-     * @return User
+     *
+     * @return User User created from presence.
      */
     public static function fromPresence(\SimpleXMLElement $presence, XmppClient $client)
     {
@@ -125,7 +133,8 @@ class User
 
     /**
      * Gets room jid of user.
-     * @return Jid
+     *
+     * @return Jid User Users jid on room nick@room.tld
      */
     public function roomJid()
     {
@@ -136,7 +145,8 @@ class User
 
     /**
      * Sends private message over MUC to user.
-     * @param $content
+     *
+     * @param string $content Message content.
      */
     public function privateMessage($content)
     {
@@ -145,7 +155,7 @@ class User
 
     /**
      * Sends message to user.
-     * @param $content
+     * @param string $content Message content.
      */
     public function message($content)
     {

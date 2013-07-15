@@ -12,16 +12,60 @@ use XPBot\System\Xmpp\Room;
 use XPBot\System\Xmpp\User;
 use XPBot\System\Xmpp\XmppClient;
 
+/**
+ * Class Bot
+ * @package XPBot\Bot
+ */
 class Bot extends XmppClient
 {
+    /**
+     * Bot version string.
+     */
     const BOT_VERSION = 'Beta 0.5';
 
+    /**
+     * Commands list.
+     *
+     * @var array
+     */
     protected $_commands = array();
+
+    /**
+     * List with all loaded plugins.
+     *
+     * @var Plugin[]
+     */
     protected $_plugins;
+
+    /**
+     * List with macros.
+     *
+     * @var array
+     */
     protected $_macros = array();
 
+    /**
+     * Bots configuration.
+     *
+     * @var \SimpleXMLElement
+     */
     public $config;
+
+    /**
+     * User database.
+     * User database, accessed by users[channel|roster][username].
+     *
+     * @todo roster support.
+     *
+     * @var User[string][string]
+     */
     public $users;
+
+    /**
+     * Command aliases.
+     *
+     * @var \XPBot\System\Utils\Ini
+     */
     public $aliases;
 
     /**
@@ -97,7 +141,7 @@ class Bot extends XmppClient
             $xml->query[0]->addChild(new XmlBranch('version'))->setContent(self::BOT_VERSION);
             $xml->query[0]->addChild(new XmlBranch('os'))->setContent(php_uname('s') . ' ' . php_uname('m') . ' ' . php_uname('v') . ' with PHP ' . PHP_VERSION);
 
-            $this->write($xml->asXML());
+            $this->write($xml->asXml());
         }
     }
 

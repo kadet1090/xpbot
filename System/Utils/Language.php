@@ -11,10 +11,16 @@ namespace XPBot\System\Utils {
     class Language
     {
         private static $_variables = array();
-
         private static $_phrases = array();
 
-        static function load($filename)
+        /**
+         * Load language file.
+         *
+         * @param string $filename Name of language file.
+         * @throws \InvalidArgumentException
+         * @throws \Exception
+         */
+        public static function load($filename)
         {
             if (!file_exists($filename)) throw new \InvalidArgumentException('filename');
 
@@ -33,7 +39,7 @@ namespace XPBot\System\Utils {
             var_dump(self::$_phrases);
         }
 
-        static function loadDir($dir)
+        public static function loadDir($dir)
         {
             if (!file_exists($dir)) throw new \InvalidArgumentException('filename');
 
@@ -47,7 +53,7 @@ namespace XPBot\System\Utils {
             }
         }
 
-        static function get($phrase, $lang, $namespace = 'default', $arguments = array())
+        public static function get($phrase, $lang, $namespace = 'default', $arguments = array())
         {
             $prepared  = array();
             $arguments = array_merge($arguments, self::$_variables);

@@ -28,24 +28,28 @@ class Timer
     public $interval;
 
     /**
+     * Is timer active?
      * @var bool
      */
     private $active = true;
 
     /**
+     * Run action only once?
      * @var bool
      */
     public $oneTime = false;
 
     /**
-     * @var array[]Timer
+     * Array of all timers (to run tick)
+     *
+     * @var Timer[]
      */
     private static $_timers = array();
 
     /**
-     * @param int $interval
-     * @param callable $function
-     * @param array $params
+     * @param int      $interval Timer interval.
+     * @param callable $function Function to be executed when proper time occurs.
+     * @param array    $params   Parameters for function.
      */
     public function __construct($interval, $function, array $params = array())
     {
@@ -72,17 +76,26 @@ class Timer
         }
     }
 
+    /**
+     * Runs tick on all timers.
+     */
     public static function update()
     {
         foreach (self::$_timers as $timer)
             $timer->tick();
     }
 
+    /**
+     * Start timer.
+     */
     public function start()
     {
         $this->active = true;
     }
 
+    /**
+     * Stop timer.
+     */
     public function stop()
     {
         $this->active = false;

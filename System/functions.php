@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * Performs deep search in array.
+ *
+ * @param array $array  Array to search in.
+ * @param mixed $search Value of our interest.
+ *
+ * @return array|bool|mixed Array of found variables or variable.
+ */
 function arrayDeepSearch(array $array, $search)
 {
     $iterator = new RecursiveIteratorIterator(
@@ -21,10 +29,16 @@ function arrayDeepSearch(array $array, $search)
     if (count($results) == 1)
         return reset($results);
     elseif (count($results) == 0)
-        return false; else
+        return false;
+    else
         return $results;
 }
 
+/**
+ * Check from where function/method was executed.
+ *
+ * @return string|null Class name.
+ */
 function getCaller()
 {
     $backtrace = debug_backtrace();
@@ -34,16 +48,41 @@ function getCaller()
         null;
 }
 
+/**
+ * Alias for Language::get().
+ *
+ * @see XPBot\System\Utils\Language::get
+ *
+ * @param string $phrase    Phrase id,
+ * @param string $lang      Target language,
+ * @param string $namespace Phrase namespace (default: default),
+ * @param array  $arguments Variables given to phrase (ie nick, version).
+ *
+ * @return mixed|string     Phrase in specified language.
+ */
 function __($phrase, $lang, $namespace = 'default', $arguments = array())
 {
     return XPBot\System\Utils\Language::get($phrase, $lang, $namespace, $arguments);
 }
 
+/**
+ * Trim multi line text.
+ * Runs trim on every line of text.
+ *
+ * @param string $string String to be trimmed.
+ * @return string Trimmed string.
+ */
 function multilineTrim($string)
 {
     return implode("\n", array_map('trim', explode("\n", $string)));
 }
 
+/**
+ * Print coloured text to console output.
+ *
+ * @param string $color Target text color, one of: red, green, yellow, blue, cyan, normal (default for user console).
+ * @param string $text
+ */
 function printColouredText($color, $text)
 {
     $colors = array(
@@ -60,6 +99,13 @@ function printColouredText($color, $text)
     else echo $text . PHP_EOL;
 }
 
+/**
+ * Gets integer in proper base.
+ *
+ * @param string|int $number Number to parse.
+ *
+ * @return int       Number converted to int.
+ */
 function parseNumber($number) {
     if (is_numeric($number)) return $number;
 
@@ -71,8 +117,14 @@ function parseNumber($number) {
     }
 }
 
-// stolen from wordpress
-function is_serialized( $data ) {
+/**
+ * Test if given string is serialized or not.
+ *
+ * @param string $data Data to check.
+ *
+ * @return bool 
+ */
+function is_serialized($data) {
     // if it isn't a string, it isn't serialized
     if ( !is_string( $data ) )
         return false;

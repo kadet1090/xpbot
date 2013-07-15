@@ -41,8 +41,8 @@ class Room
     protected static $config;
 
     /**
-     * @param XmppClient $client
-     * @param Jid $jid
+     * @param XmppClient $client Xmpp Client instance.
+     * @param Jid        $jid    Room Jid.
      */
     public function __construct(XmppClient $client, Jid $jid)
     {
@@ -69,7 +69,8 @@ class Room
 
     /**
      * Sends message to the channel.
-     * @param string $content
+     *
+     * @param string $content Message content.
      */
     public function message($content)
     {
@@ -78,8 +79,9 @@ class Room
 
     /**
      * Kicks out specified user from the channel.
-     * @param string $nick
-     * @param string $reason
+     *
+     * @param string $nick   User nick.
+     * @param string $reason Reason of kick.
      */
     public function kick($nick, $reason = '')
     {
@@ -88,9 +90,9 @@ class Room
 
     /**
      * Changes specified user role on the channel.
-     * @param string $nick
-     * @param string $role Must be one of: visitor (no voice), none (aka kick), participant (standard role), moderator (can kick out users)
-     * @param string $reason
+     * @param string $nick   User nick.
+     * @param string $role   Must be one of: visitor (no voice), none (aka kick), participant (standard role), moderator (can kick out users)
+     * @param string $reason Reason of changing role.
      */
     public function role($nick, $role, $reason = '')
     {
@@ -100,8 +102,9 @@ class Room
 
     /**
      * Bans user on the channel.
-     * @param Jid|string $who
-     * @param string $reason
+     *
+     * @param Jid|string $who    User to ban, nick or Jid
+     * @param string     $reason Ban reason.
      */
     public function ban($who, $reason = '')
     {
@@ -110,8 +113,9 @@ class Room
 
     /**
      * Unbans user on the channel.
-     * @param Jid|string $who
-     * @param string $reason
+     *
+     * @param Jid|string $who    Users nick or Jid.
+     * @param string     $reason Unban reason.
      */
     public function unban($who, $reason = '')
     {
@@ -120,9 +124,11 @@ class Room
 
     /**
      * Changes user affiliation on the channel.
-     * @param Jid|string $who
-     * @param string $affiliation Must be one of: owner (channels god), admin, outcast (aka ban), member (vip, or something), none (standard)
-     * @param string $reason
+     *
+     * @param Jid|string $who         Users nick or Jid.
+     * @param string     $affiliation New user affiliation. Must be one of: owner (channels god), admin, outcast (aka ban), member (vip, or something), none (standard)
+     * @param string     $reason      Reason of affiliation change.
+     *
      * @throws \InvalidArgumentException
      */
     public function affiliate($who, $affiliation, $reason = '')
@@ -137,8 +143,9 @@ class Room
 
     /**
      * Gets user list with who has specified affiliation.
-     * @param $affiliation
-     * @param Delegate $delegate
+     *
+     * @param string   $affiliation Type of affiliation. Must be one of: owner (channels god), admin, outcast (aka ban), member (vip, or something), none (standard)
+     * @param Delegate $delegate    Delegate to be executed after list came.
      */
     public function affiliationList($affiliation, Delegate $delegate)
     {
@@ -155,7 +162,9 @@ class Room
 
     /**
      * Adds user to the room.
-     * @param User $user
+     *
+     * @param User $user User to add.
+     *
      * @return \XPBot\System\Xmpp\User
      */
     public function addUser(User $user)
@@ -167,7 +176,8 @@ class Room
 
     /**
      * Removes user from the room.
-     * @param User $user
+     *
+     * @param User $user User to remove.
      */
     public function removeUser(User $user)
     {
@@ -176,7 +186,8 @@ class Room
 
     /**
      * Sets room subject.
-     * @param $subject
+     *
+     * @param string $subject New subject
      */
     public function setSubject($subject)
     {

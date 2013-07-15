@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<phpdoc>
+    <parser>
+        <target>Documentation</target>
+    </parser>
+    <transformer>
+        <target>Documentation</target>
+    </transformer>
+    <files>
+        <directory>.</directory>
+        <ignore>Plugins/*</ignore>
+        <ignore>Documentation/*</ignore>
+        <ignore>Tests/*</ignore>
+        <ignore>Logs/*</ignore>
+        <ignore>Config/*</ignore>
+    </files>
+</phpdoc>

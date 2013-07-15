@@ -35,11 +35,20 @@ class AutoLoader {
     private $namespace = '';
     private $directory = '';
 
+    /**
+     * @param string $namespace Namespace to autoload.
+     * @param string $directory Directory where classes of specified namespace are placed.
+     */
     public function __construct($namespace, $directory) {
         $this->namespace = $namespace.(substr($namespace, -1) == '\\' ? '' : '\\');
         $this->directory = $directory.(substr($directory, -1) == '/' ? '' : '/');
     }
 
+    /**
+     * Autoload function.
+     *
+     * @param string $class Class to be loaded.
+     */
     public function load($class) {
         if(preg_match('#^'.str_replace('\\', '\\\\', $this->namespace).'#si', $class)) {
             $class = preg_replace('#^'.str_replace('\\', '\\\\', $this->namespace).'#si', '', $class);
@@ -47,10 +56,16 @@ class AutoLoader {
         }
     }
 
+    /**
+     * Register autolader.
+     */
     public function register() {
         self::_register($this);
     }
 
+    /**
+     * Unregister autoloader.
+     */
     public function unregister() {
         self::_unregister($this);
     }

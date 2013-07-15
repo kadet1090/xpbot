@@ -15,20 +15,21 @@ class Delegate
     private $_callback;
 
     /**
-     * Arguments types array.
+     * Acceptable argument types array.
      * @var array
      */
     private $_arguments;
 
     /**
+     * Strict mode.
      * @var bool
      */
     private $_strict;
 
     /**
-     * @param callable $callback
-     * @param array $arguments
-     * @param bool $strict
+     * @param callable $callback  Function to be called by delegate.
+     * @param array    $arguments Accepted arguments list.
+     * @param bool     $strict    Strict mode.
      */
     public function __construct($callback, array $arguments = array(), $strict = false)
     {
@@ -38,10 +39,14 @@ class Delegate
     }
 
     /**
-     * @param $arguments array
+     * Run delegate with parameters provided by array.
+     *
+     * @param array $arguments
+     *
      * @throws \RuntimeException
      * @throws \OutOfRangeException
      * @throws \InvalidArgumentException
+     *
      * @return mixed
      */
     public function runArray(array $arguments)
@@ -65,7 +70,7 @@ class Delegate
     }
 
     /**
-     * Runs delegate with given arguments.
+     * Run delegate with given arguments.
      */
     public function run()
     {
@@ -73,7 +78,9 @@ class Delegate
     }
 
     /**
-     * @param $callback
+     * Set callback function.
+     *
+     * @param callable|null $callback Function to be called by delegate.
      * @throws \InvalidArgumentException
      */
     public function setCallback($callback)
@@ -83,6 +90,8 @@ class Delegate
     }
 
     /**
+     * Set accepted params.
+     *
      * @param array $types
      * @return bool
      */

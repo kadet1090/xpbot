@@ -12,7 +12,7 @@ use XPBot\System\Xmpp\Jid;
 /**
  * XmppClient, uberclass.
  * @package XPBot\System\Xmpp
- * @author Kadet <kadet1090@gmai.com>
+ * @author Kadet <kadet1090@gmail.com>
  */
 class XmppClient extends XmppSocket
 {
@@ -161,7 +161,7 @@ class XmppClient extends XmppSocket
             ->addAttribute('xmlns', 'jabber:client')
             ->addAttribute('version', '1.0')
             ->addAttribute('xmlns:stream', 'http://etherx.jabber.org/streams');
-        $this->write(XmlBranch::XML . "\n" . str_replace('/>', '>', $stream->asXML()));
+        $this->write(XmlBranch::XML . "\n" . str_replace('/>', '>', $stream->asXml()));
     }
 
     /**
@@ -252,7 +252,7 @@ class XmppClient extends XmppSocket
             $iq->addAttribute("type", "set");
             $iq->addAttribute("id", uniqid('sess_'));
             $iq->addChild(new xmlBranch("session"))->addAttribute("xmlns", "urn:ietf:params:xml:ns:xmpp-session");
-            $this->write($iq->asXML());
+            $this->write($iq->asXml());
             $this->isReady = true;
             $this->onReady->run();
         }
@@ -286,7 +286,7 @@ class XmppClient extends XmppSocket
         $xml->addAttribute("type", "get");
         $xml->addChild(new xmlBranch("ping"))->addAttribute("xmlns", "urn:xmpp:ping");
 
-        $this->write($xml->asXML());
+        $this->write($xml->asXml());
     }
 
     /**
@@ -418,7 +418,7 @@ class XmppClient extends XmppSocket
             ->addAttribute('to', $jid->__toString())
             ->addAttribute('type', $type);
         $msg->addChild(new XmlBranch('body'))->setContent($message);
-        $this->write($msg->asXML());
+        $this->write($msg->asXml());
     }
 
     /**
@@ -438,7 +438,7 @@ class XmppClient extends XmppSocket
         $xml->addChild(new xmlBranch("status"))->setContent($status);
         $xml->addChild(new xmlBranch("priority"))->setContent(50);
 
-        $this->write($xml->asXML());
+        $this->write($xml->asXml());
     }
 
     /**
@@ -458,7 +458,7 @@ class XmppClient extends XmppSocket
             ->addAttribute("id", $id);
 
         $xml->addChild(new xmlBranch("query"))->addAttribute("xmlns", "jabber:iq:version");
-        $this->write($xml->asXML());
+        $this->write($xml->asXml());
 
         $this->wait('iq', $id, $delegate);
     }
@@ -479,7 +479,7 @@ class XmppClient extends XmppSocket
             ->addAttribute("id", $id);
 
         $xml->addChild(new xmlBranch("ping"))->addAttribute("xmlns", "urn:xmpp:ping");
-        $this->write($xml->asXML());
+        $this->write($xml->asXml());
 
         $this->wait('iq', $id, $delegate);
     }
@@ -502,7 +502,7 @@ class XmppClient extends XmppSocket
             ->addAttribute("to", $room->bare() . '/' . $nick)
             ->addAttribute("id", uniqid('mucjoin_'));
         $xml->addChild(new xmlBranch("x"))->addAttribute("xmlns", "http://jabber.org/protocol/muc");
-        $this->write($xml->asXML());
+        $this->write($xml->asXml());
 
         return $this->rooms[$room->__toString()] = new Room($this, $room);
     }
@@ -526,7 +526,7 @@ class XmppClient extends XmppSocket
             ->addAttribute("id", uniqid('mucout_'))
             ->addAttribute("type", 'unavailable');
         $xml->addChild(new xmlBranch("x"))->addAttribute("xmlns", "http://jabber.org/protocol/muc");
-        $this->write($xml->asXML());
+        $this->write($xml->asXml());
 
         unset($this->rooms[$room->bare()]);
     }
@@ -562,7 +562,7 @@ class XmppClient extends XmppSocket
 
         if (!empty($reason)) $xml->query[0]->item[0]->addChild(new xmlBranch("reason"))->setContent($reason);
 
-        $this->write($xml->asXML());
+        $this->write($xml->asXml());
     }
 
     /**
@@ -596,7 +596,7 @@ class XmppClient extends XmppSocket
 
         if (!empty($reason)) $xml->query[0]->item[0]->addChild(new xmlBranch("reason"))->setContent($reason);
 
-        $this->write($xml->asXML());
+        $this->write($xml->asXml());
     }
 
     /**
@@ -613,7 +613,7 @@ class XmppClient extends XmppSocket
             ->addAttribute('to', $jid->__toString())
             ->addAttribute('type', $jid->isChannel() ? 'groupchat' : 'chat');
         $msg->addChild(new XmlBranch('subject'))->setContent($subject);
-        $this->write($msg->asXML());
+        $this->write($msg->asXml());
     }
 
     /**
@@ -642,7 +642,7 @@ class XmppClient extends XmppSocket
         $xml->query[0]->addAttribute("xmlns", "http://jabber.org/protocol/muc#admin");
         $xml->query[0]->addChild(new xmlBranch("item"));
         $xml->query[0]->item[0]->addAttribute("affiliation", $affiliation);
-        $this->write($xml->asXML());
+        $this->write($xml->asXml());
 
         $this->wait('iq', $id, $delegate);
     }

@@ -15,7 +15,7 @@ abstract class Plugin implements PluginInterface {
     protected $_loaded;
 
     /**
-     * @param Bot $bot
+     * @param Bot $bot Bot instance.
      */
     public function __construct(Bot $bot)
     {
