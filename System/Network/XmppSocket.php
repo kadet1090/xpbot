@@ -73,14 +73,17 @@ abstract class XmppSocket extends BaseSocket
      */
     public function _onPacket(\SimpleXMLElement $packet)
     {
-        if($packet->getName() == 'features')
+        $name = $packet->getName();
+        $name = strpos($name, ':') !== false ? substr(strstr($name, ':'), 1) : $name; // > SimpleXML
+
+        if($name == 'features')
             $this->_features = $packet;
-        elseif($packet->getName() == 'stream')
+        elseif($name == 'stream')
             $this->_stream = $packet;
 
         foreach ($this->_waiting as &$wait) {
             if (
-                (empty($wait['tag']) || $packet->getName() == $wait['tag']) &&
+                (empty($wait['tag']) || $name == $wait['tag']) &&
                 (empty($wait['id']) || $packet['id'] == $wait['id'])
             ) {
                 $wait['delegate']->run($packet);

@@ -10,7 +10,8 @@ use XPBot\System\Utils\XmlBranch;
 use XPBot\System\Xmpp\Jid;
 
 /**
- * XmppClient, uberclass.
+ * XmppClient class provides basic XMPP/Jabber functionality.
+ *
  * @package XPBot\System\Xmpp
  * @author Kadet <kadet1090@gmail.com>
  */
