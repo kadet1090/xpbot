@@ -334,10 +334,14 @@ class XmppClient extends XmppSocket
         $channelJid = strstr($packet['from'], '/', true);
         $jid        = new Jid($channelJid);
 
-        if (!$jid->isChannel() || !isset($this->rooms[$channelJid])) return;
-
         if ($packet['type'] != 'unavailable') {
             $user = $this->rooms[$channelJid]->addUser(User::fromPresence($packet, $this));
+
+            if(
+                $user->jid->bare() == $this->jid->bare() ||
+                $this->rooms[$channelJid]->nick == str_replace($channelJid.'/', '', $packet['from'])
+            ) $user->self = true;
+
             $this->onJoin->run($this->rooms[$channelJid], $user, $this->rooms[$channelJid]->subject === false);
         } else {
             $user = $this->rooms[$channelJid]->users[substr(strstr($packet['from'], '/'), 1)];
@@ -505,7 +509,7 @@ class XmppClient extends XmppSocket
         $xml->addChild(new xmlBranch("x"))->addAttribute("xmlns", "http://jabber.org/protocol/muc");
         $this->write($xml->asXml());
 
-        return $this->rooms[$room->__toString()] = new Room($this, $room);
+        return $this->rooms[$room->__toString()] = new Room($this, $room, $nick);
     }
 
     /**

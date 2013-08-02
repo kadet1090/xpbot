@@ -38,16 +38,24 @@ class Room
      */
     public $configuration = array();
 
+    /**
+     * Clients nick on room
+     * @var string
+     */
+    public $nick;
+
     protected static $config;
 
     /**
      * @param XmppClient $client Xmpp Client instance.
      * @param Jid        $jid    Room Jid.
+     * @param string     $nick   Clients nick on room.
      */
-    public function __construct(XmppClient $client, Jid $jid)
+    public function __construct(XmppClient $client, Jid $jid, $nick)
     {
-        $this->_client          = $client;
-        $this->jid              = $jid;
+        $this->_client = $client;
+        $this->jid     = $jid;
+        $this->nick    = $nick;
 
         if (empty(self::$config))
             self::$config = simplexml_load_file('./Config/Rooms.xml');

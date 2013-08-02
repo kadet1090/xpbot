@@ -15,7 +15,7 @@ use XPBot\System\Utils\Language;
 use XPBot\System\Xmpp\Room;
 use XPBot\System\Xmpp\User;
 
-class BuiltinPlugin extends Plugin{
+class BuiltinPlugin extends Plugin {
 
     public function getInfo()
     {

@@ -150,7 +150,7 @@ class Bot extends XmppClient
      */
     public function _parseCommand($message)
     {
-        if (isset($message->delay['stamp'])) return; // message is from history, forgot about it.
+        if(isset($message->delay['stamp'])) return; // message is from history, forgot about it.
         $author = $this->getUserByJid(new Jid($message['from']));
         if(!$author) return null;
 

@@ -50,6 +50,12 @@ class User
     public $room;
 
     /**
+     * Indicates if this user is our client.
+     * @var bool
+     */
+    public $self;
+
+    /**
      * Xmpp Client instance.
      *
      * @var XmppClient
