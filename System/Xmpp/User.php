@@ -2,6 +2,8 @@
 namespace XPBot\System\Xmpp;
 
 
+use XPBot\System\Xmpp\Stanza\Presence;
+
 class User
 {
     /**
@@ -73,68 +75,26 @@ class User
     /**
      * Makes user object from presence packet.
      *
-     * @param \SimpleXMLElement $presence Presence element.
+     * @param Presence $presence Presence element.
      * @param XmppClient        $client   XmppClient instance.
      *
      * @throws \InvalidArgumentException
      *
      * @return User User created from presence.
      */
-    public static function fromPresence(\SimpleXMLElement $presence, XmppClient $client)
+    public static function fromPresence(Presence $presence, XmppClient $client)
     {
-        if ($presence->getName() != 'presence') throw new \InvalidArgumentException('presence');
-
         $user              = new User($client);
-        $user->nick        = (string)substr(strstr($presence['from'], '/'), 1);
-        $user->affiliation = (string)self::_getAffiliation($presence);
-        $user->role        = (string)self::_getRole($presence);
-        $user->jid         = self::_getJid($presence);
-        $user->show        = (isset($presence->show) ? (string)$presence->show : 'available');
-        $user->status      = (string)$presence->status;
+        $user->nick        = $presence->from->resource;
+        $user->affiliation = $presence->affiliation;
+        $user->role        = $presence->role;
+        $user->jid         = $presence->jid;
+        $user->show        = $presence->show;
+        $user->status      = $presence->status;
+
+        echo "CHUJ".PHP_EOL.PHP_EOL.PHP_EOL;
 
         return $user;
-    }
-
-    /**
-     * Helper, gets jid from packet.
-     * @param $packet
-     * @return Jid
-     */
-    private static function _getJid($packet)
-    {
-        $jid = $packet['from'];
-        if (isset($packet->x->item['jid'])) $jid = $packet->x->item['jid'];
-        elseif (isset($packet->x[0]->item['jid'])) $jid = $packet->x[0]->item['jid']; elseif (isset($packet->x[1]->item['jid'])) $jid = $packet->x[1]->item['jid'];
-
-        return new Jid($jid);
-    }
-
-    /**
-     * Helper, gets role from packet.
-     * @param $packet
-     * @return string
-     */
-    private static function _getRole($packet)
-    {
-        $role = 'participant';
-        if (isset($packet->x->item['role'])) $role = $packet->x->item['role'];
-        elseif (isset($packet->x[0]->item['role'])) $role = $packet->x[0]->item['role']; elseif (isset($packet->x[1]->item['role'])) $role = $packet->x[1]->item['role'];
-
-        return $role;
-    }
-
-    /**
-     * Helper, gets affiliation from packet.
-     * @param $packet
-     * @return string
-     */
-    private static function _getAffiliation($packet)
-    {
-        $aff = 'none';
-        if (isset($packet->x->item['affiliation'])) $aff = $packet->x->item['affiliation'];
-        elseif (isset($packet->x[0]->item['affiliation'])) $aff = $packet->x[0]->item['affiliation']; elseif (isset($packet->x[1]->item['affiliation'])) $aff = $packet->x[1]->item['affiliation'];
-
-        return $aff;
     }
 
     /**

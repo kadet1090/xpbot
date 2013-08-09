@@ -9,6 +9,8 @@ use XPBot\System\Utils\Params;
 use XPBot\System\Utils\XmlBranch;
 use XPBot\System\Xmpp\Jid;
 use XPBot\System\Xmpp\Room;
+use XPBot\System\Xmpp\Stanza\Iq;
+use XPBot\System\Xmpp\Stanza\Message;
 use XPBot\System\Xmpp\User;
 use XPBot\System\Xmpp\XmppClient;
 
@@ -127,13 +129,13 @@ class Bot extends XmppClient
     /**
      * @ignore
      */
-    public function _parseIq($query)
+    public function _parseIq(Iq $query)
     {
-        if ($query['type'] == 'get' && preg_match('/xmlns=("|\')jabber:iq:version("|\')/si', $query->asXML())) {
+        if ($query->type == 'get' && preg_match('/xmlns=("|\')jabber:iq:version("|\')/si', $query->xml->asXML())) {
             $xml = new XmlBranch('iq');
             $xml->addAttribute('from', $this->jid->__toString())
-                ->addAttribute('to', $query['from'])
-                ->addAttribute('type', 'result')
+                ->addAttribute('to', $query->from->__toString())
+                ->addAttribute('type', $query->type)
                 ->addAttribute('id', $query['id']);
 
             $xml->addChild(new XmlBranch('query'))->addAttribute('xmlns', 'jabber:iq:version');
@@ -148,29 +150,23 @@ class Bot extends XmppClient
     /**
      * @ignore
      */
-    public function _parseCommand($message)
+    public function _parseCommand(Message $message)
     {
-        if(isset($message->delay['stamp'])) return; // message is from history, forgot about it.
-        $author = $this->getUserByJid(new Jid($message['from']));
-        if(!$author) return null;
+        if(isset($message->xml->delay['stamp'])) return; // message is from history, forgot about it.
+        if(!$message->sender) return null;
 
-        $prompt = !empty($author->room->configuration->prompt) ?
-            $author->room->configuration->prompt :
+        $prompt = !empty($message->sender->room->configuration->prompt) ?
+            $message->sender->room->configuration->prompt :
             $this->config->MUCPrompt;
 
         Language::setGlobalVar('P', $prompt);
+        $content = $message->body;
 
         foreach($this->_macros as $macro => $func)
-            $message->body = str_replace('!'.$macro, $func->run($message, $this), $message->body);
-
-        $reply = function ($msg) use ($message, $author) {
-            $message['type'] == 'groupchat' ?
-                $author->room->message($msg) :
-                $this->message(new Jid($message['from']), $msg);
-        };
+            $content = str_replace('!'.$macro, $func->run($message, $this), $message->body);
 
         if (substr($message->body, 0, strlen($prompt)) == $prompt) {
-            $content = substr($message->body, strlen($prompt));
+            $content = substr($content, strlen($prompt));
             $params  = new Params($content);
 
             $command = $this->getCommand($params[0]);
@@ -182,7 +178,7 @@ class Bot extends XmppClient
                 foreach ($command as $package => $class) {
                     $str .= "\t$package-{$params[0]} - $class\n";
                 }
-                $reply($str);
+                $message->reply($str);
                 return;
             }
 
@@ -191,20 +187,20 @@ class Bot extends XmppClient
                 $commandName = $command;
                 try {
 
-                    if (!$command::hasPermission($author))
+                    if (!$command::hasPermission($message->sender))
                         throw new CommandException(
                             'User has no permission to run this command.',
                             __('errNoPermission', 'pl')
                         );
 
-                    $command = new $commandName($this, $author, 'pl', $message);
+                    $command = new $commandName($this, $message->sender, 'pl', $message);
 
                     if ($result = $command->execute($params))
-                        $reply($result);
+                        $message->reply($result);
 
                 } catch (CommandException $exception) {
-                    $author->room->message($exception->getMessage());
-                    Logger::warning("'{$exception->getConsoleMessage()}' in $commandName launched by {$author->jid}");
+                    $message->reply($exception->getMessage());
+                    Logger::warning("'{$exception->getConsoleMessage()}' in $commandName launched by {$message->sender->jid}");
                 }
             }
         }
@@ -476,7 +472,7 @@ class Bot extends XmppClient
 
     // MACROS
     /**
-     * @param \SimpleXMLElement $packet
+     * @param Message $packet
      * @param Bot $bot
      * @return bool|string
      *
@@ -484,8 +480,7 @@ class Bot extends XmppClient
      */
     public static function getNick($packet, Bot $bot)
     {
-        $user = $bot->getUserByJid(new Jid($packet['from']));
-        if($user) return $user->nick;
+        if($packet->sender) return $packet->sender->nick;
         return false;
     }
 

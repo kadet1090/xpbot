@@ -178,7 +178,6 @@ class Room
     public function addUser(User $user)
     {
         $user->room = $this;
-
         return $this->users[$user->nick] = $user;
     }
 

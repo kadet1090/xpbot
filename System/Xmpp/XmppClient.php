@@ -8,6 +8,9 @@ use XPBot\System\Utils\Event;
 use XPBot\System\Utils\Timer;
 use XPBot\System\Utils\XmlBranch;
 use XPBot\System\Xmpp\Jid;
+use XPBot\System\Xmpp\Stanza\Message;
+use XPBot\System\Xmpp\Stanza\Presence;
+use XPBot\System\Xmpp\Stanza\Stanza;
 
 /**
  * XmppClient class provides basic XMPP/Jabber functionality.
@@ -205,14 +208,14 @@ class XmppClient extends XmppSocket
      * Should be private, but... php sucks!
      * DO NOT RUN IT, TRUST ME.
      *
-     * @param \SimpleXMLElement $result
+     * @param Stanza $result
      * @throws \RuntimeException
      *
      * @ignore
      */
     public function _onAuth($result)
     {
-        if($result->getName() == 'success') {
+        if($result->xml->getName() == 'success') {
             $this->startStream();
             $this->_bind();
         }
@@ -302,21 +305,22 @@ class XmppClient extends XmppSocket
     {
         parent::_onPacket($packet);
 
+        $stanza = Stanza::factory($this, $packet);
         switch ($packet->getName()) {
             case 'presence':
-                $this->onPresence->run($packet);
+                $this->onPresence->run($stanza);
                 break;
             case 'iq':
-                $this->onIq->run($packet);
+                $this->onIq->run($stanza);
                 break;
             case 'message':
-                $this->onMessage->run($packet);
+                $this->onMessage->run($stanza);
                 break;
 
             # SASL
             case 'success':
             case 'failure':
-                $this->onAuth->run($packet);
+                $this->onAuth->run($stanza);
                 break;
         }
     }
@@ -325,26 +329,28 @@ class XmppClient extends XmppSocket
      * Should be private, but... php sucks!
      * DO NOT RUN IT, TRUST ME.
      *
-     * @param \SimpleXMLElement $packet
+     * @param Presence $packet
      *
      * @ignore
      */
-    public function _onPresence(\SimpleXMLElement $packet)
+    public function _onPresence(Presence $packet)
     {
-        $channelJid = strstr($packet['from'], '/', true);
+        $channelJid = $packet->from->bare();
         $jid        = new Jid($channelJid);
 
-        if ($packet['type'] != 'unavailable') {
-            $user = $this->rooms[$channelJid]->addUser(User::fromPresence($packet, $this));
+        if(!$jid->isChannel()) return;
 
+        if ($packet->type != 'unavailable') {
+            $user = $this->rooms[$channelJid]->addUser(User::fromPresence($packet, $this));
+            var_dump($this->rooms[$channelJid]->users);
             if(
                 $user->jid->bare() == $this->jid->bare() ||
-                $this->rooms[$channelJid]->nick == str_replace($channelJid.'/', '', $packet['from'])
+                $this->rooms[$channelJid]->nick == str_replace($channelJid.'/', '', $packet->from->__toString())
             ) $user->self = true;
 
             $this->onJoin->run($this->rooms[$channelJid], $user, $this->rooms[$channelJid]->subject === false);
         } else {
-            $user = $this->rooms[$channelJid]->users[substr(strstr($packet['from'], '/'), 1)];
+            $user = $this->rooms[$channelJid]->users[$packet->from->resource];
             $this->onLeave->run($this->rooms[$channelJid], $user);
             $this->rooms[$channelJid]->removeUser($user);
         }
@@ -354,17 +360,16 @@ class XmppClient extends XmppSocket
      * Should be private, but... php sucks!
      * DO NOT RUN IT, TRUST ME.
      *
-     * @param \SimpleXMLElement $packet
+     * @param Message $packet
      *
      * @ignore
      */
-    public function _onMessage(\SimpleXMLElement $packet)
+    public function _onMessage(Message $packet)
     {
-        $jid = new Jid($packet['from']);
-        if ($packet['type'] != 'groupchat' || !isset($this->rooms[$jid->bare()])) return;
+        if ($packet->type != 'groupchat' || !isset($this->rooms[$packet->from->bare()])) return;
 
         if (isset($packet->subject))
-            $this->rooms[$jid->bare()]->subject = $packet->subject;
+            $this->rooms[$packet->from->bare()]->subject = $packet->subject;
     }
 
     /**
@@ -403,7 +408,7 @@ class XmppClient extends XmppSocket
     public function getUserByJid(Jid $user)
     {
         if (!$user->fromChannel()) return null;
-
+        var_dump($this->rooms[$user->bare()]->users);
         return $this->rooms[$user->bare()]->users[$user->resource];
     }
 

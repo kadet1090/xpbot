@@ -108,7 +108,7 @@ abstract class Command
         $this->_packet = $packet;
         $this->_lang   = $lang;
         $this->_author = $author;
-        $this->_type   = $packet['type'];
+        $this->_type   = $packet->type;
     }
 
     /**
