@@ -1,5 +1,9 @@
 <?php
-define('DEBUG_MODE', 2);
+
+if($index = array_search('-v', $argv))
+    define('DEBUG_MODE', isset($argv[$index + 1]) ? (int)$argv[$index + 1] : 1);
+else
+    define('DEBUG_MODE', 0);
 
 include 'System/functions.php';
 require 'System/Utils/AutoLoader.php';

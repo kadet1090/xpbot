@@ -26,9 +26,9 @@ namespace XPBot\System\Utils {
 
             $xml = simplexml_load_file($filename);
 
-            if (!isset($xml['lang']) || empty($xml['lang'])) throw new \Exception(''); //todo: Exception type for parse errors.
+            if (!isset($xml['lang']) || empty($xml['lang'])) throw new \Exception('Language has'); //todo: Exception type for parse errors.
 
-            $lang                  = (string)$xml['lang'];
+            $lang = (string)$xml['lang'];
             foreach ($xml->phrase as $phrase) {
                 $namespace = isset($phrase['ns']) ? $phrase['ns'] : 'default';
                 $name      = $phrase['id'];
@@ -49,6 +49,7 @@ namespace XPBot\System\Utils {
             );
 
             foreach ($iterator as $file) {
+                if($file->isDir()) continue;
                 self::load($file->getPathname());
             }
         }

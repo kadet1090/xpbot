@@ -7,14 +7,14 @@
  * @license WTFPL
  */
 
-namespace XPBot\Plugins\Builtin\Commands;
+namespace XPBot\Plugins\Base\Commands;
 
 use XPBot\Bot\Command;
 use XPBot\Bot\CommandException;
 use XPBot\System\Utils\Delegate;
 use XPBot\System\Xmpp\Jid;
 
-class Version extends Command
+class Ping extends Command
 {
     public function execute($args)
     {
@@ -28,15 +28,15 @@ class Version extends Command
         if (!Jid::isJid($jid))
             throw new CommandException('Given jid is not valid.', __('errJidNotValid', $this->_lang));
 
-        $jid = new Jid($jid);
-        $this->_bot->version($jid, new Delegate(function ($reply) use ($args) {
-            if ($reply['type'] != 'result') return;
+        $time = microtime(true);
+        $jid  = new Jid($jid);
 
-            $this->_author->room->message(__('reply', $this->_lang, __CLASS__, array(
-                'name'    => $reply->query->name,
-                'version' => $reply->query->version,
-                'os'      => (isset($reply->query->os) ? $reply->query->os : ''),
-                'user'    => $args[1]
+        $this->_bot->ping($jid, new Delegate(function () use ($time, $args) {
+            $time = microtime(true) - $time;
+
+            $this->_author->room->message(__('ping', $this->_lang, __CLASS__, array(
+                'time' => round($time * 1000),
+                'user' => $args[1]
             )));
         }));
     }

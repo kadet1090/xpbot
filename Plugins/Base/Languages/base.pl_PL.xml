@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phrases lang="pl_PL">
+    <phrase id="shortHelp" ns="XPBot\Plugins\Base\Commands\Ping">Sprawdza czas odpowiedzi danego usera</phrase>
+    <phrase id="help" ns="XPBot\Plugins\Base\Commands\Ping">
+        Sprawdza czas odpowiedzi danego usera.
+
+        {%P}{%command} użytkownik
+    </phrase>
+    <phrase id="ping" ns="XPBot\Plugins\Base\Commands\Ping">Czas odpowiedzi od {%user} wynosi {%time}ms.</phrase>
+
+    <phrase id="shortHelp" ns="XPBot\Plugins\Base\Commands\Version">Sprawdza wersję komunikatora danego użytkownika</phrase>
+    <phrase id="help" ns="XPBot\Plugins\Base\Commands\Version">
+        Sprawdza wersję komunikatora danego użytkownika
+
+        {%P}{%command} użytkownik
+    </phrase>
+    <phrase id="reply" ns="XPBot\Plugins\Base\Commands\Version">
+        Użytkownik {%user} używa {%name} {%version}
+        {%os}
+    </phrase>
+
+    <phrase id="shortHelp" ns="XPBot\Plugins\Base\Commands\Subject">Zarządza tematem</phrase>
+    <phrase id="help" ns="XPBot\Plugins\Base\Commands\Subject">
+        Zarządza tematem pokoju, umożliwiając jego wyświetlenie i zmianę.
+
+        {%P}{%command} [-a|-p] [temat]
+
+        -a człon - dodaje nowy człon na końcu tematu, po |,
+        -p człon - dodaje nowy człon na początku tematu, separując od aktualnego tematu poprzez znak |
+    </phrase>
+
+    <phrase id="shortHelp" ns="XPBot\Plugins\Base\Commands\Clear">Czyści log pokoju</phrase>
+    <phrase id="help" ns="XPBot\Plugins\Base\Commands\Clear">
+        Czyści log pokoju aby dołączajacy użytkownicy nie widzieli poprzednich wiadomości.
+
+        {%P}{%command} [ilość] [-m wiadomość czyszcząca] [-s tryb cichy]
+
+        Konfiguracja:
+        builtin:defaultClearCount "5"
+        builtin:defaultClearMessage "\0"
+    </phrase>
+
+    <phrase id="shortHelp" ns="XPBot\Plugins\Base\Commands\Join">Wrzuca bota na podany pokój</phrase>
+    <phrase id="help" ns="XPBot\Plugins\Base\Commands\Join">
+        Wrzuca bota na podany pokój.
+
+        {%P}{%command} pokój [nick]
+    </phrase>
+
+    <phrase id="shortHelp" ns="XPBot\Plugins\Base\Commands\Leave">Nakazuje botowi wyjść z danego pokoju</phrase>
+    <phrase id="help" ns="XPBot\Plugins\Base\Commands\Leave">
+        Nakazuje botowi wyjść z danego pokoju.
+
+        {%P}{%command} [pokój=aktualny pokój]
+    </phrase>
+
+    <phrase id="shortHelp" ns="XPBot\Plugins\Base\Commands\Say">Wypisuje podany tekst</phrase>
+    <phrase id="help" ns="XPBot\Plugins\Base\Commands\Say">
+        Wysyła wiadomość z podanym tekstem.
+
+        {%P}{%command} tekst
+    </phrase>
+
+    <phrase id="shortHelp" ns="XPBot\Plugins\Base\Commands\Users">Wypisuje użytkowników w pokoju</phrase>
+    <phrase id="help" ns="XPBot\Plugins\Base\Commands\Users">
+        Wypisuje listę użytkowników w pokoju wg. podanego wzoru.
+
+        {%P}{%command} wzór
+
+        Tagi do użycia we wzorze:
+        %c - Kanał,
+        %n - Nick,
+        %a - Przynależność,
+        %r - Rola,
+        %p - Poziom uprawnień,
+        %j - JID,
+        %s - Status,
+        %d - Opis,
+        %t - Czas jaki użytkownik spędził na kanale.
+
+        Przykład:
+        {%P}{%command} "%n - %s"
+
+        Da następujący wynik dla 2 użytkowników (Admin i Bot)
+        Admin - Available
+        Bot	- Available
+
+        Konfiguracja:
+        builtin:defaultUserPattern "%n - %a [%r] %s"
+    </phrase>
+</phrases>

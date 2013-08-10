@@ -7,7 +7,7 @@
  * @license WTFPL
  */
 
-namespace XPBot\Plugins\Builtin\Commands;;
+namespace XPBot\Bot\Commands;
 
 use XPBot\Bot\Command;
 use XPBot\System\Utils\Logger;
@@ -20,7 +20,6 @@ class Close extends Command
     {
         if($args[1]) Logger::info("Exiting bot because {$args[0]}");
         else Logger::info("Exiting bot.");
-
         exit;
     }
 }

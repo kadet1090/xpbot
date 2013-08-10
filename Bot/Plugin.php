@@ -1,17 +1,17 @@
 <?php
-/**
- * Created by JetBrains PhpStorm.
- *
- * @author Kadet <kadet1090@gmail.com>
- * @package 
- * @license WTFPL
- */
-
 namespace XPBot\Bot;
 
-
 abstract class Plugin implements PluginInterface {
+    /**
+     * Bot instance.
+     * @var Bot
+     */
     protected $_bot;
+
+    /**
+     * Indicates if plugin is loaded or not.
+     * @var bool
+     */
     protected $_loaded;
 
     /**

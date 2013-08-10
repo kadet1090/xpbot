@@ -23,7 +23,7 @@ class Bot extends XmppClient
     /**
      * Bot version string.
      */
-    const BOT_VERSION = 'Beta 0.5';
+    const BOT_VERSION = 'Beta 0.6';
 
     /**
      * Commands list.
@@ -92,6 +92,15 @@ class Bot extends XmppClient
 
         $this->onReady->add(new Delegate(array($this, '_joinRooms')));
         $this->onJoin->add(new Delegate(array($this, '_onJoin')));
+
+        $this->registerCommand('XPBot\\Bot\\Commands\\Alias', 'builtin', 'alias');
+        $this->registerCommand('XPBot\\Bot\\Commands\\Config', 'builtin', 'config');
+        $this->registerCommand('XPBot\\Bot\\Commands\\Help', 'builtin', 'help');
+        $this->registerCommand('XPBot\\Bot\\Commands\\Permission', 'builtin', 'permission');
+        $this->registerCommand('XPBot\\Bot\\Commands\\Plugin', 'builtin', 'plugin');
+        $this->registerCommand('XPBot\\Bot\\Commands\\Close', 'builtin', 'close');
+
+        Language::loadDir(dirname(__FILE__).'/Languages/');
 
         $this->addMacro('me'  , new Delegate('XPBot\\Bot\\Bot::getNick'));
         $this->addMacro('date', new Delegate('XPBot\\Bot\\Bot::getDate'));
@@ -190,10 +199,10 @@ class Bot extends XmppClient
                     if (!$command::hasPermission($message->sender))
                         throw new CommandException(
                             'User has no permission to run this command.',
-                            __('errNoPermission', 'pl')
+                            __('errNoPermission', 'pl_PL')
                         );
 
-                    $command = new $commandName($this, $message->sender, 'pl', $message);
+                    $command = new $commandName($this, $message->sender, 'pl_PL', $message);
 
                     if ($result = $command->execute($params))
                         $message->reply($result);
@@ -209,6 +218,8 @@ class Bot extends XmppClient
     /**
      * Registers all commands in directory.
      *
+     * @deprecated
+     *
      * @param string $dir       Dir to search.
      * @param string $package   Commands package.
      * @param string $namespace Commands namespace.
@@ -221,6 +232,7 @@ class Bot extends XmppClient
         );
 
         foreach ($iterator as $file) {
+            if($file->isDir()) continue;
             $class = strstr($file->getFilename(), '.', true);
             $this->registerCommand($namespace . '\\' . $class, $package);
         }
@@ -396,6 +408,18 @@ class Bot extends XmppClient
     }
 
     /**
+     * Unregisters command in bot.
+     *
+     * @param string $package Command package (eg builtin)
+     * @param string $command Command name, if null class name will be used.
+     */
+    public function unregisterCommand($package, $command) {
+        unset($this->_commands[$package][strtolower($command)]);
+        if(empty($this->_commands[$package]))
+            unset($this->_commands[$package]);
+    }
+
+    /**
      * Gets proper permission level according to affiliation.
      *
      * @param string $affiliation
@@ -443,12 +467,16 @@ class Bot extends XmppClient
         ));
 
         foreach ($iterator as $file) {
-            if(preg_match('/(.*Plugin).php$/', $file->getFilename(), $matches)) {
-                $class = 'XPBot\\'.str_replace(DIRECTORY_SEPARATOR, '\\', $file->getPath()).'\\'.$matches[1];
+            if(preg_match('/(.*?)Plugin.php$/', $file->getFilename(), $matches)) {
+                $class = 'XPBot\\'.str_replace(DIRECTORY_SEPARATOR, '\\', $file->getPath()).'\\'.$matches[1].'Plugin';
                 $this->_plugins[$matches[1]] = new $class($this);
                 $this->_plugins[$matches[1]]->load();
             }
         }
+    }
+
+    public function getPlugins() {
+        return $this->_plugins;
     }
 
     /**

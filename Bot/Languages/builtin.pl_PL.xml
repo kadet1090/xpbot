@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phrases lang="pl_PL">
+    <phrase id="shortHelp">Ta komenda nie zosta?a udokumentowana</phrase>
+    <phrase id="help">Ta komenda nie zosta?a udokumentowana</phrase>
+    <phrase id="commandAmbiguous">Komenda {%command} nie jest jednoznaczna, wybierz jedn? z poni?szych:</phrase>
+    <phrase id="errCommandNotExists">Nie ma takiej komendy.</phrase>
+    <phrase id="errModuleNotExists">Modu? {%module} nie istnieje, mo?e nie zosta? zainstalowany?</phrase>
+    <phrase id="errArgumentInvalid">Podany argument nie jest prawid?owy.</phrase>
+    <phrase id="errTooFewArguments">Podano za ma?o argumentów.</phrase>
+    <phrase id="errInvalidAction">Nieprawid?owa akcja.</phrase>
+
+    <phrase id="shortHelp" ns="XPBot\Bot\Commands\Help">Wy?wietla pomoc bota</phrase>
+    <phrase id="help" ns="XPBot\Bot\Commands\Help">
+        Wy?wietla pomoc bota, oraz list? wszystkich dost?pnych komend.
+
+        {%P}{%command} [komenda lub modu?]
+
+        Dodatkowo mo?esz u?y? nast?puj?cych prze??czników:
+
+        -m - Wy?wietla list? modu?ów.
+        -m nazwa - Wy?wietla komendy z danego modu?u,
+        -a - wy?wietla wszystkie komendy, nawet te, do których nie mamy uprawnie?,
+        -l - dodatkowo wypisuje wymagany poziom uprawnie?.
+
+        -r regex - Wy?wietla wszystkie komendy pasuj?ce do danego regexa,
+    </phrase>
+    <phrase id="commands" ns="XPBot\Bot\Commands\Help">
+        Aby uruchomi? dan? komend? wpisz {%P}komenda lub {%P}modu?-komenda.
+        Je?eli nie wiesz jak obs?uguje si? dan? komend? po prostu wpisz {%P}help komenda.
+
+        {%commands}
+    </phrase>
+    <phrase id="modules" ns="XPBot\Bot\Commands\Help">Dost?pne modu?y: {%modules}</phrase>
+
+    <phrase id="shortHelp" ns="XPBot\Bot\Commands\Alias">Zarządza aliasami komend</phrase>
+    <phrase id="help" ns="XPBot\Bot\Commands\Alias">
+        Zarządza aliasami komend w bocie.
+
+        {%P}{%command} add alias komenda - dodaje nowy alias,
+        {%P}{%command} remove alias - usuwa dany alias,
+        {%P}{%command} command komenda - wyświetla aliasy danej komendy,
+        {%P}{%command} - wyświetla wszystkie aliasy.
+    </phrase>
+    <phrase id="errAliasNotExists" ns="XPBot\Bot\Commands\Aliases">Taki alias nie istnieje.</phrase>
+
+    <phrase id="shortHelp" ns="XPBot\Bot\Commands\Close">Wyłącza bota</phrase>
+    <phrase id="help" ns="XPBot\Bot\Commands\Close">
+        Wyłącza bota.
+
+        {%P}{%command} [wiadomość]
+    </phrase>
+
+    <phrase id="shortHelp" ns="XPBot\Bot\Commands\About">Informcje o bocie</phrase>
+    <phrase id="help" ns="XPBot\Bot\Commands\About">
+        Informacje o bocie.
+
+        {%P}{%command}
+    </phrase>
+    <phrase id="about">
+        Xmpp Php BOT {%version}
+        Bot stworzony przez Kadeta w PHP.
+        Napisany przy pomocy świetnego IDE - PhpStorma,
+        na mniej świetnym systemie Windowsie.
+
+        Kontakt z autorem:
+        jabber: kadet1090@aqq.eu (pamiętaj aby najpierw poprosić o autoryzację :)
+        gg:     12881099
+        e-mail: kadet1090@gmail.com
+    </phrase>
+</phrases>
