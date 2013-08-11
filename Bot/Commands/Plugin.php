@@ -20,6 +20,6 @@ class Plugin extends Command
 
     public function execute($args)
     {
-        var_dump($this->_bot->getPlugins());
+
     }
 }
