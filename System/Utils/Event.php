@@ -11,7 +11,7 @@ class Event
 
     /**
      * Delegates array.
-     * @var \XPBot\System\Utils\Delegate[int]
+     * @var callable[int]
      */
     private $_delegates = array();
 
@@ -24,14 +24,12 @@ class Event
     }
 
     /**
-     * @param Delegate $delegate Delegate to run when event is fired.
+     * @param callable $delegate Delegate to run when event is fired.
      *
      * @throws \InvalidArgumentException
      */
-    public function add(Delegate $delegate)
+    public function add(callable $delegate)
     {
-        if (!$delegate->acceptParams($this->_arguments)) throw new \InvalidArgumentException('That delegate don\'t accept this event arguments.');
-
         $this->_delegates[] = $delegate;
     }
 
@@ -52,7 +50,7 @@ class Event
         }
 
         foreach ($this->_delegates as $delegate)
-            $delegate->runArray($arguments);
+            call_user_func_array($delegate, $arguments);
     }
 
     /**

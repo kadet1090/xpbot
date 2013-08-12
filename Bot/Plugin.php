@@ -37,4 +37,8 @@ abstract class Plugin implements PluginInterface {
     {
         $this->_loaded ? $this->unload() : $this->load(); // Best code line EVAH.
     }
+
+    public function getInfo() {
+        return $this->_manifest;
+    }
 }

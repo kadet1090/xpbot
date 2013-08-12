@@ -16,12 +16,6 @@ use XPBot\System\Xmpp\Room;
 use XPBot\System\Xmpp\User;
 
 class AdminPlugin extends Plugin {
-
-    public function getInfo()
-    {
-        // TODO: Implement getInfo() method.
-    }
-
     public function load()
     {
         $this->_bot->findCommands('Plugins/Admin/Commands/', 'admin', 'XPBot\\Plugins\\Admin\\Commands');

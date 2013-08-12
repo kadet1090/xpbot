@@ -43,7 +43,7 @@ class Affiliate extends Command
 
     private function _list($args) {
         try {
-            $this->_author->room->affiliationList($args[1], new Delegate(function ($packet) use ($args) {
+            $this->_author->room->affiliationList($args[1], function ($packet use ($args) {
                 $users = array();
                 foreach($packet->query->item as $user)
                     $users[] = $args['j'] ? $user['jid'] : strstr($user['jid'], '@', true).(!empty($user->reason) && $args['r'] ? " - {$user->reason}" : '');

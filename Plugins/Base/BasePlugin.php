@@ -15,12 +15,6 @@ use XPBot\System\Utils\Language;
 use XPBot\System\Xmpp\Room;
 
 class BasePlugin extends Plugin {
-
-    public function getInfo()
-    {
-        // TODO: Implement getInfo() method.
-    }
-
     public function load()
     {
         $this->_bot->registerCommand(__NAMESPACE__.'\\Commands\\Clear',   'base', 'clear');

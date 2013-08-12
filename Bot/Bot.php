@@ -87,11 +87,11 @@ class Bot extends XmppClient
         );
 
         $this->_loadPlugins();
-        $this->onMessage->add(new Delegate(array($this, '_parseCommand')));
-        $this->onIq->add(new Delegate(array($this, '_parseIq')));
+        $this->onMessage->add(array($this, '_parseCommand'));
+        $this->onIq->add(array($this, '_parseIq'));
 
-        $this->onReady->add(new Delegate(array($this, '_joinRooms')));
-        $this->onJoin->add(new Delegate(array($this, '_onJoin')));
+        $this->onReady->add(array($this, '_joinRooms'));
+        $this->onJoin->add(array($this, '_onJoin'));
 
         $this->registerCommand('XPBot\\Bot\\Commands\\Alias', 'builtin', 'alias');
         $this->registerCommand('XPBot\\Bot\\Commands\\Config', 'builtin', 'config');
@@ -102,9 +102,9 @@ class Bot extends XmppClient
 
         Language::loadDir(dirname(__FILE__).'/Languages/');
 
-        $this->addMacro('me'  , new Delegate('XPBot\\Bot\\Bot::getNick'));
-        $this->addMacro('date', new Delegate('XPBot\\Bot\\Bot::getDate'));
-        $this->addMacro('time', new Delegate('XPBot\\Bot\\Bot::getTime'));
+        $this->addMacro('me'  , array('XPBot\\Bot\\Bot', 'getNick'));
+        $this->addMacro('date', array('XPBot\\Bot\\Bot', 'getDate'));
+        $this->addMacro('time', array('XPBot\\Bot\\Bot', 'getTime'));
     }
 
     /**
@@ -172,7 +172,7 @@ class Bot extends XmppClient
         $content = $message->body;
 
         foreach($this->_macros as $macro => $func)
-            $content = str_replace('!'.$macro, $func->run($message, $this), $message->body);
+            $content = str_replace('!'.$macro, $func($message, $this), $message->body);
 
         if (substr($message->body, 0, strlen($prompt)) == $prompt) {
             $content = substr($content, strlen($prompt));
@@ -506,9 +506,9 @@ class Bot extends XmppClient
      * Adds new macro to bot.
      *
      * @param string   $name     Macros name
-     * @param Delegate $delegate Delegate to macros function.
+     * @param callable $delegate Delegate to macros function.
      */
-    public function addMacro($name, Delegate $delegate) {
+    public function addMacro($name, callable $delegate) {
         $this->_macros[$name] = $delegate;
     }
 

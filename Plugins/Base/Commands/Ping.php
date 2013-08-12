@@ -31,13 +31,13 @@ class Ping extends Command
         $time = microtime(true);
         $jid  = new Jid($jid);
 
-        $this->_bot->ping($jid, new Delegate(function () use ($time, $args) {
+        $this->_bot->ping($jid, function ($packet) use ($time, $args) {
             $time = microtime(true) - $time;
 
             $this->_author->room->message(__('ping', $this->_lang, __CLASS__, array(
                 'time' => round($time * 1000),
                 'user' => $args[1]
             )));
-        }));
+        });
     }
 }

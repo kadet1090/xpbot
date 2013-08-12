@@ -29,7 +29,7 @@ class Version extends Command
             throw new CommandException('Given jid is not valid.', __('errJidNotValid', $this->_lang));
 
         $jid = new Jid($jid);
-        $this->_bot->version($jid, new Delegate(function ($reply) use ($args) {
+        $this->_bot->version($jid, function ($reply) use ($args) {
             if ($reply['type'] != 'result') return;
 
             $this->_author->room->message(__('reply', $this->_lang, __CLASS__, array(
@@ -38,6 +38,6 @@ class Version extends Command
                 'os'      => (isset($reply->query->os) ? $reply->query->os : ''),
                 'user'    => $args[1]
             )));
-        }));
+        });
     }
 }

@@ -4,6 +4,7 @@ namespace XPBot\System\Utils;
 /**
  * Class Delegate
  * @package XPBot\System\Utils
+ * @deprecated
  * @author Kadet <kadet1090@gmail.com>
  */
 class Delegate

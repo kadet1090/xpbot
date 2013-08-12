@@ -26,7 +26,7 @@ abstract class XmppSocket extends BaseSocket
         $this->onPacket       = new Event();
         $this->keepAliveTimer = new Timer(15, array($this, 'keepAliveTick'));
         $this->keepAliveTimer->stop(); // We don't want to run this before connection is finalized.
-        $this->onPacket->add(new Delegate(array($this, '_onPacket')));
+        $this->onPacket->add(array($this, '_onPacket'));
     }
 
     public function read()
@@ -57,9 +57,9 @@ abstract class XmppSocket extends BaseSocket
     /**
      * @param string $type
      * @param int $id
-     * @param Delegate $delegate
+     * @param callable $delegate
      */
-    public function wait($type, $id, Delegate $delegate)
+    public function wait($type, $id, callable $delegate)
     {
         $this->_waiting[] = array(
             'tag'      => $type,
@@ -86,7 +86,7 @@ abstract class XmppSocket extends BaseSocket
                 (empty($wait['tag']) || $name == $wait['tag']) &&
                 (empty($wait['id']) || $packet['id'] == $wait['id'])
             ) {
-                $wait['delegate']->run($packet);
+                $wait['delegate']($packet);
             }
         }
     }

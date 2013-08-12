@@ -123,7 +123,7 @@ class XmppClient extends XmppSocket
         parent::__construct($jid->server, $port, $timeout);
         $this->jid      = $jid;
         $this->password = $password;
-        $this->onConnect->add(new Delegate(array($this, '_onConnect')));
+        $this->onConnect->add(array($this, '_onConnect'));
 
         $this->onAuth       = new Event();
         $this->onStreamOpen = new Event();
@@ -135,11 +135,11 @@ class XmppClient extends XmppSocket
         $this->onJoin       = new Event();
         $this->onLeave      = new Event();
 
-        $this->onAuth->add(new Delegate(array($this, '_onAuth')));
-        $this->onStreamOpen->add(new Delegate(array($this, '_onStreamOpen')));
-        $this->onReady->add(new Delegate(array($this, '_onReady')));
-        $this->onPresence->add(new Delegate(array($this, '_onPresence')));
-        $this->onMessage->add(new Delegate(array($this, '_onMessage')));
+        $this->onAuth->add(array($this, '_onAuth'));
+        $this->onStreamOpen->add(array($this, '_onStreamOpen'));
+        $this->onReady->add(array($this, '_onReady'));
+        $this->onPresence->add(array($this, '_onPresence'));
+        $this->onMessage->add(array($this, '_onMessage'));
     }
 
     /**
@@ -151,7 +151,7 @@ class XmppClient extends XmppSocket
     public function _onConnect()
     {
         $this->startStream();
-        $this->wait('features', '', new Delegate(array($this->onStreamOpen, 'run')));
+        $this->wait('features', '', array($this->onStreamOpen, 'run'));
         $this->work();
     }
 
@@ -240,7 +240,7 @@ class XmppClient extends XmppSocket
             ->setContent($this->jid->resource);
 
         $this->write($xml);
-        $this->wait('iq', $id, new Delegate(array($this, '_bindResult')));
+        $this->wait('iq', $id, array($this, '_bindResult'));
     }
 
     /**
@@ -344,7 +344,7 @@ class XmppClient extends XmppSocket
             $user = $this->rooms[$channelJid]->addUser(User::fromPresence($packet, $this));
             if(
                 $user->jid->bare() == $this->jid->bare() ||
-                $this->rooms[$channelJid]->nick == str_replace($channelJid.'/', '', $packet->from->__toString())
+                $this->rooms[$channelJid]->nick == $packet->from->resource
             ) $user->self = true;
 
             $this->onJoin->run($this->rooms[$channelJid], $user, $this->rooms[$channelJid]->subject === false);
@@ -407,7 +407,6 @@ class XmppClient extends XmppSocket
     public function getUserByJid(Jid $user)
     {
         if (!$user->fromChannel()) return null;
-        var_dump($this->rooms[$user->bare()]->users);
         return $this->rooms[$user->bare()]->users[$user->resource];
     }
 
@@ -454,10 +453,10 @@ class XmppClient extends XmppSocket
      * Checks client version.
      *
      * @param Jid      $jid      Users jid.
-     * @param Delegate $delegate Delegate to be executed after proper packet came.
+     * @param callable $delegate Delegate to be executed after proper packet came.
      *                           Delegate takes one argument (packet) of type SimpleXMLElement.
      */
-    public function version(Jid $jid, Delegate $delegate)
+    public function version(Jid $jid, callable $delegate)
     {
         $id  = uniqid('osversion_');
         $xml = new xmlBranch("iq");
@@ -475,10 +474,10 @@ class XmppClient extends XmppSocket
     /**
      * Pings user.
      * @param Jid      $jid      User jid.
-     * @param Delegate $delegate Delegate to be executed after proper packet came.
+     * @param callable $delegate Delegate to be executed after proper packet came.
      *                           Delegate takes one argument (packet) of type SimpleXMLElement.
      */
-    public function ping(Jid $jid, Delegate $delegate)
+    public function ping(Jid $jid, callable $delegate)
     {
         $id  = uniqid('ping_');
         $xml = new xmlBranch("iq");
@@ -630,14 +629,14 @@ class XmppClient extends XmppSocket
      *
      * @param Jid      $room        Jid of room to query.
      * @param string   $affiliation Affiliation type.
-     * @param Delegate $delegate    Delegate to run after proper packet came.
+     * @param callable $delegate    Delegate to run after proper packet came.
      *                              Delegate takes one argument (packet) of type SimpleXMLElement.
      *
      * @internal Plugins should use Room::affiliationList() instead of that.
      *
      * @throws \InvalidArgumentException
      */
-    public function affiliationList(Jid $room, $affiliation, Delegate $delegate) {
+    public function affiliationList(Jid $room, $affiliation, callable $delegate) {
         if (!in_array($affiliation, array('none', 'outcast', 'member', 'admin', 'owner')))
             throw new \InvalidArgumentException('affiliation');
 
