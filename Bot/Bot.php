@@ -461,17 +461,40 @@ class Bot extends XmppClient
     }
 
     private function _loadPlugins() {
-        $iterator = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator(
+        $iterator = new \RecursiveDirectoryIterator(
             'Plugins/',
             \RecursiveDirectoryIterator::SKIP_DOTS || \RecursiveDirectoryIterator::UNIX_PATHS
-        ));
+        );
 
         foreach ($iterator as $file) {
-            if(preg_match('/(.*?)Plugin.php$/', $file->getFilename(), $matches)) {
-                $class = 'XPBot\\'.str_replace(DIRECTORY_SEPARATOR, '\\', $file->getPath()).'\\'.$matches[1].'Plugin';
-                $this->_plugins[$matches[1]] = new $class($this);
-                $this->_plugins[$matches[1]]->load();
+            if(!$file->isDir()) continue;
+
+            if(!file_exists($file->getPathname().'/manifest.xml')) {
+                Logger::warning('Plugin on path "'.$file->getPathname().'" hasn\'t manifest, skipping...');
+                continue;
             }
+
+            $manifest = simplexml_load_file($file->getPathname().'/manifest.xml');
+            if(!isset($manifest->file)) {
+                Logger::warning('Plugin on path "'.$file->getPathname().'" hasn\'t set file, skipping...');
+                continue;
+            }
+
+            include $file->getPathname().'/'.$manifest->file;
+            if(!isset($manifest->class) || !class_exists($manifest->class)) {
+                Logger::warning('Plugin on path "'.$file->getPathname().'" hasn\'t set class or specified class not exists, skipping...');
+                continue;
+            }
+
+            if(!is_subclass_of((string)$manifest->class, 'XPBot\\Bot\\Plugin')) {
+                Logger::warning('Plugin on path "'.$file->getPathname().'" is not a valid plugin, skipping...');
+                continue;
+            }
+
+            $plugin = (string)$manifest->class;
+            $plugin = new $plugin($this, $manifest);
+            $plugin->load();
+            $this->_plugins[(string)$manifest->name] = $plugin;
         }
     }
 

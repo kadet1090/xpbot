@@ -25,7 +25,7 @@ class AdminPlugin extends Plugin {
     public function load()
     {
         $this->_bot->findCommands('Plugins/Admin/Commands/', 'admin', 'XPBot\\Plugins\\Admin\\Commands');
-        $this->_bot->onJoin->add(new Delegate(array($this, '_auto')));
+        $this->_bot->onJoin->add(array($this, '_auto'));
     }
 
     public function unload()

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<plugin>
+    <name>Base</name>
+    <version>1.0.0</version>
+    <author>Kadet</author>
+    <website>http://google.com/</website>
+    <description>Basic features of bot</description>
+
+    <class>XPBot\Plugins\Base\BasePlugin</class>
+    <file>BasePlugin.php</file>
+</plugin>

@@ -35,8 +35,6 @@ namespace XPBot\System\Utils {
 
                 self::$_phrases[$lang][$namespace . ':' . $name] = multilineTrim((string)$phrase);
             }
-
-            var_dump(self::$_phrases);
         }
 
         public static function loadDir($dir)

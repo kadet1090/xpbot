@@ -8,7 +8,7 @@ class User
 {
     /**
      * Users nick on room.
-     * MJC ONLY
+     * MUC ONLY
      * @var string
      */
     public $nick;
@@ -75,8 +75,8 @@ class User
     /**
      * Makes user object from presence packet.
      *
-     * @param Presence $presence Presence element.
-     * @param XmppClient        $client   XmppClient instance.
+     * @param Presence   $presence Presence element.
+     * @param XmppClient $client   XmppClient instance.
      *
      * @throws \InvalidArgumentException
      *
@@ -91,8 +91,6 @@ class User
         $user->jid         = $presence->jid;
         $user->show        = $presence->show;
         $user->status      = $presence->status;
-
-        echo "CHUJ".PHP_EOL.PHP_EOL.PHP_EOL;
 
         return $user;
     }

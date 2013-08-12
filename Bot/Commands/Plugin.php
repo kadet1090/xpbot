@@ -18,8 +18,15 @@ class Plugin extends Command
 {
     const PERMISSION = 9;
 
-    public function execute($args)
-    {
+    public function execute($args) {
+        if(!isset($args[1]))
+            return $this->all($args);
+        else
+            return $this->{$args[1]}($args);
+    }
+
+    public function all($args) {
+        $plugins = $this->_bot->getPlugins();
 
     }
 }

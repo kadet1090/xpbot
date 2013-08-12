@@ -22,7 +22,7 @@ class XmppClient extends XmppSocket
 {
     # events
     /**
-     * Event fired when client is authed (or not).
+     * Event fired when authorization process ends.
      * Takes one argument of type SimpleXMLElement.
      * @var \XPBot\System\Utils\Event
      */
@@ -342,7 +342,6 @@ class XmppClient extends XmppSocket
 
         if ($packet->type != 'unavailable') {
             $user = $this->rooms[$channelJid]->addUser(User::fromPresence($packet, $this));
-            var_dump($this->rooms[$channelJid]->users);
             if(
                 $user->jid->bare() == $this->jid->bare() ||
                 $this->rooms[$channelJid]->nick == str_replace($channelJid.'/', '', $packet->from->__toString())

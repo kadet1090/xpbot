@@ -15,11 +15,19 @@ abstract class Plugin implements PluginInterface {
     protected $_loaded;
 
     /**
-     * @param Bot $bot Bot instance.
+     * Plugins manifest.
+     * @var \SimpleXMLElement
      */
-    public function __construct(Bot $bot)
+    protected $_manifest;
+
+    /**
+     * @param Bot               $bot      Bot instance.
+     * @param \SimpleXMLElement $manifest Plugins manifest file.
+     */
+    public function __construct(Bot $bot, $manifest)
     {
         $this->_bot = $bot;
+        $this->_manifest = $manifest;
     }
 
     /**
