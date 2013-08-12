@@ -25,7 +25,7 @@ class Logger
     public static function debug($message)
     {
         if (DEBUG_MODE >= 1)
-            echo '[' . date('H:i:s') . ' d] ' . $message . PHP_EOL;
+            echo "\033[1;30m[" . date('H:i:s') . " ?] \033[0m" . $message . PHP_EOL;
 
         self::_addToLog('Debug.log', $message);
     }
@@ -36,7 +36,7 @@ class Logger
      */
     public static function warning($message)
     {
-        echo '[' . date('H:i:s') . ' !] ' . $message . PHP_EOL;
+        echo "\033[1;33m[" . date('H:i:s') . " !] \033[0m" . $message . PHP_EOL;
         self::_addToLog('Bot.log', $message);
     }
 
@@ -46,7 +46,7 @@ class Logger
      */
     public static function info($message)
     {
-        echo '[' . date('H:i:s') . ' i] ' . $message . PHP_EOL;
+        echo "\033[1;32m[" . date('H:i:s') . " i] \033[0m" . $message . PHP_EOL;
         self::_addToLog('Bot.log', $message);
     }
 
@@ -56,7 +56,7 @@ class Logger
      */
     public static function error($message)
     {
-        echo '[' . date('H:i:s') . ' x] ' . $message . PHP_EOL;
+        echo "\033[1;31m[" . date('H:i:s') . " x] \033[0m" . $message . PHP_EOL;
         self::_addToLog('Bot.log', $message);
     }
 

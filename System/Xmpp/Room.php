@@ -153,9 +153,9 @@ class Room
      * Gets user list with who has specified affiliation.
      *
      * @param string   $affiliation Type of affiliation. Must be one of: owner (channels god), admin, outcast (aka ban), member (vip, or something), none (standard)
-     * @param Delegate $delegate    Delegate to be executed after list came.
+     * @param callable $delegate    Delegate to be executed after list came.
      */
-    public function affiliationList($affiliation, Delegate $delegate)
+    public function affiliationList($affiliation, callable $delegate)
     {
         $this->_client->affiliationList($this->jid, $affiliation, $delegate);
     }

@@ -43,7 +43,7 @@ class Affiliate extends Command
 
     private function _list($args) {
         try {
-            $this->_author->room->affiliationList($args[1], function ($packet use ($args) {
+            $this->_author->room->affiliationList($args[1], function ($packet) use ($args) {
                 $users = array();
                 foreach($packet->query->item as $user)
                     $users[] = $args['j'] ? $user['jid'] : strstr($user['jid'], '@', true).(!empty($user->reason) && $args['r'] ? " - {$user->reason}" : '');
@@ -51,7 +51,7 @@ class Affiliate extends Command
                 $args['p'] ?
                     $this->_author->room->message(implode(", \n", $users)) :
                     $this->_author->privateMessage(implode(", \n", $users));
-            }));
+            });
         } catch (\InvalidArgumentException $exception) {
             if($exception->getMessage() == 'affiliation')
                 throw new commandException('Wrong affiliation.', __('errWrongAffiliation', $this->_lang));
