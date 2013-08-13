@@ -33,8 +33,15 @@ class Wikipedia extends Command
         $content = json_decode(curl_exec($ch));
         $text = $content->parse->text->{'*'};
 
-        preg_match('/<p>(.*?)<\/p>/si', $text, $matches);
-        $paragraph = strip_tags($matches[1]);
+        preg_match_all('/<p>(.*?)<\/p>/si', $text, $matches);
+        $nop = isset($args['p']) ?
+            $args['p'] :
+            $this->_bot->getFromConfig('wikiNoParagraphs', 'internet', 1);
+
+        $paragraph = '';
+        for($i = 0; $i < min($nop, count($matches[1])); $i++)
+            $paragraph .= $matches[1][$i]."\n";
+        $paragraph = strip_tags(trim($paragraph));
         $paragraph = preg_replace('/\[[0-9]+\]/s', '', $paragraph);
 
         return $paragraph;

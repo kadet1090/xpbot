@@ -3,7 +3,6 @@
     <name>Base</name>
     <version>1.0.0</version>
     <author>Kadet</author>
-    <website>http://google.com/</website>
     <description>Basic features of bot</description>
 
     <class>XPBot\Plugins\Base\BasePlugin</class>

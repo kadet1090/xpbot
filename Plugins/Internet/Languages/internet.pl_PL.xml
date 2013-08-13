@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phrases lang="pl_PL">
+    <phrase id="shortHelp" ns="XPBot\Plugins\Internet\Commands\Weather">Informacje o pogodzie</phrase>
+    <phrase id="help" ns="XPBot\Plugins\Internet\Commands\Weather">
+        Pobiera i wyświetla informacje o pogodzie.
+        Informacje pochodzą z serwisu http://worldweatheronline.com/
+
+        {%P}{%command} Adres
+    </phrase>
+    <phrase id="weather" ns="XPBot\Plugins\Internet\Commands\Weather">
+        Pogoda w {%city}:
+        {%temp}°C - {%desc}, zachmurzenie: {%cloudcover}%, opady: {%precipitation}
+        Widoczność: {%visibility}km, ciśnienie: {%pressure}hPa, wilgotność: {%humidity}%
+        Wiatr: {%windspeed}km/h {%winddir16} ({%winddirdeg}°)
+    </phrase>
+
+    <phrase id="shortHelp" ns="XPBot\Plugins\Internet\Commands\Google">Szuka podanej frazy za pomocą Google.</phrase>
+    <phrase id="help" ns="XPBot\Plugins\Internet\Commands\Google">
+        Używa wyszukiwarki Google™ do przeszukania zasobów internetu.
+        Uwaga, ze względu na personalizację wyszukiwania, wyniki w Twojej przeglądarce mogą się nieznacznie różnić!
+
+        {%P}{%command} Fraza
+    </phrase>
+
+    <phrase id="shortHelp" ns="XPBot\Plugins\Internet\Commands\Wikipedia">Wyświetla artykuł z Wikipedii na dany temat</phrase>
+    <phrase id="help" ns="XPBot\Plugins\Internet\Commands\Wikipedia">
+        Odpytuje Wikipedię na podany temat i wypisuje podaną ilość akapitów.
+
+        {%P}{%command} Fraza [-l język] [-p liczba akapitów]
+
+        Konfiguracja:
+            internet:wikipediaLang "en"
+            internet:wikipediaNoParagraphs 1
+    </phrase>
+
+    <phrase id="shortHelp" ns="XPBot\Plugins\Internet\Commands\Rss">Odczytuje kanał RSS</phrase>
+    <phrase id="help" ns="XPBot\Plugins\Internet\Commands\Rss">
+        Pobiera i odczytuje podaną ilość linków z kanału rss
+
+        {%P}{%command} "link do kanału"
+    </phrase>
+
+    <phrase id="shortHelp" ns="XPBot\Plugins\Internet\Commands\Translate">Tłumaczy podaną frazę</phrase>
+    <phrase id="help" ns="XPBot\Plugins\Internet\Commands\Translate">
+        Tłumaczy podany tekst za pomocą Microsoft Translatora.
+
+        {%P}{%command} "tekst do przetłumaczenia" [-t język docelowy (domyślnie język pokoju/rozmowy)] [-f język źródłowy (domyślnie automatycznie]
+
+        Konfiguracja:
+        internet:translatorAppId  Id aplikacji zarejestrowanej w serwisie Microsoftu, domyślnie AppId XPBota
+        internet:translatorSecret Sekret aplikacji zarejestrowanej w serwisie Microsoftu, domyślnie Secret XPBota.
+    </phrase>
+</phrases>

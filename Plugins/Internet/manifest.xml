@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<plugin>
+    <name>Internet</name>
+    <version>1.0.0</version>
+    <author>Kadet</author>
+    <description>Module with tools related to internet (like searching).</description>
+
+    <class>XPBot\Plugins\Internet\InternetPlugin</class>
+    <file>InternetPlugin.php</file>
+</plugin>

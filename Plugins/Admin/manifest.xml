@@ -3,7 +3,6 @@
     <name>Admin</name>
     <version>1.0.0</version>
     <author>Kadet</author>
-    <website>http://google.com/</website>
     <description>Features useful for MUC administrators.</description>
 
     <class>XPBot\Plugins\Admin\AdminPlugin</class>

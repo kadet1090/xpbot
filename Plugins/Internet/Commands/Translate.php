@@ -25,7 +25,7 @@ class Translate extends Command
 
         $to = isset($args['t']) ?
             $args['t'] :
-            $this->_bot->getFromConfig('translateLang', 'internet', $this->_lang);
+            $this->_bot->getFromConfig('translateLang', 'internet', strstr($this->_lang, '_', true));
 
         return InternetPlugin::$translator->translate($args[1], $to, $args['f']);
     }
