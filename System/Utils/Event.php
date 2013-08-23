@@ -24,6 +24,7 @@ class Event
     }
 
     /**
+     * Adds callback to event queue.
      * @param callable $delegate Delegate to run when event is fired.
      *
      * @throws \InvalidArgumentException
@@ -31,6 +32,18 @@ class Event
     public function add(callable $delegate)
     {
         $this->_delegates[] = $delegate;
+    }
+
+    /**
+     * Removes callback from event queue.
+     * @param callable $delegate Delegate to remove from event queue.
+     *
+     * @throws \InvalidArgumentException
+     */
+    public function remove(callable $delegate)
+    {
+        if(in_array($delegate, $this->_delegates))
+            unset($this->_delegates[array_search($delegate, $this->_delegates)]);
     }
 
     /**

@@ -19,16 +19,6 @@
         {%os}
     </phrase>
 
-    <phrase id="shortHelp" ns="XPBot\Plugins\Base\Commands\Subject">Zarządza tematem</phrase>
-    <phrase id="help" ns="XPBot\Plugins\Base\Commands\Subject">
-        Zarządza tematem pokoju, umożliwiając jego wyświetlenie i zmianę.
-
-        {%P}{%command} [-a|-p] [temat]
-
-        -a człon - dodaje nowy człon na końcu tematu, po |,
-        -p człon - dodaje nowy człon na początku tematu, separując od aktualnego tematu poprzez znak |
-    </phrase>
-
     <phrase id="shortHelp" ns="XPBot\Plugins\Base\Commands\Clear">Czyści log pokoju</phrase>
     <phrase id="help" ns="XPBot\Plugins\Base\Commands\Clear">
         Czyści log pokoju aby dołączajacy użytkownicy nie widzieli poprzednich wiadomości.

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phrases lang="en_US">
+    <phrase id="shortHelp" ns="XPBot\Plugins\Internet\Commands\Weather">Weather information</phrase>
+    <phrase id="help" ns="XPBot\Plugins\Internet\Commands\Weather">
+        Gets and display weather information.
+        Data comes from http://worldweatheronline.com/
+
+        {%P}{%command} address
+    </phrase>
+    <phrase id="weather" ns="XPBot\Plugins\Internet\Commands\Weather">
+        Weather in {%city}:
+        {%temp}°C - {%desc}, cloudcover: {%cloudcover}%, precipitation: {%precipitation}
+        Visibility: {%visibility}km, pressure: {%pressure}hPa, humidity: {%humidity}%
+        Speed of wind: {%windspeed}km/h {%winddir16} ({%winddirdeg}°)
+    </phrase>
+
+    <phrase id="shortHelp" ns="XPBot\Plugins\Internet\Commands\Google">Searches the web using google.</phrase>
+    <phrase id="help" ns="XPBot\Plugins\Internet\Commands\Google">
+        Uses Google™ to find given phrase.
+        Notice that search results in your browser could be slightly different due to search personalisation.
+
+        {%P}{%command} phrase
+    </phrase>
+
+    <phrase id="shortHelp" ns="XPBot\Plugins\Internet\Commands\Wikipedia">Displays first paragraphs of Wikipedia page</phrase>
+    <phrase id="help" ns="XPBot\Plugins\Internet\Commands\Wikipedia">
+        Displays first few paragraphs of Wikipedia page.
+
+        {%P}{%command} phrase [-l language] [-p number of paragraphs]
+
+        Configuration variables:
+            internet:wikipediaLang "en"
+            internet:wikipediaNoParagraphs 1
+    </phrase>
+
+    <phrase id="shortHelp" ns="XPBot\Plugins\Internet\Commands\Rss">Reads RSS channel</phrase>
+    <phrase id="help" ns="XPBot\Plugins\Internet\Commands\Rss">
+        Gets and displays few links from channel.
+
+        {%P}{%command} "link do kanału"
+    </phrase>
+
+    <phrase id="shortHelp" ns="XPBot\Plugins\Internet\Commands\Translate">Translates text.</phrase>
+    <phrase id="help" ns="XPBot\Plugins\Internet\Commands\Translate">
+        Translates given text using Microsoft Translator
+
+        {%P}{%command} "text to translate" [-t target language, room language as default] [-f source language (default auto)]
+
+        Configuration variables:
+        internet:translatorAppId  Application Id registered in Microsoft Translate Service.
+        internet:translatorSecret Microsoft Translate Service Application secret.
+    </phrase>
+</phrases>

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phrases lang="en_US">
+    <phrase id="shortHelp" ns="XPBot\Plugins\Internet\Commands\Weather">Weather information</phrase>
+    <phrase id="help" ns="XPBot\Plugins\Internet\Commands\Weather">
+        Gets and display weather information.
+        Data comes from http://worldweatheronline.com/
+
+        {%P}{%command} address
+    </phrase>
+
+    <phrase id="shortHelp" ns="XPBot\Plugins\Admin\Commands\Affiliate">Manages room affiliations</phrase>
+    <phrase id="help" ns="XPBot\Plugins\Admin\Commands\Affiliate">
+        Menages room affiliations.
+
+        {%P}{%command} affiliation - Displays all user with specified affiliation.
+        {%P}{%command} affiliation user [reason] - Sets user affiliation to specified one.
+
+        Available affiliations:
+        Owner - Rooms owner, you shouldn't grant it to anyone,
+        Admin - operator/administrator,
+        Member - Member of room,
+        None - Default affiliation,
+        Outcast - banned.
+    </phrase>
+
+    <phrase id="shortHelp" ns="XPBot\Plugins\Admin\Commands\Ban">(un)bans someone in room</phrase>
+    <phrase id="help" ns="XPBot\Plugins\Admin\Commands\Ban">
+        Gives or revokes ban. Result is same as using affiliation outcast.
+
+        {%P}{%command} user [reason]
+
+        You can use -u flag to unban user.
+        {%P}{%command} jid -u
+    </phrase>
+
+    <phrase id="shortHelp" ns="XPBot\Plugins\Admin\Commands\Kick">Kicks out user</phrase>
+    <phrase id="help" ns="XPBot\Plugins\Admin\Commands\Kick">
+        Kicks out specified user. Result is same as using role none.
+
+        {%P}{%command} user [reason]
+    </phrase>
+
+    <phrase id="shortHelp" ns="XPBot\Plugins\Admin\Commands\Kick">Sets users role</phrase>
+    <phrase id="help" ns="XPBot\Plugins\Admin\Commands\Kick">
+        Sets role of specified user.
+
+        {%P}{%command} user role [reason]
+
+        If you want to auto role someone just add -a flag.
+        {%P}{%command} user role [reason] -a
+
+        Available roles:
+        Moderator - Rooms moderator,
+        Participant - Room user with gained voice,
+        Visitor - Room user without voice,
+        None - Kicked out user.
+    </phrase>
+</phrases>

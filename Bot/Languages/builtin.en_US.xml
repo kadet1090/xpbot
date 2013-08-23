@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phrases lang="en_US">
+    <phrase id="shortHelp">This command is undocumented</phrase>
+    <phrase id="help">This command is undocumented</phrase>
+    <phrase id="commandAmbiguous">{%command} is ambiguous choose one of: </phrase>
+    <phrase id="errCommandNotExists">Specified command does not exists.</phrase>
+    <phrase id="errModuleNotExists">Specified module not exist, maybe you forgot to install it?</phrase>
+    <phrase id="errArgumentInvalid">Argument is not valid.</phrase>
+    <phrase id="errTooFewArguments">Too few arguments for this command.</phrase>
+    <phrase id="errInvalidAction">Invalid action.</phrase>
+    <phrase id="errUserNotPresent">Given user is currently not available in channel.</phrase>
+
+    <phrase id="shortHelp" ns="XPBot\Bot\Commands\Help">Displays bot help.</phrase>
+    <phrase id="help" ns="XPBot\Bot\Commands\Help">
+        Displays bots help and command list.
+
+        {%P}{%command} [command or module name]
+
+        You can also use these switches:
+
+        -m - Displays only available modules,
+        -m module - Displays commands from specified module,
+        -a - Displays all commands, even if we have insufficient permissions to run it,
+        -l - Additionally prints required access level.
+
+        -r regex - Matches command by given regex.
+    </phrase>
+    <phrase id="commands" ns="XPBot\Bot\Commands\Help">
+        You can run commands by typing {%P}command or {%P}module-command (if command is ambiguous).
+        If you don't know how to use it, just use {%P}help command.
+
+        {%commands}
+    </phrase>
+    <phrase id="modules" ns="XPBot\Bot\Commands\Help">Available modules: {%modules}</phrase>
+
+    <phrase id="shortHelp" ns="XPBot\Bot\Commands\Alias">Manages command aliases</phrase>
+    <phrase id="help" ns="XPBot\Bot\Commands\Alias">
+        Manages command aliases in bot.
+
+        {%P}{%command} add alias command - adds new alias,
+        {%P}{%command} remove alias - removes alias,
+        {%P}{%command} command komenda - displays all aliases of specified command,
+        {%P}{%command} - displays all aliases.
+    </phrase>
+    <phrase id="errAliasNotExists" ns="XPBot\Bot\Commands\Aliases">Specified alias not exist.</phrase>
+
+    <phrase id="shortHelp" ns="XPBot\Bot\Commands\Quit">Turns off bot.</phrase>
+    <phrase id="help" ns="XPBot\Bot\Commands\Quit">
+        Turns off bot.
+
+        {%P}{%command} [log message]
+    </phrase>
+
+    <phrase id="shortHelp" ns="XPBot\Bot\Commands\Permission">Menages user permissions in bot.</phrase>
+    <phrase id="help" ns="XPBot\Bot\Commands\Permission">
+        Menages user permissions in bot.
+
+        {%P}{%command} - Displays all permissions.
+        {%P}{%command} "nick/jid" - Displays access level of specified user.
+        {%P}{%command} "nick/jid" level - Sets users access level.
+
+        As a access level you can use every natural number from 0 to 10. You SHOULDN'T give ANYONE max access level (10).
+    </phrase>
+
+    <phrase id="shortHelp" ns="XPBot\Bot\Commands\About">Displays information about bot.</phrase>
+    <phrase id="help" ns="XPBot\Bot\Commands\About">
+        Displays bot credits.
+
+        {%P}{%command}
+    </phrase>
+    <phrase id="about">
+        <!-- DO NOT REMOVE THESE CREDITS OR I WILL BURN YOUR HOUSE, WITH LEMONS! -->
+        Xmpp Php BOT {%version}
+        Bot created by Kadet in PHP,
+        Written using amazing IDE - PhpStorm,
+        On less amazing Windows.
+
+        Contact with author:
+        jabber: kadet1090@aqq.eu (First you should authorize)
+        gg:     12881099
+        e-mail: kadet1090@gmail.com
+    </phrase>
+</phrases>

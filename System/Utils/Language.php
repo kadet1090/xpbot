@@ -43,7 +43,7 @@ namespace XPBot\System\Utils {
 
             $iterator = new \RecursiveDirectoryIterator(
                 $dir,
-                \RecursiveDirectoryIterator::SKIP_DOTS || \RecursiveDirectoryIterator::UNIX_PATHS
+                \RecursiveDirectoryIterator::SKIP_DOTS | \RecursiveDirectoryIterator::UNIX_PATHS
             );
 
             foreach ($iterator as $file) {

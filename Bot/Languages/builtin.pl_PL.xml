@@ -8,6 +8,7 @@
     <phrase id="errArgumentInvalid">Podany argument nie jest prawidłowy.</phrase>
     <phrase id="errTooFewArguments">Podano za mało argumentów.</phrase>
     <phrase id="errInvalidAction">Nieprawidłowa akcja.</phrase>
+    <phrase id="errUserNotPresent">Użytkownik jest aktualnie niedostępny.</phrase>
 
     <phrase id="shortHelp" ns="XPBot\Bot\Commands\Help">Wyświetla pomoc bota</phrase>
     <phrase id="help" ns="XPBot\Bot\Commands\Help">

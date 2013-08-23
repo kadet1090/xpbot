@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phrases lang="pl_PL">
+    <phrase id="shortHelp" ns="XPBot\Plugins\Admin\Commands\Affiliate">Zarządza przynależnościami</phrase>
+    <phrase id="help" ns="XPBot\Plugins\Admin\Commands\Affiliate">
+        Zarządza przynależnościami pokoju.
+
+        {%P}{%command} przynależność - Wypisuje wszystkich użytkowników z podaną przynależnością.
+        {%P}{%command} przynależność użytkownik [powód] - Ustala przynależność użytkownika.
+
+        Dostępne przynależności:
+        Owner - Właściciel, nie powinien być przydielony NIKOMU,
+        Admin - operator/administrator,
+        Member - uczestnik,
+        None - domyślna przynależność,
+        Outcast - zbanowany.
+    </phrase>
+
+    <phrase id="shortHelp" ns="XPBot\Plugins\Admin\Commands\Ban">(od)banuje kogoś</phrase>
+    <phrase id="help" ns="XPBot\Plugins\Admin\Commands\Ban">
+        Banuje lub odbanowuje użytkownika na pokoju.
+
+        {%P}{%command} użytkownik [powód]
+
+        Możesz użyć flagi -u aby kogoś odbanować
+        {%P}{%command} jid -u
+    </phrase>
+
+    <phrase id="shortHelp" ns="XPBot\Plugins\Admin\Commands\Kick">Wyrzuca użytkownika</phrase>
+    <phrase id="help" ns="XPBot\Plugins\Admin\Commands\Kick">
+        Wyrzuca użytkownika z pokoju.
+
+        {%P}{%command} użytkownik [powód]
+    </phrase>
+
+    <phrase id="shortHelp" ns="XPBot\Plugins\Admin\Commands\Role">Zmienia rolę użytkownika w pokoju</phrase>
+    <phrase id="help" ns="XPBot\Plugins\Admin\Commands\Role">
+        Zmienia rolę użytkownika w pokoju.
+
+        {%P}{%command} użytkownik rola [powód]
+
+        Jeżeli chcesz aby użytkownik miał automatycznie przydzieloną rolę po prostu dodaj flagę -a.
+        {%P}{%command} użytkownik rola -a
+
+        Dostępne role:
+        Moderator - moderator pokoju,
+        Participant - użytkownik mający głos,
+        Visitor - użytkownik bez głosu,
+        None - wyrzucony użytkownik.
+    </phrase>
+</phrases>
