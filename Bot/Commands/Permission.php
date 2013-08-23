@@ -20,6 +20,12 @@ class Permission extends Command
 
     public function execute($args)
     {
+        if(!Jid::isJid($args[1]) && !isset($this->_author->room->users[$args[1]]))
+            throw new commandException('This user is not present on that channel.', __('errUserNotPresent', $this->_lang));
+
+        if(isset($args[1]))
+            $args[1] = Jid::isJid($args[1]) ? $args[1] : $this->_author->room->users[$args[1]]->jid->bare();
+
         if(!isset($args[1]))
             return $this->all();
         elseif(!isset($args[2]))
@@ -50,6 +56,9 @@ class Permission extends Command
     public function set($jid, $permission = -1) {
         $users = $this->_bot->users->xpath("//user[@jid='{$jid}']");
         $user = $users ? $users[0] : $this->_bot->users->addChild('user');
+
+        if(!isset($user["jid"])) $user->addAttribute('jid', $jid);
+
         if($permission != -1)
             $user['permission'] = $permission;
         else

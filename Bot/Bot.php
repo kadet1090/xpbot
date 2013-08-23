@@ -98,7 +98,7 @@ class Bot extends XmppClient
         $this->registerCommand('XPBot\\Bot\\Commands\\Help', 'builtin', 'help');
         $this->registerCommand('XPBot\\Bot\\Commands\\Permission', 'builtin', 'permission');
         $this->registerCommand('XPBot\\Bot\\Commands\\Plugin', 'builtin', 'plugin');
-        $this->registerCommand('XPBot\\Bot\\Commands\\Close', 'builtin', 'close');
+        $this->registerCommand('XPBot\\Bot\\Commands\\Quit', 'builtin', 'close');
 
         Language::loadDir(dirname(__FILE__).'/Languages/');
 
@@ -161,8 +161,9 @@ class Bot extends XmppClient
      */
     public function _parseCommand(Message $message)
     {
-        if(isset($message->xml->delay['stamp'])) return; // message is from history, forgot about it.
         if(!$message->sender) return null;
+        if($message->sender->self == true) return null;
+        if(isset($message->sender->room) && $message->sender->room->subject === false) return; // from history
 
         $prompt = !empty($message->sender->room->configuration->prompt) ?
             $message->sender->room->configuration->prompt :
@@ -193,19 +194,20 @@ class Bot extends XmppClient
 
             // TODO: private commands support.
             if ($command) {
+                if(($message->type == "groupchat" && !$command::GROUPCHAT)
+                || ($message->type == "chat" && !$command::CHAT)) return;
                 $commandName = $command;
-                try {
 
+                try {
                     if (!$command::hasPermission($message->sender))
                         throw new CommandException(
                             'User has no permission to run this command.',
                             __('errNoPermission', 'pl_PL')
                         );
 
-                    $command = new $commandName($this, $message->sender, 'pl_PL', $message);
-
+                    $command = new $command($this, $message->sender, 'pl_PL', $message);
                     if ($result = $command->execute($params))
-                        $message->reply($result);
+                        $command::PRIVREPLY ? $message->sender->privateMessage($result) : $message->reply($result);
 
                 } catch (CommandException $exception) {
                     $message->reply($exception->getMessage());
@@ -463,12 +465,10 @@ class Bot extends XmppClient
     private function _loadPlugins() {
         $iterator = new \RecursiveDirectoryIterator(
             'Plugins/',
-            \RecursiveDirectoryIterator::SKIP_DOTS || \RecursiveDirectoryIterator::UNIX_PATHS
+            \RecursiveDirectoryIterator::SKIP_DOTS | \RecursiveDirectoryIterator::UNIX_PATHS
         );
 
         foreach ($iterator as $file) {
-            if(!$file->isDir()) continue;
-
             if(!file_exists($file->getPathname().'/manifest.xml')) {
                 Logger::warning('Plugin on path "'.$file->getPathname().'" hasn\'t manifest, skipping...');
                 continue;
@@ -495,6 +495,13 @@ class Bot extends XmppClient
             $plugin = new $plugin($this, $manifest);
             $plugin->load();
             $this->_plugins[(string)$manifest->name] = $plugin;
+        }
+    }
+
+    private function _loadPlugin($file) {
+        if(!file_exists($file->getPathname().'/manifest.xml')) {
+            Logger::warning('Plugin on path "'.$file->getPathname().'" hasn\'t manifest, skipping...');
+            return false;
         }
     }
 

@@ -367,8 +367,8 @@ class XmppClient extends XmppSocket
     {
         if ($packet->type != 'groupchat' || !isset($this->rooms[$packet->from->bare()])) return;
 
-        if (isset($packet->subject))
-            $this->rooms[$packet->from->bare()]->subject = $packet->subject;
+        if (isset($packet->xml->subject))
+            $this->rooms[$packet->from->bare()]->subject = $packet->xml->subject;
     }
 
     /**

@@ -16,6 +16,8 @@ use XPBot\System\Xmpp\Jid;
 
 class Google extends Command
 {
+    const GROUPCHAT = false;
+
     public function execute($args)
     {
         if(!isset($args[1]))

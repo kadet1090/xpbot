@@ -12,7 +12,7 @@ namespace XPBot\Bot\Commands;
 use XPBot\Bot\Command;
 use XPBot\System\Utils\Logger;
 
-class Close extends Command
+class Quit extends Command
 {
     const PERMISSION = 10;
 

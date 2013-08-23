@@ -67,6 +67,11 @@ abstract class Command
     const GROUPCHAT  = true;
 
     /**
+     * Set to true if reply should be sent on private channel.
+     */
+    const PRIVREPLY  = false;
+
+    /**
      * Jabber client.
      * @var \XPBot\System\Xmpp\XmppClient
      */
