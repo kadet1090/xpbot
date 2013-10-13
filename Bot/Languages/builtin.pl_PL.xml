@@ -4,6 +4,7 @@
     <phrase id="help">Ta komenda nie została udokumentowana</phrase>
     <phrase id="commandAmbiguous">Komenda {%command} nie jest jednoznaczna, wybierz jedną z poniższych:</phrase>
     <phrase id="errCommandNotExists">Nie ma takiej komendy.</phrase>
+    <phrase id="errNoPermission">Nie masz uprawnień.</phrase>
     <phrase id="errModuleNotExists">Moduł {%module} nie istnieje, może nie został zainstalowany?</phrase>
     <phrase id="errArgumentInvalid">Podany argument nie jest prawidłowy.</phrase>
     <phrase id="errTooFewArguments">Podano za mało argumentów.</phrase>
@@ -44,8 +45,8 @@
     </phrase>
     <phrase id="errAliasNotExists" ns="XPBot\Bot\Commands\Aliases">Taki alias nie istnieje.</phrase>
 
-    <phrase id="shortHelp" ns="XPBot\Bot\Commands\Close">Wyłącza bota</phrase>
-    <phrase id="help" ns="XPBot\Bot\Commands\Close">
+    <phrase id="shortHelp" ns="XPBot\Bot\Commands\Quit">Wyłącza bota</phrase>
+    <phrase id="help" ns="XPBot\Bot\Commands\Quit">
         Wyłącza bota.
 
         {%P}{%command} [wiadomość]
@@ -65,7 +66,7 @@
 
         Kontakt z autorem:
         jabber: kadet1090@aqq.eu (pamiętaj aby najpierw poprosić o autoryzację :)
-        gg:     12881099
+        gg: 12881099
         e-mail: kadet1090@gmail.com
     </phrase>
 </phrases>

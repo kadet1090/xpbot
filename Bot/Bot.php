@@ -1,7 +1,6 @@
 <?php
 namespace XPBot\Bot;
 
-use XPBot\System\Utils\Delegate;
 use XPBot\System\Utils\Ini;
 use XPBot\System\Utils\Language;
 use XPBot\System\Utils\Logger;
@@ -75,8 +74,13 @@ class Bot extends XmppClient
      */
     public function __construct($config = './Config/Config.xml')
     {
+        set_error_handler(array($this, '_errorHandler'));
+        register_shutdown_function(array($this, '_shutdownHandler'));
+        ini_set('display_errors', 0);
+        error_reporting(E_ERROR);
+
         $this->config = simplexml_load_file($config);
-        $this->users  = simplexml_load_file('./Config/Users.xml');
+        $this->users = simplexml_load_file('./Config/Users.xml');
         $this->aliases = new Ini('./Config/Aliases.ini', true);
 
         parent::__construct(
@@ -98,11 +102,11 @@ class Bot extends XmppClient
         $this->registerCommand('XPBot\\Bot\\Commands\\Help', 'builtin', 'help');
         $this->registerCommand('XPBot\\Bot\\Commands\\Permission', 'builtin', 'permission');
         $this->registerCommand('XPBot\\Bot\\Commands\\Plugin', 'builtin', 'plugin');
-        $this->registerCommand('XPBot\\Bot\\Commands\\Quit', 'builtin', 'close');
+        $this->registerCommand('XPBot\\Bot\\Commands\\Quit', 'builtin', 'quit');
 
-        Language::loadDir(dirname(__FILE__).'/Languages/');
+        Language::loadDir(dirname(__FILE__) . '/Languages/');
 
-        $this->addMacro('me'  , array('XPBot\\Bot\\Bot', 'getNick'));
+        $this->addMacro('me', array('XPBot\\Bot\\Bot', 'getNick'));
         $this->addMacro('date', array('XPBot\\Bot\\Bot', 'getDate'));
         $this->addMacro('time', array('XPBot\\Bot\\Bot', 'getTime'));
     }
@@ -128,7 +132,7 @@ class Bot extends XmppClient
     public function _joinRooms()
     {
         foreach ($this->config->channels->channel as $channel) {
-            $nick    = isset($channel['nick']) ? $channel->nick : $this->config->xmpp->nickname;
+            $nick = isset($channel['nick']) ? $channel->nick : $this->config->xmpp->nickname;
             $channel = new Jid($channel['name'], $channel['server']);
 
             $this->join($channel, $nick);
@@ -161,9 +165,9 @@ class Bot extends XmppClient
      */
     public function _parseCommand(Message $message)
     {
-        if(!$message->sender) return null;
-        if($message->sender->self == true) return null;
-        if(isset($message->sender->room) && $message->sender->room->subject === false) return; // from history
+        if (!$message->sender) return null;
+        if ($message->sender->self == true) return null;
+        if (isset($message->sender->room) && $message->sender->room->subject === false) return; // from history
 
         $prompt = !empty($message->sender->room->configuration->prompt) ?
             $message->sender->room->configuration->prompt :
@@ -172,19 +176,19 @@ class Bot extends XmppClient
         Language::setGlobalVar('P', $prompt);
         $content = $message->body;
 
-        foreach($this->_macros as $macro => $func)
-            $content = str_replace('!'.$macro, $func($message, $this), $message->body);
+        foreach ($this->_macros as $macro => $func)
+            $content = str_replace('!' . $macro, $func($message, $this), $message->body);
 
         if (substr($message->body, 0, strlen($prompt)) == $prompt) {
             $content = substr($content, strlen($prompt));
-            $params  = new Params($content);
+            $params = new Params($content);
 
             $command = $this->getCommand($params[0]);
 
             if ($command === false) return;
 
             if (is_array($command)) {
-                $str = __('commandAmbiguous', $this->_lang, 'default', array('command' => $params[0]));
+                $str = __('commandAmbiguous', 'pl_PL', 'default', array('command' => $params[0]));
                 foreach ($command as $package => $class) {
                     $str .= "\t$package-{$params[0]} - $class\n";
                 }
@@ -194,8 +198,10 @@ class Bot extends XmppClient
 
             // TODO: private commands support.
             if ($command) {
-                if(($message->type == "groupchat" && !$command::GROUPCHAT)
-                || ($message->type == "chat" && !$command::CHAT)) return;
+                if (
+                    ($message->type == "groupchat" && !$command::GROUPCHAT) ||
+                    ($message->type == "chat" && !$command::CHAT)
+                ) return;
                 $commandName = $command;
 
                 try {
@@ -234,7 +240,7 @@ class Bot extends XmppClient
         );
 
         foreach ($iterator as $file) {
-            if($file->isDir()) continue;
+            if ($file->isDir()) continue;
             $class = strstr($file->getFilename(), '.', true);
             $this->registerCommand($namespace . '\\' . $class, $package);
         }
@@ -254,13 +260,13 @@ class Bot extends XmppClient
      * Gets command class.
      *
      * @param string $name     Command name.
-     * @param bool   $aliasing Check aliases too?
+     * @param bool $aliasing Check aliases too?
      *
      * @return array|bool|string Command class list if name is ambiguous or class.
      */
     public function getCommand($name, $aliasing = true)
     {
-        if($aliasing && isset($this->aliases[$name]))
+        if ($aliasing && isset($this->aliases[$name]))
             $name = $this->aliases[$name];
 
         $name = explode('-', $name, 2);
@@ -269,10 +275,10 @@ class Bot extends XmppClient
                 return false;
 
             $search = $this->_commands[$name[0]];
-            $name   = $name[1];
+            $name = $name[1];
         } else {
             $search = $this->_commands;
-            $name   = $name[0];
+            $name = $name[0];
         }
 
         return arrayDeepSearch($search, $name);
@@ -285,7 +291,8 @@ class Bot extends XmppClient
      *
      * @return bool
      */
-    public function commandExists($command) {
+    public function commandExists($command)
+    {
         $commands = $this->getCommand($command, false);
         return ($commands && !is_array($commands));
     }
@@ -297,15 +304,16 @@ class Bot extends XmppClient
      *
      * @return bool|string Fully qualified command name.
      */
-    public function getFullyQualifiedCommand($command) {
-        if(strstr($command, '-')) return $command; // Command is already fully qualified command.
+    public function getFullyQualifiedCommand($command)
+    {
+        if (strstr($command, '-')) return $command; // Command is already fully qualified command.
 
         $iterator = new \RecursiveIteratorIterator(
             new \RecursiveArrayIterator($this->_commands), \RecursiveIteratorIterator::SELF_FIRST
         );
 
         $results = array();
-        $parent  = '';
+        $parent = '';
         foreach ($iterator as $key => $value) {
             if ($iterator->callHasChildren()) {
                 $parent = $key;
@@ -317,7 +325,7 @@ class Bot extends XmppClient
         }
 
         if (count($results) == 1)
-            return $parent.'-'.$command;
+            return $parent . '-' . $command;
 
         return false;
     }
@@ -329,7 +337,8 @@ class Bot extends XmppClient
      *
      * @return array Command aliases list.
      */
-    public function getCommandAliases($command) {
+    public function getCommandAliases($command)
+    {
         $command = $this->getFullyQualifiedCommand($command);
 
         return array_keys(array_filter($this->aliases->asArray(), function ($value) use ($command) {
@@ -338,15 +347,16 @@ class Bot extends XmppClient
     }
 
     /**
-     * @param string     $var       Variable name
-     * @param string     $namespace Variable namespace
+     * @param string $var       Variable name
+     * @param string $namespace Variable namespace
      * @param null|mixed $default   Value to return if variable doesn't exist.
      *
      * @return mixed
      */
-    public function getFromConfig($var, $namespace, $default = null) {
+    public function getFromConfig($var, $namespace, $default = null)
+    {
         $result = $this->config->xpath("//plugins/var[@name='$var' and @namespace='$namespace']");
-        if($result) return (string)$result[0];
+        if ($result) return (string)$result[0];
         else return $default;
     }
 
@@ -355,14 +365,15 @@ class Bot extends XmppClient
      *
      * @param string $var       Variable name
      * @param string $namespace Variable namespace
-     * @param mixed  $value     Variable new value
+     * @param mixed $value     Variable new value
      */
-    public function setInConfig($var, $namespace, $value) {
-        if(!isset($this->config->plugins)) $this->config->addChild('plugins');
+    public function setInConfig($var, $namespace, $value)
+    {
+        if (!isset($this->config->plugins)) $this->config->addChild('plugins');
 
         $result = $this->config->xpath("//plugins/var[@name='$var' and @namespace='$namespace']");
 
-        if($result) {
+        if ($result) {
             $result[0]->{0} = $value;
         } else {
             $result = $this->config->plugins->addChild('var', $value);
@@ -379,10 +390,11 @@ class Bot extends XmppClient
      * @param string $var       Variable name
      * @param string $namespace Variable namespace
      */
-    public function removeFromConfig($var, $namespace) {
+    public function removeFromConfig($var, $namespace)
+    {
         $result = $this->config->xpath("//plugins/var[@name='$var' and @namespace='$namespace']");
 
-        if($result) {
+        if ($result) {
             unset($result[0][0]);
             $this->config->asXML('./Config/Config.xml');
         }
@@ -391,18 +403,19 @@ class Bot extends XmppClient
     /**
      * Registers command in bot.
      *
-     * @param string      $class   Class name with namespace.
-     * @param string      $package Command package (eg builtin)
+     * @param string $class   Class name with namespace.
+     * @param string $package Command package (eg builtin)
      * @param string|null $command Command name, if null class name will be used.
      *
      * @throws \InvalidArgumentException
      */
-    public function registerCommand($class, $package, $command = null) {
-        if(!class_exists($class))
+    public function registerCommand($class, $package, $command = null)
+    {
+        if (!class_exists($class))
             throw new \InvalidArgumentException('class');
 
-        if(empty($command)) {
-            $chunks  = explode('\\', $class);
+        if (empty($command)) {
+            $chunks = explode('\\', $class);
             $command = end($chunks);
         }
 
@@ -415,9 +428,10 @@ class Bot extends XmppClient
      * @param string $package Command package (eg builtin)
      * @param string $command Command name, if null class name will be used.
      */
-    public function unregisterCommand($package, $command) {
+    public function unregisterCommand($package, $command)
+    {
         unset($this->_commands[$package][strtolower($command)]);
-        if(empty($this->_commands[$package]))
+        if (empty($this->_commands[$package]))
             unset($this->_commands[$package]);
     }
 
@@ -428,7 +442,8 @@ class Bot extends XmppClient
      *
      * @return int Permission according to given affiliation.
      */
-    private function getAffiliationPermission($affiliation) {
+    private function getAffiliationPermission($affiliation)
+    {
         switch ($affiliation) {
             case 'owner':
                 return 8;
@@ -454,40 +469,41 @@ class Bot extends XmppClient
         if ($users && isset($users[0]['permission']))
             $permission = (int)$users[0]['permission'];
 
-        foreach($this->rooms as $room)
-            foreach($room->users as $user)
-                if($user->jid->bare() == $jid->bare())
+        foreach ($this->rooms as $room)
+            foreach ($room->users as $user)
+                if ($user->jid->bare() == $jid->bare())
                     $user->permission = isset($permission) ?
                         $permission :
                         $this->getAffiliationPermission($user->affiliation);
     }
 
-    private function _loadPlugins() {
+    private function _loadPlugins()
+    {
         $iterator = new \RecursiveDirectoryIterator(
             'Plugins/',
             \RecursiveDirectoryIterator::SKIP_DOTS | \RecursiveDirectoryIterator::UNIX_PATHS
         );
 
         foreach ($iterator as $file) {
-            if(!file_exists($file->getPathname().'/manifest.xml')) {
-                Logger::warning('Plugin on path "'.$file->getPathname().'" hasn\'t manifest, skipping...');
+            if (!file_exists($file->getPathname() . '/manifest.xml')) {
+                Logger::warning('Plugin on path "' . $file->getPathname() . '" hasn\'t manifest, skipping...');
                 continue;
             }
 
-            $manifest = simplexml_load_file($file->getPathname().'/manifest.xml');
-            if(!isset($manifest->file)) {
-                Logger::warning('Plugin on path "'.$file->getPathname().'" hasn\'t set file, skipping...');
+            $manifest = simplexml_load_file($file->getPathname() . '/manifest.xml');
+            if (!isset($manifest->file)) {
+                Logger::warning('Plugin on path "' . $file->getPathname() . '" hasn\'t set file, skipping...');
                 continue;
             }
 
-            include $file->getPathname().'/'.$manifest->file;
-            if(!isset($manifest->class) || !class_exists($manifest->class)) {
-                Logger::warning('Plugin on path "'.$file->getPathname().'" hasn\'t set class or specified class not exists, skipping...');
+            include $file->getPathname() . '/' . $manifest->file;
+            if (!isset($manifest->class) || !class_exists($manifest->class)) {
+                Logger::warning('Plugin on path "' . $file->getPathname() . '" hasn\'t set class or specified class not exists, skipping...');
                 continue;
             }
 
-            if(!is_subclass_of((string)$manifest->class, 'XPBot\\Bot\\Plugin')) {
-                Logger::warning('Plugin on path "'.$file->getPathname().'" is not a valid plugin, skipping...');
+            if (!is_subclass_of((string)$manifest->class, 'XPBot\\Bot\\Plugin')) {
+                Logger::warning('Plugin on path "' . $file->getPathname() . '" is not a valid plugin, skipping...');
                 continue;
             }
 
@@ -498,24 +514,27 @@ class Bot extends XmppClient
         }
     }
 
-    private function _loadPlugin($file) {
-        if(!file_exists($file->getPathname().'/manifest.xml')) {
-            Logger::warning('Plugin on path "'.$file->getPathname().'" hasn\'t manifest, skipping...');
+    private function _loadPlugin($file)
+    {
+        if (!file_exists($file->getPathname() . '/manifest.xml')) {
+            Logger::warning('Plugin on path "' . $file->getPathname() . '" hasn\'t manifest, skipping...');
             return false;
         }
     }
 
-    public function getPlugins() {
+    public function getPlugins()
+    {
         return $this->_plugins;
     }
 
     /**
      * Adds new macro to bot.
      *
-     * @param string   $name     Macros name
+     * @param string $name     Macros name
      * @param callable $delegate Delegate to macros function.
      */
-    public function addMacro($name, callable $delegate) {
+    public function addMacro($name, callable $delegate)
+    {
         $this->_macros[$name] = $delegate;
     }
 
@@ -524,7 +543,8 @@ class Bot extends XmppClient
      *
      * @param string $name Macros name.
      */
-    public function removeMacro($name) {
+    public function removeMacro($name)
+    {
         unset($this->_macros[$name]);
     }
 
@@ -538,7 +558,7 @@ class Bot extends XmppClient
      */
     public static function getNick($packet, Bot $bot)
     {
-        if($packet->sender) return $packet->sender->nick;
+        if ($packet->sender) return $packet->sender->nick;
         return false;
     }
 
@@ -564,5 +584,56 @@ class Bot extends XmppClient
     public static function getTime($packet, Bot $bot)
     {
         return date('H:i:s');
+    }
+
+    public function _errorHandler($level, $message, $file = '', $line = 0)
+    {
+        $message = 'PHP: ' . $message . ' in ' . str_replace(getcwd(), '.', $file) . ' on line ' . $line;
+
+        switch ($level) {
+            case E_WARNING:
+                Logger::warning($message);
+                break;
+            case E_DEPRECATED:
+            case E_NOTICE:
+                Logger::debug($message);
+                break;
+            case E_ERROR:
+                Logger::error($message);
+                return false; // backtrace is corrupted.
+        }
+
+        $callstack = debug_backtrace();
+        $backtrace = [];
+
+        foreach ($callstack as $no => $call) {
+            $args = array();
+            foreach ($call['args'] as $argno => $arg) {
+                if (is_string($arg)) $args[$argno] = "'" . (strlen($arg) > 50 ? substr($arg, 0, 50) . '...' : $arg) . "'";
+                if (is_bool($arg)) $args[$argno] = $arg ? 'true' : 'false';
+                if (is_array($arg)) $args[$argno] = 'array';
+                if (is_object($arg)) $args[$argno] = get_class($arg);
+            }
+
+            $str = '#' . ($no + 1) . ' ';
+            if (isset($call['file']) && isset($call['line'])) $str .= $call['file'] . '@' . $call['line'] . ' ';
+            $str .= (!empty($call['class']) ? $call['class'] . $call['type'] : '') . $call['function'] . '(' . implode(', ', $args) . ')';
+            $backtrace[] = $str;
+        }
+
+        Logger::debug('Cor... Callstack dump: ' . PHP_EOL . implode(PHP_EOL, $backtrace));
+        return true;
+    }
+
+    public function _shutdownHandler()
+    {
+        $error = error_get_last();
+        if ($error['type'] = E_ERROR)
+            $this->_errorHandler(E_ERROR, $error['message'], $error['file'], $error['line']);
+    }
+
+    public function restart()
+    {
+
     }
 }

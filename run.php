@@ -1,5 +1,5 @@
 <?php
-if($index = array_search('-v', $argv))
+if ($index = array_search('-d', $argv))
     define('DEBUG_MODE', isset($argv[$index + 1]) ? (int)$argv[$index + 1] : 1);
 else
     define('DEBUG_MODE', 0);

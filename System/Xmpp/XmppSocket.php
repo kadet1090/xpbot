@@ -1,7 +1,7 @@
 <?php
-namespace XPBot\System\Network;
+namespace XPBot\System\Xmpp;
 
-use XPBot\System\Utils\Delegate;
+use XPBot\System\Network\BaseSocket;
 use XPBot\System\Utils\Event;
 use XPBot\System\Utils\Logger;
 use XPBot\System\Utils\Timer;
@@ -23,7 +23,7 @@ abstract class XmppSocket extends BaseSocket
     {
         parent::__construct($address, $port, $timeout);
 
-        $this->onPacket       = new Event();
+        $this->onPacket = new Event();
         $this->keepAliveTimer = new Timer(15, array($this, 'keepAliveTick'));
         $this->keepAliveTimer->stop(); // We don't want to run this before connection is finalized.
         $this->onPacket->add(array($this, '_onPacket'));
@@ -36,7 +36,7 @@ abstract class XmppSocket extends BaseSocket
             $content = stream_get_contents($this->_socket);
             $result .= $content;
         } while (!preg_match("/('\/|\"\/|iq|ge|ce|am|es|se|ss|ge|re|.'|.\")>$/", substr($result, -3)) && !empty($result));
-        if(!empty($result)) Logger::debug($result);
+        if (!empty($result)) Logger::debug($result);
         $this->_parse(trim($result));
     }
 
@@ -50,7 +50,7 @@ abstract class XmppSocket extends BaseSocket
             $xml = "<" . $packets[$i] . $packets[($i + 1)];
 
             if (strpos($xml, '<stream:stream') !== false) $xml .= '</stream:stream>';
-            $this->onPacket->run(@simplexml_load_string($xml));
+            $this->onPacket->run(simplexml_load_string(preg_replace('/(<\/?)([a-z]*?)\:/si', '$1', $xml)));
         }
     }
 
@@ -62,8 +62,8 @@ abstract class XmppSocket extends BaseSocket
     public function wait($type, $id, callable $delegate)
     {
         $this->_waiting[] = array(
-            'tag'      => $type,
-            'id'       => $id,
+            'tag' => $type,
+            'id' => $id,
             'delegate' => $delegate
         );
     }
@@ -74,11 +74,9 @@ abstract class XmppSocket extends BaseSocket
     public function _onPacket(\SimpleXMLElement $packet)
     {
         $name = $packet->getName();
-        $name = strpos($name, ':') !== false ? substr(strstr($name, ':'), 1) : $name; // > SimpleXML
-
-        if($name == 'features')
+        if ($name == 'features')
             $this->_features = $packet;
-        elseif($name == 'stream')
+        elseif ($name == 'stream')
             $this->_stream = $packet;
 
         foreach ($this->_waiting as &$wait) {

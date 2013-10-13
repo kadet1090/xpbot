@@ -10,9 +10,6 @@
 namespace XPBot\Plugins\Base\Commands;
 
 use XPBot\Bot\Command;
-use XPBot\Bot\CommandException;
-use XPBot\System\Utils\Delegate;
-use XPBot\System\Xmpp\Jid;
 
 class Users extends Command
 {
@@ -22,7 +19,10 @@ class Users extends Command
     {
         $pattern = (!empty($args[1]) ? $args[1] : $this->_bot->getFromConfig('defaultUserPattern', 'builtin', '%n - %a [%r] %s'));
         $users = array();
-        foreach($this->_author->room->users as $user) {
+
+        var_dump($this->_bot->users);
+
+        foreach ($this->_author->room->users as $user) {
             $replace = array(
                 '%n' => $user->nick,
                 '%c' => $user->room->jid->name,

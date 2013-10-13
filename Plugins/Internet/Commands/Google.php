@@ -11,16 +11,14 @@ namespace XPBot\Plugins\Internet\Commands;
 
 use XPBot\Bot\Command;
 use XPBot\Bot\CommandException;
-use XPBot\System\Utils\Delegate;
-use XPBot\System\Xmpp\Jid;
 
 class Google extends Command
 {
-    const GROUPCHAT = false;
+    const GROUPCHAT = true;
 
     public function execute($args)
     {
-        if(!isset($args[1]))
+        if (!isset($args[1]))
             throw new commandException('Too few arguments.', __('errTooFewArguments', $this->_lang));
 
         $args[1] = urlencode($args[1]);

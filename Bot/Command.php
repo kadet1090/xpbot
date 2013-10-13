@@ -3,6 +3,7 @@
 namespace XPBot\Bot;
 
 use XPBot\System\Utils\Params;
+use XPBot\System\Xmpp\Stanza\Message;
 use XPBot\System\Xmpp\User;
 use XPBot\System\Xmpp\XmppClient;
 
@@ -22,7 +23,7 @@ class CommandException extends \Exception
     /**
      * @param string $cmdMsg  Message that will be added to console and log, in english.
      * @param string $message Localized message that will be sent to client as response.
-     * @param int    $code    Exception code.
+     * @param int $code    Exception code.
      * @param CommandException|null $previous Previous exception.
      */
     public function __construct($cmdMsg, $message = '', $code = 0, $previous = null)
@@ -59,17 +60,17 @@ abstract class Command
     /**
      * Set to true if command can be launched on chat mode.
      */
-    const CHAT       = true;
+    const CHAT = true;
 
     /**
      * Set to true if command can be launched on chat mode.
      */
-    const GROUPCHAT  = true;
+    const GROUPCHAT = true;
 
     /**
      * Set to true if reply should be sent on private channel.
      */
-    const PRIVREPLY  = false;
+    const PRIVREPLY = false;
 
     /**
      * Jabber client.
@@ -79,7 +80,7 @@ abstract class Command
 
     /**
      * Packet of message that contains command
-     * @var \SimpleXMLElement
+     * @var \XPBot\System\Xmpp\Stanza\Message
      */
     protected $_packet;
 
@@ -102,18 +103,18 @@ abstract class Command
     protected $_type;
 
     /**
-     * @param Bot               $client Jabber client.
-     * @param User              $author User who executed this command.
-     * @param string            $lang   Commands language.
-     * @param \SimpleXMLElement $packet Commands packet.
+     * @param Bot $client Jabber client.
+     * @param User $author User who executed this command.
+     * @param string $lang   Commands language.
+     * @param Message $packet Commands packet.
      */
-    public function __construct(Bot $client, $author, $lang, $packet)
+    public function __construct(Bot $client, $author, $lang, Message $packet)
     {
-        $this->_bot    = $client;
+        $this->_bot = $client;
         $this->_packet = $packet;
-        $this->_lang   = $lang;
+        $this->_lang = $lang;
         $this->_author = $author;
-        $this->_type   = $packet->type;
+        $this->_type = $packet->type;
     }
 
     /**
