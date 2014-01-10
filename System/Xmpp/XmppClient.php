@@ -85,6 +85,8 @@ class XmppClient extends XmppSocket
      */
     public $onLeave;
 
+    public $onTsl;
+
     /**
      * Jabber account Jid
      * @var Jid
@@ -131,12 +133,14 @@ class XmppClient extends XmppSocket
         $this->onIq = new Event();
         $this->onJoin = new Event();
         $this->onLeave = new Event();
+        $this->onTls = new Event();
 
         $this->onAuth->add(array($this, '_onAuth'));
         $this->onStreamOpen->add(array($this, '_onStreamOpen'));
         $this->onReady->add(array($this, '_onReady'));
         $this->onPresence->add(array($this, '_onPresence'));
         $this->onMessage->add(array($this, '_onMessage'));
+        $this->onTls->add(array($this, '_onTls'));
     }
 
     /**
@@ -174,7 +178,22 @@ class XmppClient extends XmppSocket
      */
     public function _onStreamOpen()
     {
-        if (isset($this->_features->mechanisms)) $this->auth();
+        if (isset($this->_features->starttls)) {
+            $this->startTls();
+            return;
+        }
+
+        if (isset($this->_features->mechanisms)) {
+            $this->auth();
+            return;
+        }
+    }
+
+    private function startTls()
+    {
+        $xml = new XmlBranch('starttls');
+        $xml->addAttribute('xmlns', 'urn:ietf:params:xml:ns:xmpp-tls');
+        $this->write($xml);
     }
 
     /**
@@ -184,7 +203,6 @@ class XmppClient extends XmppSocket
      */
     private function auth()
     {
-
         $xml = new XmlBranch('auth');
         $xml->addAttribute('xmlns', 'urn:ietf:params:xml:ns:xmpp-sasl');
 
@@ -219,6 +237,26 @@ class XmppClient extends XmppSocket
             $this->_bind();
         } else
             throw new \RuntimeException('Authorization failed.');
+    }
+
+    /**
+     * Should be private, but... php sucks!
+     * DO NOT RUN IT, TRUST ME.
+     *
+     * @param Stanza $result
+     * @throws \RuntimeException
+     *
+     * @internal
+     */
+    public function _onTls($result)
+    {
+        if ($result->xml->getName() == 'proceed') {
+            stream_set_blocking($this->_socket, true);
+            stream_socket_enable_crypto($this->_socket, true, STREAM_CRYPTO_METHOD_TLS_CLIENT);
+            stream_set_blocking($this->_socket, false);
+            $this->startStream();
+        } else
+            throw new \RuntimeException('Tls negotiation failed.');
     }
 
     /**
@@ -319,7 +357,12 @@ class XmppClient extends XmppSocket
             # SASL
             case 'success':
             case 'failure':
-                $this->onAuth->run($stanza);
+            case 'proceed':
+                if (preg_match('/xmlns=("|\')urn:ietf:params:xml:ns:xmpp-sasl("|\')/si', $stanza->xml->asXML()))
+                    $this->onAuth->run($stanza);
+                elseif (preg_match('/xmlns=("|\')urn:ietf:params:xml:ns:xmpp-tls("|\')/si', $stanza->xml->asXML()))
+                    $this->onTls->run($stanza);
+
                 break;
         }
     }
