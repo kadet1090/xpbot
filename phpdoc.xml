@@ -5,7 +5,7 @@
     </parser>
     <transformer>
         <target>Documentation</target>
-		<template name="responsive"/>
+        <template name="clean"/>
     </transformer>
     <files>
         <directory>.</directory>

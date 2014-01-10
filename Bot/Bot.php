@@ -16,6 +16,8 @@ use XPBot\System\Xmpp\XmppClient;
 /**
  * Class Bot
  * @package XPBot\Bot
+ *
+ * @todo over 500 LoC, refactor
  */
 class Bot extends XmppClient
 {
@@ -103,6 +105,7 @@ class Bot extends XmppClient
         $this->registerCommand('XPBot\\Bot\\Commands\\Permission', 'builtin', 'permission');
         $this->registerCommand('XPBot\\Bot\\Commands\\Plugin', 'builtin', 'plugin');
         $this->registerCommand('XPBot\\Bot\\Commands\\Quit', 'builtin', 'quit');
+        $this->registerCommand('XPBot\\Bot\\Commands\\Quit', 'builtin', 'quit');
 
         Language::loadDir(dirname(__FILE__) . '/Languages/');
 
@@ -112,7 +115,7 @@ class Bot extends XmppClient
     }
 
     /**
-     * @ignore
+     * @ignore Because it should be private, but it is used in delegate.
      */
     public function _onJoin(Room $room, User $user, $broadcast)
     {
@@ -126,9 +129,6 @@ class Bot extends XmppClient
         Logger::debug($user->nick . ' joined to ' . $room->jid->name . ' with permission ' . $user->permission);
     }
 
-    /**
-     * @ignore
-     */
     public function _joinRooms()
     {
         foreach ($this->config->channels->channel as $channel) {
@@ -140,7 +140,7 @@ class Bot extends XmppClient
     }
 
     /**
-     * @ignore
+     * @ignore Because it should be private, but it is used in delegate.
      */
     public function _parseIq(Iq $query)
     {
@@ -161,7 +161,7 @@ class Bot extends XmppClient
     }
 
     /**
-     * @ignore
+     * @ignore Because it should be private, but it is used in delegate.
      */
     public function _parseCommand(Message $message)
     {
@@ -228,8 +228,8 @@ class Bot extends XmppClient
      *
      * @deprecated
      *
-     * @param string $dir       Dir to search.
-     * @param string $package   Commands package.
+     * @param string $dir Dir to search.
+     * @param string $package Commands package.
      * @param string $namespace Commands namespace.
      */
     public function findCommands($dir, $package, $namespace)
@@ -259,7 +259,7 @@ class Bot extends XmppClient
     /**
      * Gets command class.
      *
-     * @param string $name     Command name.
+     * @param string $name Command name.
      * @param bool $aliasing Check aliases too?
      *
      * @return array|bool|string Command class list if name is ambiguous or class.
@@ -347,9 +347,9 @@ class Bot extends XmppClient
     }
 
     /**
-     * @param string $var       Variable name
+     * @param string $var Variable name
      * @param string $namespace Variable namespace
-     * @param null|mixed $default   Value to return if variable doesn't exist.
+     * @param null|mixed $default Value to return if variable doesn't exist.
      *
      * @return mixed
      */
@@ -363,9 +363,9 @@ class Bot extends XmppClient
     /**
      * Sets variable in config to given value.
      *
-     * @param string $var       Variable name
+     * @param string $var Variable name
      * @param string $namespace Variable namespace
-     * @param mixed $value     Variable new value
+     * @param mixed $value Variable new value
      */
     public function setInConfig($var, $namespace, $value)
     {
@@ -387,7 +387,7 @@ class Bot extends XmppClient
     /**
      * Removes configuration value.
      *
-     * @param string $var       Variable name
+     * @param string $var Variable name
      * @param string $namespace Variable namespace
      */
     public function removeFromConfig($var, $namespace)
@@ -403,7 +403,7 @@ class Bot extends XmppClient
     /**
      * Registers command in bot.
      *
-     * @param string $class   Class name with namespace.
+     * @param string $class Class name with namespace.
      * @param string $package Command package (eg builtin)
      * @param string|null $command Command name, if null class name will be used.
      *
@@ -530,7 +530,7 @@ class Bot extends XmppClient
     /**
      * Adds new macro to bot.
      *
-     * @param string $name     Macros name
+     * @param string $name Macros name
      * @param callable $delegate Delegate to macros function.
      */
     public function addMacro($name, callable $delegate)

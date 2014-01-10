@@ -10,9 +10,6 @@
 namespace XPBot\Plugins\Base\Commands;
 
 use XPBot\Bot\Command;
-use XPBot\Bot\CommandException;
-use XPBot\System\Utils\Delegate;
-use XPBot\System\Xmpp\Jid;
 
 class Clear extends Command
 {
@@ -20,15 +17,16 @@ class Clear extends Command
 
     public function execute($args)
     {
-        $count   = min(isset($args[1]) ? parseNumber($args[1]) : $this->_bot->getFromConfig('defaultClearCount', 'builtin', 5), 10);
+        $count = min(isset($args[1]) ? parseNumber($args[1]) : $this->_bot->getFromConfig('defaultClearCount', 'builtin', 5), 10);
         $message = isset($args['m']) ? $args['m'] : $this->_bot->getFromConfig('defaultClearMessage', 'builtin', "\0");
 
-        for($i = 0; $i < $count; $i++) {
+        //todo: Timers
+        for ($i = 0; $i < $count; $i++) {
             $this->_author->room->message($message);
             usleep(500000);
         }
 
-        if(!$args['s'])
+        if (!$args['s'])
             return __('done', $this->_lang);
     }
 }

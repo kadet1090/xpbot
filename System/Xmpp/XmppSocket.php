@@ -70,6 +70,8 @@ abstract class XmppSocket extends BaseSocket
 
     /**
      * @param \SimpleXMLElement $packet
+     *
+     * @internal
      */
     public function _onPacket(\SimpleXMLElement $packet)
     {
@@ -89,6 +91,9 @@ abstract class XmppSocket extends BaseSocket
         }
     }
 
+    /**
+     * @internal
+     */
     public function keepAliveTick()
     {
     }

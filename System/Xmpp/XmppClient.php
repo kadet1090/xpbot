@@ -5,11 +5,9 @@ use XPBot\System\Sasl\SaslFactory;
 use XPBot\System\Utils\Event;
 use XPBot\System\Utils\Timer;
 use XPBot\System\Utils\XmlBranch;
-use XPBot\System\Xmpp\Jid;
 use XPBot\System\Xmpp\Stanza\Message;
 use XPBot\System\Xmpp\Stanza\Presence;
 use XPBot\System\Xmpp\Stanza\Stanza;
-use XPBot\System\Xmpp\XmppSocket;
 
 /**
  * XmppClient class provides basic XMPP/Jabber functionality.
@@ -19,7 +17,6 @@ use XPBot\System\Xmpp\XmppSocket;
  */
 class XmppClient extends XmppSocket
 {
-    # events
     /**
      * Event fired when authorization process ends.
      * Takes one argument of type SimpleXMLElement.
@@ -82,6 +79,7 @@ class XmppClient extends XmppSocket
     /**
      * Event fired when user leaves room.
      * Takes two arguments:
+     *
      * Room $room
      * User $user
      */
@@ -112,10 +110,10 @@ class XmppClient extends XmppSocket
     public $rooms = array();
 
     /**
-     * @param Jid $jid      Clients JID
+     * @param Jid $jid Clients JID
      * @param string $password Account Password
-     * @param int $port     Server port (default 5222)
-     * @param int $timeout  Clients timeout in seconds (default 30)
+     * @param int $port Server port (default 5222)
+     * @param int $timeout Clients timeout in seconds (default 30)
      */
     public function __construct(Jid $jid, $password, $port = 5222, $timeout = 30)
     {
@@ -145,7 +143,7 @@ class XmppClient extends XmppSocket
      * Should be private, but... php sucks!
      * DO NOT RUN IT, TRUST ME.
      *
-     * @ignore
+     * @internal
      */
     public function _onConnect()
     {
@@ -172,7 +170,7 @@ class XmppClient extends XmppSocket
      * Should be private, but... php sucks!
      * DO NOT RUN IT, TRUST ME.
      *
-     * @ignore
+     * @internal
      */
     public function _onStreamOpen()
     {
@@ -212,7 +210,7 @@ class XmppClient extends XmppSocket
      * @param Stanza $result
      * @throws \RuntimeException
      *
-     * @ignore
+     * @internal
      */
     public function _onAuth($result)
     {
@@ -226,7 +224,7 @@ class XmppClient extends XmppSocket
     /**
      * Binds resource.
      *
-     * @ignore
+     * @internal
      */
     private function _bind()
     {
@@ -249,7 +247,7 @@ class XmppClient extends XmppSocket
      * @param $packet
      * @throws \RuntimeException
      *
-     * @ignore
+     * @internal
      */
     public function _bindResult($packet)
     {
@@ -280,7 +278,7 @@ class XmppClient extends XmppSocket
      * Should be private, but... php sucks!
      * DO NOT RUN IT, TRUST ME.
      *
-     * @ignore
+     * @internal
      */
     public function keepAliveTick()
     {
@@ -300,7 +298,7 @@ class XmppClient extends XmppSocket
      *
      * @param \SimpleXMLElement $packet
      *
-     * @ignore
+     * @internal
      */
     public function _onPacket(\SimpleXMLElement $packet)
     {
@@ -332,7 +330,7 @@ class XmppClient extends XmppSocket
      *
      * @param Presence $packet
      *
-     * @ignore
+     * @internal
      */
     public function _onPresence(Presence $packet)
     {
@@ -362,7 +360,7 @@ class XmppClient extends XmppSocket
      *
      * @param Message $packet
      *
-     * @ignore
+     * @internal
      */
     public function _onMessage(Message $packet)
     {
@@ -418,9 +416,9 @@ class XmppClient extends XmppSocket
      *
      * You could use it to send message to groupchat, but it is highly not recommended.
      *
-     * @param Jid $jid     Receiver jid
+     * @param Jid $jid Receiver jid
      * @param string $message Message content
-     * @param string $type    Message type: char or groupchat.
+     * @param string $type Message type: char or groupchat.
      */
     public function message(Jid $jid, $message, $type = 'chat')
     {
@@ -435,7 +433,7 @@ class XmppClient extends XmppSocket
     /**
      * Changes client status on server.
      *
-     * @param string $show   New show status for client, one of these:
+     * @param string $show New show status for client, one of these:
      *                       chat, available, away, xa, dnd, unavailable.
      *                       (default available)
      * @param string $status Additional text status.
@@ -455,7 +453,7 @@ class XmppClient extends XmppSocket
     /**
      * Checks client version.
      *
-     * @param Jid $jid      Users jid.
+     * @param Jid $jid Users jid.
      * @param callable $delegate Delegate to be executed after proper packet came.
      *                           Delegate takes one argument (packet) of type SimpleXMLElement.
      */
@@ -476,7 +474,7 @@ class XmppClient extends XmppSocket
 
     /**
      * Pings user.
-     * @param Jid $jid      User jid.
+     * @param Jid $jid User jid.
      * @param callable $delegate Delegate to be executed after proper packet came.
      *                           Delegate takes one argument (packet) of type SimpleXMLElement.
      */
@@ -545,9 +543,9 @@ class XmppClient extends XmppSocket
     /**
      * Changes user role on room.
      *
-     * @param Jid $room   Jid of room.
-     * @param string $nick   Nick of user.
-     * @param string $role   New users role.
+     * @param Jid $room Jid of room.
+     * @param string $nick Nick of user.
+     * @param string $role New users role.
      *                       visitor, none, participant or moderator.
      * @param string $reason Reason of changing role. (default empty)
      *
@@ -579,11 +577,11 @@ class XmppClient extends XmppSocket
     /**
      * Changes user affiliation.
      *
-     * @param Jid $room        Jid of room.
-     * @param Jid $user        Users Jid.
+     * @param Jid $room Jid of room.
+     * @param Jid $user Users Jid.
      * @param string $affiliation New affiliation for user.
      *                            none, outcast, member, admin, owner
-     * @param string $reason      Reason of changing user affiliation.
+     * @param string $reason Reason of changing user affiliation.
      *
      * @internal Plugins should use Room::affiliation() instead of that.
      *
@@ -613,7 +611,7 @@ class XmppClient extends XmppSocket
     /**
      * Sets room (or conversation) subject.
      *
-     * @param Jid $jid     Jid to send subject msg.
+     * @param Jid $jid Jid to send subject msg.
      * @param string $subject New subject.
      *
      * @internal Plugins should use Room::subject() instead of that.
@@ -631,9 +629,9 @@ class XmppClient extends XmppSocket
     /**
      * Gets user affiliation list.
      *
-     * @param Jid $room        Jid of room to query.
+     * @param Jid $room Jid of room to query.
      * @param string $affiliation Affiliation type.
-     * @param callable $delegate    Delegate to run after proper packet came.
+     * @param callable $delegate Delegate to run after proper packet came.
      *                              Delegate takes one argument (packet) of type SimpleXMLElement.
      *
      * @internal Plugins should use Room::affiliationList() instead of that.
