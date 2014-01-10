@@ -3,22 +3,22 @@
  * Created by JetBrains PhpStorm.
  *
  * @author Kadet <kadet1090@gmail.com>
- * @package 
+ * @package
  * @license WTFPL
  */
 
 namespace XPBot\System\Sasl;
 
 
-class Plain implements MechanismInterface
+class Plain extends Mechanism
 {
     public function challenge($packet)
     {
         // Plain has no challenge
     }
 
-    public function get($jid, $password)
+    public function auth()
     {
-        return base64_encode("\0{$jid->name}\0$password");
+        return base64_encode("\0{$this->jid->name}\0{$this->password}");
     }
 }

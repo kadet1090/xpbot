@@ -1,6 +1,7 @@
 <?php
 namespace XPBot\System\Xmpp;
 
+use XPBot\System\Sasl\Mechanism;
 use XPBot\System\Sasl\SaslFactory;
 use XPBot\System\Utils\Event;
 use XPBot\System\Utils\Timer;
@@ -98,6 +99,12 @@ class XmppClient extends XmppSocket
      * @var string
      */
     protected $password;
+
+    /**
+     * Mechanism used in sasl authentication
+     * @var Mechanism
+     */
+    protected $_mechanism;
 
     /**
      * If client is connected and authed is true.
@@ -203,20 +210,23 @@ class XmppClient extends XmppSocket
      */
     private function auth()
     {
+
         $xml = new XmlBranch('auth');
         $xml->addAttribute('xmlns', 'urn:ietf:params:xml:ns:xmpp-sasl');
 
         $mechanism = null;
         foreach ($this->_features->mechanisms->mechanism as $current) {
-            if ($mechanism = SaslFactory::get((string)$current))
+            if ($mechanism = SaslFactory::get((string)$current, $this->jid, $this->password))
                 break;
         }
 
         if (!$mechanism)
             throw new \RuntimeException('This client is not supporting any of server auth mechanisms.');
 
+        $this->_mechanism = $mechanism;
+
         $xml->addAttribute('mechanism', $current);
-        $xml->setContent($mechanism->get($this->jid, $this->password));
+        $xml->setContent($mechanism->auth());
 
         $this->write($xml);
     }
@@ -237,6 +247,22 @@ class XmppClient extends XmppSocket
             $this->_bind();
         } else
             throw new \RuntimeException('Authorization failed.');
+    }
+
+    /**
+     * Should be private, but... php sucks!
+     * DO NOT RUN IT, TRUST ME.
+     *
+     * @param Stanza $packet
+     *
+     * @internal
+     */
+    public function _onChallenge($packet)
+    {
+        $xml = new XmlBranch('response');
+        $xml->addAttribute('xmlns', 'urn:ietf:params:xml:ns:xmpp-sasl');
+        $xml->setContent(base64_encode($this->_mechanism->challenge($packet)));
+        $this->write($xml->asXML());
     }
 
     /**
@@ -363,6 +389,9 @@ class XmppClient extends XmppSocket
                 elseif (preg_match('/xmlns=("|\')urn:ietf:params:xml:ns:xmpp-tls("|\')/si', $stanza->xml->asXML()))
                     $this->onTls->run($stanza);
 
+            break;
+            case 'challenge':
+                $this->_onChallenge($stanza);
                 break;
         }
     }

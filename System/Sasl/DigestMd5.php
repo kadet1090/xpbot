@@ -9,8 +9,6 @@
 
 namespace XPBot\System\Sasl;
 
-use XPBot\System\Utils\Logger;
-
 class DigestMd5 extends Mechanism
 {
     private $_realm;
@@ -21,7 +19,7 @@ class DigestMd5 extends Mechanism
 
     public function challenge($packet)
     {
-        if(!$this->_parseChallenge(base64_decode($packet)))
+        if (!$this->_parseChallenge(base64_decode($packet->xml)))
             return '';
 
         $cnonce = $this->_generateCnonce();
