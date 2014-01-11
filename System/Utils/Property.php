@@ -1,12 +1,8 @@
 <?php
 /**
- * Created by JetBrains PhpStorm.
- * User: Kacper
- * Date: 08.08.13
- * Time: 22:44
- * To change this template use File | Settings | File Templates.
+ * Copyright 2014 Kadet <kadet1090@gmail.com>
+ * @license http://creativecommons.org/licenses/by-sa/4.0/legalcode CC BY-SA
  */
-
 namespace XPBot\System\Utils;
 
 trait Property {
@@ -19,9 +15,12 @@ trait Property {
             if($this->hasAccess($method, $this->getCaller()))
                 return $this->$getter();
             else
-                throw new \RuntimeException('Nie masz dostępu do pobierania tej właściwości.');
+                throw new \RuntimeException('Cannot access ' . ($method->isPrivate() ? 'private' : 'protected') . ' property ' . get_class($this) . '::$' . $name);
         } catch (\ReflectionException $exception) {
-            throw new \RuntimeException('Ta właściwość nie może być pobrana.');
+            if (method_exists($this, '_get'))
+                return $this->_get($name);
+            else
+                throw new \RuntimeException('Trying to get non-existent property ' . get_class($this) . '::$' . $name);
         }
     }
 
@@ -33,11 +32,14 @@ trait Property {
             $method = $reflection->getMethod($setter);
 
             if($this->hasAccess($method, $this->getCaller()))
-                return $this->$setter($value);
+                $this->$setter($value);
             else
-                throw new \RuntimeException('Nie masz dostępu do ustawiania tej właściwości.');
+                throw new \RuntimeException('Cannot access ' . ($method->isPrivate() ? 'private' : 'protected') . ' property ' . get_class($this) . '::$' . $name);
         } catch (\ReflectionException $exception) {
-            throw new \RuntimeException('Ta właściwość nie może być ustawiona.');
+            if (method_exists($this, '_set'))
+                $this->_set($name, $value);
+            else
+                $this->$name = $value;
         }
     }
 

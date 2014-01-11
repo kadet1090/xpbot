@@ -142,14 +142,14 @@ class Bot extends XmppClient
     /**
      * @ignore Because it should be private, but it is used in delegate.
      */
-    public function _parseIq(Iq $query)
+    public function _parseIq(Iq $iq)
     {
-        if ($query->type == 'get' && preg_match('/xmlns=("|\')jabber:iq:version("|\')/si', $query->xml->asXML())) {
+        if ($iq->type == 'get' && $iq->query != null && $iq->query->namespace == 'jabber:iq:version') {
             $xml = new XmlBranch('iq');
             $xml->addAttribute('from', $this->jid->__toString())
-                ->addAttribute('to', $query->from->__toString())
-                ->addAttribute('type', $query->type)
-                ->addAttribute('id', $query['id']);
+                ->addAttribute('to', $iq->from->__toString())
+                ->addAttribute('type', 'result')
+                ->addAttribute('id', $iq->id);
 
             $xml->addChild(new XmlBranch('query'))->addAttribute('xmlns', 'jabber:iq:version');
             $xml->query[0]->addChild(new XmlBranch('name'))->setContent('Xmpp Php Bot');

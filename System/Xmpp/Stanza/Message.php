@@ -20,11 +20,17 @@ class Message extends Stanza {
     private $_body;
     private $_timestamp;
 
+    /**
+     * @internal
+     */
     public function _get_body() {
         if(!isset($this->_body)) $this->_body = (string)$this->xml->body;
         return $this->_body;
     }
 
+    /**
+     * @internal
+     */
     public function _get_timestamp() {
         if(!isset($this->_timestamp)) {
             $this->_timestamp = isset($this->xml->delay['stamp']) ?

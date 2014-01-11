@@ -9,4 +9,16 @@
 
 namespace XPBot\System\Xmpp\Stanza;
 
-class Iq extends Stanza { }
+use XPBot\System\Xmpp\Stanza\Iq\Query;
+
+class Iq extends Stanza
+{
+    private $_query;
+
+    public function _get_query()
+    {
+        if (!isset($this->xml->query)) return null;
+        if (!isset($this->_query)) $this->_query = new Query($this->xml->query);
+        return $this->_query;
+    }
+}
