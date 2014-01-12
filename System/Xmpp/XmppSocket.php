@@ -36,7 +36,6 @@ abstract class XmppSocket extends BaseSocket
             $content = stream_get_contents($this->_socket);
             $result .= $content;
         } while (!preg_match("/('\/|\"\/|iq|ge|ce|am|es|se|ss|ge|re|.'|.\")>$/", substr($result, -3)) && !empty($result));
-        if (!empty($result)) Logger::debug($result);
         $this->_parse(trim($result));
     }
 
@@ -51,6 +50,8 @@ abstract class XmppSocket extends BaseSocket
 
             if (strpos($xml, '<stream:stream') !== false) $xml .= '</stream:stream>';
             $this->onPacket->run(simplexml_load_string(preg_replace('/(<\/?)([a-z]*?)\:/si', '$1', $xml)));
+
+            Logger::debug($xml);
         }
     }
 

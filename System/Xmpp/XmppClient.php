@@ -6,6 +6,7 @@ use XPBot\System\Sasl\SaslFactory;
 use XPBot\System\Utils\Event;
 use XPBot\System\Utils\Timer;
 use XPBot\System\Utils\XmlBranch;
+use XPBot\System\Xmpp\Roster\Roster;
 use XPBot\System\Xmpp\Stanza\Message;
 use XPBot\System\Xmpp\Stanza\Presence;
 use XPBot\System\Xmpp\Stanza\Stanza;
@@ -92,7 +93,7 @@ class XmppClient extends XmppSocket
      * Jabber account Jid
      * @var Jid
      */
-    protected $jid;
+    public $jid;
 
     /**
      * Password to jabber account.
@@ -118,6 +119,8 @@ class XmppClient extends XmppSocket
      */
     public $rooms = array();
 
+    public $roster;
+
     /**
      * @param Jid $jid Clients JID
      * @param string $password Account Password
@@ -141,6 +144,8 @@ class XmppClient extends XmppSocket
         $this->onJoin = new Event();
         $this->onLeave = new Event();
         $this->onTls = new Event();
+
+        $this->roster = new Roster($this);
 
         $this->onAuth->add(array($this, '_onAuth'));
         $this->onStreamOpen->add(array($this, '_onStreamOpen'));
@@ -335,6 +340,12 @@ class XmppClient extends XmppSocket
      */
     public function _onReady()
     {
+        $iq = new xmlBranch("iq");
+        $iq->addAttribute("type", "get");
+        $iq->addAttribute("id", uniqid('roster_'));
+        $iq->addChild(new xmlBranch("query"))->addAttribute("xmlns", "jabber:iq:roster");
+        $this->write($iq);
+
         $this->keepAliveTimer->start();
     }
 
@@ -440,6 +451,9 @@ class XmppClient extends XmppSocket
 
         if (isset($packet->xml->subject))
             $this->rooms[$packet->from->bare()]->subject = $packet->xml->subject;
+
+        if (!isset($packet->xml->delay) && $this->rooms[$packet->from->bare()]->subject === false)
+            $this->rooms[$packet->from->bare()]->subject = ''; // Some strange workaround, servers doesn't meet specification... ;(
     }
 
     /**
@@ -454,7 +468,6 @@ class XmppClient extends XmppSocket
 
             Timer::update();
             $this->read();
-            usleep(100);
         }
     }
 

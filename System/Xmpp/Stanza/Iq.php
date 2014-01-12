@@ -11,6 +11,11 @@ namespace XPBot\System\Xmpp\Stanza;
 
 use XPBot\System\Xmpp\Stanza\Iq\Query;
 
+/**
+ * Class Iq
+ * @package XPBot\System\Xmpp\Stanza
+ * @property Query $query
+ */
 class Iq extends Stanza
 {
     private $_query;
