@@ -93,6 +93,12 @@ class Bot extends XmppClient
         );
 
         $this->_loadPlugins();
+        $this->onConnect->add(function () {
+            while (true) {
+                $this->process();
+                usleep(100);
+            }
+        });
         $this->onMessage->add(array($this, '_parseCommand'));
         $this->onIq->add(array($this, '_parseIq'));
 
@@ -111,6 +117,8 @@ class Bot extends XmppClient
         $this->addMacro('me', array('XPBot\\Bot\\Bot', 'getNick'));
         $this->addMacro('date', array('XPBot\\Bot\\Bot', 'getDate'));
         $this->addMacro('time', array('XPBot\\Bot\\Bot', 'getTime'));
+
+
     }
 
     /**

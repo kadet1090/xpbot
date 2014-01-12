@@ -165,7 +165,6 @@ class XmppClient extends XmppSocket
     {
         $this->startStream();
         $this->wait('features', '', array($this->onStreamOpen, 'run'));
-        $this->work();
     }
 
     /**
@@ -457,18 +456,15 @@ class XmppClient extends XmppSocket
     }
 
     /**
-     * Starts bot reading loop.
-     * @todo [PHP 5.5] write it using coroutines.
+     * Handles new packets
      */
-    private function work()
+    public function process()
     {
-        while (true) {
-            if ($this->isReady)
-                $this->onTick->run();
+        if ($this->isReady)
+            $this->onTick->run();
 
-            Timer::update();
-            $this->read();
-        }
+        Timer::update();
+        $this->read();
     }
 
     /**
