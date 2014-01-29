@@ -8,10 +8,10 @@
  */
 namespace XPBot\Plugins\Ai;
 
-use XPBot\Bot\Plugin;
+use XPBot\Plugin;
 use XPBot\Plugins\Ai\Lib\Chatter;
-use XPBot\System\Xmpp\Room;
-use XPBot\System\Xmpp\Stanza\Message;
+
+use Kadet\Xmpp\Stanza\Message;
 
 class AiPlugin extends Plugin
 {

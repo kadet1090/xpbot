@@ -1,5 +1,5 @@
 <?php
-require_once '../System/Utils/Ini.php';
+require_once '../Kadet/Utils/Ini.php';
 
 class IniTest extends PHPUnit_Framework_TestCase {
     public function resetContent()
@@ -16,12 +16,12 @@ class IniTest extends PHPUnit_Framework_TestCase {
      */
     public function testNonExistingFile()
     {
-        new \XPBot\System\Utils\Ini('non existing file');
+        new \Kadet\Utils\Ini('non existing file');
     }
 
     public function testIterator()
     {
-        $ini = new \XPBot\System\Utils\Ini('Data/Ini/Test.ini');
+        $ini = new \Kadet\Utils\Ini('Data/Ini/Test.ini');
         $res = array();
         foreach($ini as $key => $value) {
             $res[$key] = $value;
@@ -37,13 +37,13 @@ class IniTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testGettingData() {
-        $ini = new \XPBot\System\Utils\Ini('Data/Ini/Test.ini');
+        $ini = new \Kadet\Utils\Ini('Data/Ini/Test.ini');
         $this->assertEquals('bar', $ini['foo']);
         $this->assertEquals('foo', $ini['bar']);
     }
 
     public function testIsset() {
-        $ini = new \XPBot\System\Utils\Ini('Data/Ini/Test.ini');
+        $ini = new \Kadet\Utils\Ini('Data/Ini/Test.ini');
         $this->assertTrue(isset($ini['foo']));
         $this->assertFalse(isset($ini['new']));
     }
@@ -51,7 +51,7 @@ class IniTest extends PHPUnit_Framework_TestCase {
     public function testUnset() {
         $this->resetContent();
 
-        $ini = new \XPBot\System\Utils\Ini('Data/Ini/Test.ini');
+        $ini = new \Kadet\Utils\Ini('Data/Ini/Test.ini');
         unset($ini['bar']);
 
         $this->assertFalse(isset($ini['bar']));
@@ -66,7 +66,7 @@ class IniTest extends PHPUnit_Framework_TestCase {
     public function testSave() {
         $this->resetContent();
 
-        $ini = new \XPBot\System\Utils\Ini('Data/Ini/Test.ini');
+        $ini = new \Kadet\Utils\Ini('Data/Ini/Test.ini');
         $ini['bar'] = 'bar';
         $ini['new'] = 'blah';
 
@@ -86,7 +86,7 @@ class IniTest extends PHPUnit_Framework_TestCase {
     public function testAutoSave() {
         $this->resetContent();
 
-        $ini = new \XPBot\System\Utils\Ini('Data/Ini/Test.ini', true);
+        $ini = new \Kadet\Utils\Ini('Data/Ini/Test.ini', true);
         $ini['bar'] = 'bar';
         $ini['new'] = 'blah';
 

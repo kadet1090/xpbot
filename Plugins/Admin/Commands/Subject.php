@@ -9,7 +9,7 @@
 
 namespace XPBot\Plugins\Admin\Commands;
 
-use XPBot\Bot\Command;
+use XPBot\Command;
 
 class Subject extends Command
 {

@@ -9,8 +9,8 @@
 
 namespace XPBot\Plugins\Admin\Commands;
 
-use XPBot\Bot\Command;
-use XPBot\Bot\Exceptions\CommandException;
+use XPBot\Command;
+use XPBot\Exceptions\CommandException;
 
 class Kick extends Command
 {

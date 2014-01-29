@@ -4,11 +4,18 @@ if ($index = array_search('-d', $argv))
 else
     define('DEBUG_MODE', 0);
 
-include 'System/functions.php';
-require 'System/Utils/AutoLoader.php';
+include 'XPBot/functions.php';
+include 'Kadet/Utils/functions.php';
+require 'Kadet/Utils/AutoLoader.php';
 
-$autoloader = new \XPBot\System\Utils\AutoLoader('XPBot\\', './');
-$autoloader->register();
+$autoloader['Plugins'] = new \Kadet\Utils\AutoLoader('XPBot\\Plugins\\', './Plugins/');
+$autoloader['Plugins']->register();
 
-$client = new \XPBot\Bot\Bot();
+$autoloader['XPBot'] = new \Kadet\Utils\AutoLoader('XPBot\\', './XPBot/');
+$autoloader['XPBot']->register();
+
+$autoloader['Kadet'] = new \Kadet\Utils\AutoLoader('Kadet\\', './Kadet/');
+$autoloader['Kadet']->register();
+
+$client = new \XPBot\Bot();
 $client->connect();

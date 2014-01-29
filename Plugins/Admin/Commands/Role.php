@@ -9,10 +9,10 @@
 
 namespace XPBot\Plugins\Admin\Commands;
 
-use XPBot\Bot\Command;
-use XPBot\Bot\Exceptions\CommandException;
-use XPBot\System\Xmpp\Jid;
-use XPBot\System\Xmpp\Room;
+use XPBot\Command;
+use XPBot\Exceptions\CommandException;
+use Kadet\Xmpp\Jid;
+use Kadet\Xmpp\Room;
 
 class Role extends Command
 {

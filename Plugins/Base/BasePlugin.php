@@ -10,9 +10,9 @@
 namespace XPBot\Plugins\Base;
 
 
-use XPBot\Bot\Plugin;
-use XPBot\System\Utils\Language;
-use XPBot\System\Xmpp\Room;
+use XPBot\Plugin;
+use XPBot\Utils\Language;
+
 
 class BasePlugin extends Plugin {
     public function load()

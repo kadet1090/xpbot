@@ -9,9 +9,9 @@
 
 namespace XPBot\Plugins\Admin\Commands;
 
-use XPBot\Bot\Command;
-use XPBot\Bot\Exceptions\CommandException;
-use XPBot\System\Xmpp\Jid;
+use XPBot\Command;
+use XPBot\Exceptions\CommandException;
+use Kadet\Xmpp\Jid;
 
 class Affiliate extends Command
 {

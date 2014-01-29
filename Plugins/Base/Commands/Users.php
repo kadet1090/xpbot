@@ -9,7 +9,7 @@
 
 namespace XPBot\Plugins\Base\Commands;
 
-use XPBot\Bot\Command;
+use XPBot\Command;
 
 class Users extends Command
 {

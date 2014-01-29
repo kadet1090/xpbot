@@ -9,9 +9,9 @@
 
 namespace XPBot\Plugins\Base\Commands;
 
-use XPBot\Bot\Command;
-use XPBot\Bot\Exceptions\CommandException;
-use XPBot\System\Xmpp\Jid;
+use XPBot\Command;
+use XPBot\Exceptions\CommandException;
+use Kadet\Xmpp\Jid;
 
 class Ping extends Command
 {

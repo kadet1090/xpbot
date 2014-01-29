@@ -9,13 +9,9 @@
 
 namespace XPBot\Plugins\Internet;
 
-use XPBot\Bot\Plugin;
+use XPBot\Plugin;
 use XPBot\Plugins\Internet\Lib\MsTranslator;
-use XPBot\Plugins\Math\Lib\RpnParser;
-use XPBot\System\Utils\Delegate;
-use XPBot\System\Utils\Language;
-use XPBot\System\Xmpp\Room;
-use XPBot\System\Xmpp\User;
+use XPBot\Utils\Language;
 
 class InternetPlugin extends Plugin {
     /**

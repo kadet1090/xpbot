@@ -10,10 +10,10 @@
 namespace XPBot\Plugins\Admin;
 
 
-use XPBot\Bot\Plugin;
-use XPBot\System\Utils\Language;
-use XPBot\System\Xmpp\Room;
-use XPBot\System\Xmpp\User;
+use XPBot\Plugin;
+use XPBot\Utils\Language;
+use Kadet\Xmpp\Room;
+use Kadet\Xmpp\User;
 
 class AdminPlugin extends Plugin {
     public function load()

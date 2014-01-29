@@ -9,8 +9,8 @@
 
 namespace XPBot\Plugins\Internet\Commands;
 
-use XPBot\Bot\Command;
-use XPBot\Bot\Exceptions\CommandException;
+use XPBot\Command;
+use XPBot\Exceptions\CommandException;
 
 class Rss extends Command
 {

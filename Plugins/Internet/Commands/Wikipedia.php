@@ -9,9 +9,9 @@
 
 namespace XPBot\Plugins\Internet\Commands;
 
-use XPBot\Bot\Bot;
-use XPBot\Bot\Command;
-use XPBot\Bot\Exceptions\CommandException;
+use XPBot\Bot;
+use XPBot\Command;
+use XPBot\Exceptions\CommandException;
 
 class Wikipedia extends Command
 {

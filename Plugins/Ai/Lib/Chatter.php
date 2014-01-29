@@ -10,7 +10,7 @@
 namespace XPBot\Plugins\Ai\Lib;
 
 
-use XPBot\Bot\Bot;
+use XPBot\Bot;
 
 class Chatter
 {
