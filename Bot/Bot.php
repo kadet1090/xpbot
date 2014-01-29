@@ -1,6 +1,9 @@
 <?php
 namespace XPBot\Bot;
 
+use XPBot\Bot\Exceptions\CommandAmbiguousException;
+use XPBot\Bot\Exceptions\CommandException;
+use XPBot\Bot\Exceptions\NoPermissionException;
 use XPBot\System\Utils\Ini;
 use XPBot\System\Utils\Language;
 use XPBot\System\Utils\Logger;
@@ -99,7 +102,7 @@ class Bot extends XmppClient
                 usleep(100);
             }
         });
-        $this->onMessage->add(array($this, '_parseCommand'));
+        $this->onMessage->add(array($this, '_parseMessage'));
         $this->onIq->add(array($this, '_parseIq'));
 
         $this->onReady->add(array($this, '_joinRooms'));
@@ -170,7 +173,39 @@ class Bot extends XmppClient
     /**
      * @ignore Because it should be private, but it is used in delegate.
      */
-    public function _parseCommand(Message $message)
+    private function parseCommand($command, Message $message)
+    {
+        if (preg_match('/\`((?:(?>[^`]+)|(?R))*)\`/six', $command))
+            $command = preg_replace_callback('/\`((?:(?>[^`]+)|(?R))*)\`/six', function ($matches) use ($message) {
+                return '"' . $this->parseCommand($matches[1], $message) . '"';
+            }, $command);
+
+        $params  = new Params($command);
+        $command = $this->getCommand($params[0]);
+
+        if ($command === false) return null;
+
+        if (is_array($command))
+            throw new CommandAmbiguousException($params[0], $command);
+
+        // TODO: private commands support.
+        if (
+            ($message->type == "groupchat" && !$command::GROUPCHAT) ||
+            ($message->type == "chat" && !$command::CHAT)
+        ) return null;
+
+        if (!$command::hasPermission($message->sender))
+            throw new NoPermissionException($params[0]);
+
+        $command = new $command($this, $message->sender, 'pl_PL', $message);
+
+        return $command->execute($params);
+    }
+
+    /**
+     * @ignore Because it should be private, but it is used in delegate.
+     */
+    public function _parseMessage(Message $message)
     {
         if (!$message->sender) return null;
         if ($message->sender->self == true) return null;
@@ -180,53 +215,25 @@ class Bot extends XmppClient
             $message->sender->room->configuration->prompt :
             $this->config->MUCPrompt;
 
+        if (substr($message->body, 0, strlen($prompt)) != $prompt) return;
+
         Language::setGlobalVar('P', $prompt);
-        $content = $message->body;
 
         foreach ($this->_macros as $macro => $func)
             $content = str_replace('!' . $macro, $func($message, $this), $message->body);
 
-        if (substr($message->body, 0, strlen($prompt)) == $prompt) {
-            $content = substr($content, strlen($prompt));
-            $params = new Params($content);
+        try {
+            $message->reply($this->parseCommand(substr($message->body, strlen($prompt)), $message));
+        } catch (CommandAmbiguousException $e) {
+            $str = __('commandAmbiguous', 'pl_PL', 'default', array('command' => $e->getCommand()));
 
-            $command = $this->getCommand($params[0]);
-
-            if ($command === false) return;
-
-            if (is_array($command)) {
-                $str = __('commandAmbiguous', 'pl_PL', 'default', array('command' => $params[0]));
-                foreach ($command as $package => $class) {
-                    $str .= "\t$package-{$params[0]} - $class\n";
-                }
-                $message->reply($str);
-                return;
+            foreach ($e->getReferences() as $package => $class) {
+                $str .= "\t$package-{$e->getCommand()} - $class\n";
             }
-
-            // TODO: private commands support.
-            if ($command) {
-                if (
-                    ($message->type == "groupchat" && !$command::GROUPCHAT) ||
-                    ($message->type == "chat" && !$command::CHAT)
-                ) return;
-                $commandName = $command;
-
-                try {
-                    if (!$command::hasPermission($message->sender))
-                        throw new CommandException(
-                            'User has no permission to run this command.',
-                            __('errNoPermission', 'pl_PL')
-                        );
-
-                    $command = new $command($this, $message->sender, 'pl_PL', $message);
-                    if ($result = $command->execute($params))
-                        $command::PRIVREPLY ? $message->sender->privateMessage($result) : $message->reply($result);
-
-                } catch (CommandException $exception) {
-                    $message->reply($exception->getMessage());
-                    Logger::warning("'{$exception->getConsoleMessage()}' in $commandName launched by {$message->sender->jid}");
-                }
-            }
+            $message->reply($str);
+        } catch (CommandException $exception) {
+            $message->reply($exception->getMessage());
+            Logger::warning("'{$exception->getConsoleMessage()}' in {$exception->getCommand()} launched by {$message->sender->jid}");
         }
     }
 

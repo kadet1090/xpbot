@@ -2,7 +2,7 @@
 /**
  * Created by JetBrains PhpStorm.
  *
- * @author Kadet <kadet1090@gmail.com>
+ * @author  Kadet <kadet1090@gmail.com>
  * @package
  * @license WTFPL
  */
@@ -10,15 +10,14 @@
 namespace XPBot\Plugins\Base\Commands;
 
 use XPBot\Bot\Command;
-use XPBot\Bot\CommandException;
-use XPBot\System\Utils\Delegate;
+use XPBot\Bot\Exceptions\CommandException;
 use XPBot\System\Xmpp\Jid;
 
 class Ping extends Command
 {
     public function execute($args)
     {
-        if(!isset($args[1]))
+        if (!isset($args[1]))
             throw new commandException('Too few arguments.', __('errTooFewArguments', $this->_lang));
 
         $jid = isset($this->_author->room->users[$args[1]]) ?

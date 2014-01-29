@@ -1,10 +1,9 @@
 <?php
 /**
- * Created by JetBrains PhpStorm.
- *
- * @author Kadet <kadet1090@gmail.com>
- * @package
- * @license WTFPL
+ * Created by PhpStorm.
+ * User: Kacper
+ * Date: 19.01.14
+ * Time: 00:30
  */
 
 namespace XPBot\Bot\Commands;

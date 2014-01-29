@@ -5,43 +5,6 @@ namespace XPBot\Bot;
 use XPBot\System\Utils\Params;
 use XPBot\System\Xmpp\Stanza\Message;
 use XPBot\System\Xmpp\User;
-use XPBot\System\Xmpp\XmppClient;
-
-/**
- * Exception thrown by commands when some error occurs.
- *
- * @package XPBot\Bot
- */
-class CommandException extends \Exception
-{
-    /**
-     * Message printed to console (english localized!)
-     * @var string
-     */
-    protected $_consoleMessage;
-
-    /**
-     * @param string $cmdMsg  Message that will be added to console and log, in english.
-     * @param string $message Localized message that will be sent to client as response.
-     * @param int $code    Exception code.
-     * @param CommandException|null $previous Previous exception.
-     */
-    public function __construct($cmdMsg, $message = '', $code = 0, $previous = null)
-    {
-        $this->_consoleMessage = $cmdMsg;
-        parent::__construct($message, $code, $previous);
-    }
-
-    /**
-     * Gets english localized message for console and logging.
-     *
-     * @return string
-     */
-    public function getConsoleMessage()
-    {
-        return $this->_consoleMessage;
-    }
-}
 
 /**
  * Abstract command class.
@@ -103,18 +66,18 @@ abstract class Command
     protected $_type;
 
     /**
-     * @param Bot $client Jabber client.
-     * @param User $author User who executed this command.
-     * @param string $lang   Commands language.
+     * @param Bot     $client Jabber client.
+     * @param User    $author User who executed this command.
+     * @param string  $lang   Commands language.
      * @param Message $packet Commands packet.
      */
     public function __construct(Bot $client, $author, $lang, Message $packet)
     {
-        $this->_bot = $client;
+        $this->_bot    = $client;
         $this->_packet = $packet;
-        $this->_lang = $lang;
+        $this->_lang   = $lang;
         $this->_author = $author;
-        $this->_type = $packet->type;
+        $this->_type   = $packet->type;
     }
 
     /**

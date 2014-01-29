@@ -2,7 +2,7 @@
 /**
  * Created by JetBrains PhpStorm.
  *
- * @author Kadet <kadet1090@gmail.com>
+ * @author  Kadet <kadet1090@gmail.com>
  * @package
  * @license WTFPL
  */
@@ -10,18 +10,18 @@
 namespace XPBot\Plugins\Base\Commands;
 
 use XPBot\Bot\Command;
-use XPBot\Bot\CommandException;
+use XPBot\Bot\Exceptions\CommandException;
 use XPBot\System\Xmpp\Jid;
 
 class Say extends Command
 {
     public function execute($args)
     {
-        if(!isset($args[1]))
+        if (!isset($args[1]))
             throw new commandException('Too few arguments.', __('errTooFewArguments', $this->_lang));
 
-        if(isset($args['r'])) {
-            if($this->_author->permission < 6)
+        if (isset($args['r'])) {
+            if ($this->_author->permission < 6)
                 throw new CommandException('User has no permission to do that.', __('errNoPermission', 'pl'));
 
             $jid = isset($this->_author->room->users[$args['r']]) ?

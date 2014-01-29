@@ -2,7 +2,7 @@
 /**
  * Created by JetBrains PhpStorm.
  *
- * @author Kadet <kadet1090@gmail.com>
+ * @author  Kadet <kadet1090@gmail.com>
  * @package
  * @license WTFPL
  */
@@ -10,7 +10,7 @@
 namespace XPBot\Plugins\Internet\Commands;
 
 use XPBot\Bot\Command;
-use XPBot\Bot\CommandException;
+use XPBot\Bot\Exceptions\CommandException;
 
 class Google extends Command
 {

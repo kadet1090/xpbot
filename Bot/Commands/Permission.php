@@ -2,7 +2,7 @@
 /**
  * Created by JetBrains PhpStorm.
  *
- * @author Kadet <kadet1090@gmail.com>
+ * @author  Kadet <kadet1090@gmail.com>
  * @package
  * @license WTFPL
  */
@@ -10,8 +10,7 @@
 namespace XPBot\Bot\Commands;
 
 use XPBot\Bot\Command;
-use XPBot\Bot\CommandException;
-use XPBot\System\Utils\Delegate;
+use XPBot\Bot\Exceptions\CommandException;
 use XPBot\System\Xmpp\Jid;
 
 class Permission extends Command
@@ -20,15 +19,15 @@ class Permission extends Command
 
     public function execute($args)
     {
-        if(!Jid::isJid($args[1]) && !isset($this->_author->room->users[$args[1]]))
+        if (!Jid::isJid($args[1]) && !isset($this->_author->room->users[$args[1]]))
             throw new commandException('This user is not present on that channel.', __('errUserNotPresent', $this->_lang));
 
-        if(isset($args[1]))
+        if (isset($args[1]))
             $args[1] = Jid::isJid($args[1]) ? $args[1] : $this->_author->room->users[$args[1]]->jid->bare();
 
-        if(!isset($args[1]))
+        if (!isset($args[1]))
             return $this->all();
-        elseif(!isset($args[2]))
+        elseif (!isset($args[2]))
             return $this->get($args[1]);
         else
             $this->set($args[1], (int)$args[2]);
@@ -37,15 +36,16 @@ class Permission extends Command
     public function all()
     {
         $result = array();
-        foreach($this->_bot->users->user as $user) {
-            if(isset($user['permission']))
+        foreach ($this->_bot->users->user as $user) {
+            if (isset($user['permission']))
                 $result[] = "{$user['jid']} - {$user['permission']}";
         }
 
         return implode(PHP_EOL, $result);
     }
 
-    public function get($jid) {
+    public function get($jid)
+    {
         $users = $this->_bot->users->xpath("//user[@jid='{$jid}']");
         if ($users && isset($users[0]['permission']))
             return (int)$users[0]['permission'];
@@ -53,13 +53,14 @@ class Permission extends Command
             return __('errSpecifiedUserNotKnown', $this->_lang, __CLASS__);
     }
 
-    public function set($jid, $permission = -1) {
+    public function set($jid, $permission = -1)
+    {
         $users = $this->_bot->users->xpath("//user[@jid='{$jid}']");
-        $user = $users ? $users[0] : $this->_bot->users->addChild('user');
+        $user  = $users ? $users[0] : $this->_bot->users->addChild('user');
 
-        if(!isset($user["jid"])) $user->addAttribute('jid', $jid);
+        if (!isset($user["jid"])) $user->addAttribute('jid', $jid);
 
-        if($permission != -1)
+        if ($permission != -1)
             $user['permission'] = $permission;
         else
             unset($user['permission']);
