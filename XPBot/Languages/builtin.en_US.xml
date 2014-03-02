@@ -2,6 +2,7 @@
 <phrases lang="en_US">
     <phrase id="shortHelp">This command is undocumented</phrase>
     <phrase id="help">This command is undocumented</phrase>
+    <phrase id="done">Done.</phrase>
     <phrase id="commandAmbiguous">{%command} is ambiguous choose one of: </phrase>
     <phrase id="errCommandNotExists">Specified command does not exists.</phrase>
     <phrase id="errModuleNotExists">Specified module not exist, maybe you forgot to install it?</phrase>

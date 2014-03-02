@@ -2,6 +2,7 @@
 <phrases lang="pl_PL">
     <phrase id="shortHelp">Ta komenda nie została udokumentowana</phrase>
     <phrase id="help">Ta komenda nie została udokumentowana</phrase>
+    <phrase id="done">Wykonano.</phrase>
     <phrase id="commandAmbiguous">Komenda {%command} nie jest jednoznaczna, wybierz jedną z poniższych:</phrase>
     <phrase id="errCommandNotExists">Nie ma takiej komendy.</phrase>
     <phrase id="errNoPermission">Nie masz uprawnień.</phrase>

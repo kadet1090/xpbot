@@ -27,7 +27,7 @@ class Bot extends XmppClient
     /**
      * Bot version string.
      */
-    const BOT_VERSION = 'Beta 0.6';
+    const BOT_VERSION = 'Beta 0.7';
 
     /**
      * Commands list.
@@ -60,8 +60,6 @@ class Bot extends XmppClient
     /**
      * User database.
      * User database, accessed by users[channel|roster][username].
-     *
-     * @todo roster support.
      *
      * @var User[string][string]
      */
@@ -120,8 +118,6 @@ class Bot extends XmppClient
         $this->addMacro('me', array('XPBot\\Bot', 'getNick'));
         $this->addMacro('date', array('XPBot\\Bot', 'getDate'));
         $this->addMacro('time', array('XPBot\\Bot', 'getTime'));
-
-
     }
 
     /**
@@ -220,7 +216,7 @@ class Bot extends XmppClient
         Language::setGlobalVar('P', $prompt);
         $content = $message->body;
         foreach ($this->_macros as $macro => $func)
-            $content = str_replace('!' . $macro, $func($message, $this), $message->body);
+            $content = str_replace('!' . $macro, $func($message, $this), $content);
 
         try {
             $message->reply($this->parseCommand(substr($content, strlen($prompt)), $message));
@@ -650,10 +646,5 @@ class Bot extends XmppClient
         $error = error_get_last();
         if ($error['type'] == E_ERROR) // OMG SO MUCH FAIL
             $this->_errorHandler(E_ERROR, $error['message'], $error['file'], $error['line']);
-    }
-
-    public function restart()
-    {
-
     }
 }
