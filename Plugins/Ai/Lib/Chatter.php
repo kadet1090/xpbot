@@ -25,7 +25,7 @@ class Chatter
     public function learn($text)
     {
         $text = mb_strtolower($text, 'UTF-8');
-        $lines = preg_split("/[a-z]{3,}[\.\?\!] ./", $text);
+        $lines = preg_split("/[a-z]{2,}[\.\?\!]\s+./", $text);
         foreach ($lines as $line)
             $this->_learn(trim($line));
     }
@@ -46,9 +46,18 @@ class Chatter
     public function generate($line)
     {
         $words = explode(' ', mb_strtolower(str_replace(array('.', '?', '!', ','), '', $line), 'UTF-8'));
-        $generated = array($words[array_rand($words)]);
+        shuffle($words);
 
-        if (!isset($this->_words[$generated[0]])) return;
+        $generated = [];
+        foreach($words as $word) {
+            if (isset($this->_words[$word])) {
+                $sentence = $this->_words[$word][array_rand($this->_words[$word])];
+                $generated[] = $sentence[0][array_rand($sentence[0])];
+                break;
+            }
+        }
+
+        if(empty($generated)) return false;
 
         $iterations = 8;
         $range = array(2, 4);

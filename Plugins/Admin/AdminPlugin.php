@@ -10,6 +10,7 @@
 namespace XPBot\Plugins\Admin;
 
 
+use Kadet\Xmpp\XmppClient;
 use XPBot\Plugin;
 use XPBot\Utils\Language;
 use Kadet\Xmpp\Room;
@@ -40,7 +41,7 @@ class AdminPlugin extends Plugin {
         $this->_bot->onJoin->remove(array($this, '_auto'));
     }
 
-    public function _auto(Room $room, User $user, $broadcast) {
+    public function _auto(XmppClient $client, Room $room, User $user, $broadcast) {
         $users = $room->configuration->xpath("//auto/user[@jid='{$user->jid->bare()}']");
         try {
             if($users) {

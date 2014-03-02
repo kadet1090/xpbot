@@ -96,7 +96,7 @@ class Bot extends XmppClient
         );
 
         $this->_loadPlugins();
-        $this->onConnect->add(function () {
+        $this->onConnect->add(function (XmppClient $client) {
             while (true) {
                 $this->process();
                 usleep(100);
@@ -127,7 +127,7 @@ class Bot extends XmppClient
     /**
      * @ignore Because it should be private, but it is used in delegate.
      */
-    public function _onJoin(Room $room, User $user, $broadcast)
+    public function _onJoin(XmppClient $client, Room $room, User $user, $broadcast)
     {
         $user->jointime = time();
         $user->permission = $this->getAffiliationPermission($user->affiliation);
@@ -139,7 +139,7 @@ class Bot extends XmppClient
         Logger::debug($user->nick . ' joined to ' . $room->jid->name . ' with permission ' . $user->permission);
     }
 
-    public function _joinRooms()
+    public function _joinRooms(XmppClient $client)
     {
         foreach ($this->config->channels->channel as $channel) {
             $nick = isset($channel['nick']) ? $channel->nick : $this->config->xmpp->nickname;
@@ -152,7 +152,7 @@ class Bot extends XmppClient
     /**
      * @ignore Because it should be private, but it is used in delegate.
      */
-    public function _parseIq(Iq $iq)
+    public function _parseIq(XmppClient $client, Iq $iq)
     {
         if ($iq->type == 'get' && $iq->query != null && $iq->query->namespace == 'jabber:iq:version') {
             $xml = new XmlBranch('iq');
@@ -205,7 +205,7 @@ class Bot extends XmppClient
     /**
      * @ignore Because it should be private, but it is used in delegate.
      */
-    public function _parseMessage(Message $message)
+    public function _parseMessage(XmppClient $client, Message $message)
     {
         if (!$message->sender) return null;
         if ($message->sender->self == true) return null;
@@ -218,12 +218,12 @@ class Bot extends XmppClient
         if (substr($message->body, 0, strlen($prompt)) != $prompt) return;
 
         Language::setGlobalVar('P', $prompt);
-
+        $content = $message->body;
         foreach ($this->_macros as $macro => $func)
             $content = str_replace('!' . $macro, $func($message, $this), $message->body);
 
         try {
-            $message->reply($this->parseCommand(substr($message->body, strlen($prompt)), $message));
+            $message->reply($this->parseCommand(substr($content, strlen($prompt)), $message));
         } catch (CommandAmbiguousException $e) {
             $str = __('commandAmbiguous', 'pl_PL', 'default', array('command' => $e->getCommand()));
 
@@ -234,6 +234,9 @@ class Bot extends XmppClient
         } catch (CommandException $exception) {
             $message->reply($exception->getMessage());
             Logger::warning("'{$exception->getConsoleMessage()}' in {$exception->getCommand()} launched by {$message->sender->jid}");
+        } catch (NoPermissionException $exception) {
+            $message->reply($exception->getMessage());
+            Logger::warning("");
         }
     }
 
@@ -615,6 +618,9 @@ class Bot extends XmppClient
             case E_ERROR:
                 Logger::error($message);
                 return false; // backtrace is corrupted.
+            default:
+                Logger::warning($message);
+                break;
         }
 
         $callstack = debug_backtrace();

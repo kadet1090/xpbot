@@ -8,6 +8,7 @@
  */
 namespace XPBot\Plugins\Ai;
 
+use Kadet\Xmpp\XmppClient;
 use XPBot\Plugin;
 use XPBot\Plugins\Ai\Lib\Chatter;
 
@@ -24,12 +25,18 @@ class AiPlugin extends Plugin
         $this->_bot->onMessage->add(array($this, 'parse'));
     }
 
-    public function parse(Message $packet)
+    public function parse(XmppClient $client, Message $packet)
     {
         if (isset($packet->xml->subject) || isset($packet->xml->delay['stamp']) || $packet->type == "error") return;
         $user = $packet->sender;
 
         if ($user->self) return;
+
+        $prompt = !empty($packet->sender->room->configuration->prompt) ?
+            $packet->sender->room->configuration->prompt :
+            $this->_bot->config->MUCPrompt;
+
+        if(preg_match('/^('.preg_quote($prompt).'|<.*?>|[0-9]{2}:[0-9]{2}:[0-9]{2})/', $packet->body)) return;
 
         if (rand(0, 100) < $this->_bot->getFromConfig('replyrate', 'ai', 33))
             $packet->reply($this->chatter->generate($packet->body));
