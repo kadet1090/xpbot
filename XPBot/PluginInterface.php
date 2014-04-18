@@ -5,7 +5,8 @@ namespace XPBot;
  *
  * @package XPBot
  */
-interface PluginInterface {
+interface PluginInterface
+{
     /**
      * Returns information about plugin.
      * Returns plugin specific information like version or author.
@@ -17,7 +18,7 @@ interface PluginInterface {
      *      [mail]      => Mail contact to author,
      *      [xmpp]      => Xmpp contact to author.
      *
-     * Keys in [] are optional, but one of contact variables should be filled :)
+     * Keys in [] are optional, but at least one of contact variables should be filled :)
      *
      * @todo Add Summary.xml for plugins.
      *

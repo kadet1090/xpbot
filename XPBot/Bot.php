@@ -1,20 +1,20 @@
 <?php
 namespace XPBot;
 
-use Kadet\Utils\Ini;
 use Kadet\Utils\Logger;
-use XPBot\Exceptions\CommandAmbiguousException;
-use XPBot\Exceptions\CommandException;
-use XPBot\Exceptions\NoPermissionException;
-use XPBot\Utils\Language;
-use XPBot\Utils\Params;
-use Kadet\Xmpp\Utils\XmlBranch;
 use Kadet\Xmpp\Jid;
 use Kadet\Xmpp\Room;
 use Kadet\Xmpp\Stanza\Iq;
 use Kadet\Xmpp\Stanza\Message;
 use Kadet\Xmpp\User;
+use Kadet\Xmpp\Utils\XmlBranch;
 use Kadet\Xmpp\XmppClient;
+use XPBot\Config\Config;
+use XPBot\Exceptions\CommandAmbiguousException;
+use XPBot\Exceptions\CommandException;
+use XPBot\Exceptions\NoPermissionException;
+use XPBot\Utils\Language;
+use XPBot\Utils\Params;
 
 /**
  * Class Bot
@@ -58,7 +58,6 @@ class Bot extends XmppClient
     public $config;
 
     /**
-     * User database.
      * User database, accessed by users[channel|roster][username].
      *
      * @var User[string][string]
@@ -80,11 +79,12 @@ class Bot extends XmppClient
         set_error_handler(array($this, '_errorHandler'));
         register_shutdown_function(array($this, '_shutdownHandler'));
         ini_set('display_errors', 0);
-        error_reporting(E_ERROR);
+        error_reporting(E_ALL);
 
-        $this->config = simplexml_load_file($config);
-        $this->users = simplexml_load_file('./Config/Users.xml');
-        $this->aliases = new Ini('./Config/Aliases.ini', true);
+        $this->config = new Config($config);
+
+        //$this->users = simplexml_load_file('./Config/Users.xml');
+        // $this->aliases = new Ini('./Config/Aliases.ini', true);
 
         parent::__construct(
             new Jid("{$this->config->xmpp->login}@{$this->config->xmpp->server}/{$this->config->xmpp->resource}"),
@@ -95,7 +95,7 @@ class Bot extends XmppClient
 
         $this->_loadPlugins();
         $this->onConnect->add(function (XmppClient $client) {
-            while (true) {
+            while ($this->isConnected) {
                 $this->process();
                 usleep(100);
             }
@@ -128,7 +128,7 @@ class Bot extends XmppClient
         $user->jointime = time();
         $user->permission = $this->getAffiliationPermission($user->affiliation);
 
-        $users = $this->users->xpath("//user[@jid='{$user->jid->bare()}']");
+        $users = $this->config->users->xpath("/user[@jid='{$user->jid->bare()}']");
         if ($users && isset($users[0]['permission']))
             $user->permission = (int)$users[0]['permission'];
 
@@ -137,7 +137,9 @@ class Bot extends XmppClient
 
     public function _joinRooms(XmppClient $client)
     {
-        foreach ($this->config->channels->channel as $channel) {
+        foreach ($this->config->rooms as $channel) {
+            if ($channel->autojoin != 'true') continue;
+
             $nick = isset($channel['nick']) ? $channel->nick : $this->config->xmpp->nickname;
             $channel = new Jid($channel['name'], $channel['server']);
 
@@ -215,8 +217,10 @@ class Bot extends XmppClient
 
         Language::setGlobalVar('P', $prompt);
         $content = $message->body;
-        foreach ($this->_macros as $macro => $func)
-            $content = str_replace('!' . $macro, $func($message, $this), $content);
+
+        foreach ($this->_macros as $macro => $macro) {
+            $content = str_replace('!' . $macro, is_callable($macro) ? $macro($message, $this) : $macro, $content);
+        }
 
         try {
             $message->reply($this->parseCommand(substr($content, strlen($prompt)), $message));
@@ -365,6 +369,8 @@ class Bot extends XmppClient
      * @param null|mixed $default Value to return if variable doesn't exist.
      *
      * @return mixed
+     *
+     * @deprecated
      */
     public function getFromConfig($var, $namespace, $default = null)
     {
@@ -379,6 +385,8 @@ class Bot extends XmppClient
      * @param string $var Variable name
      * @param string $namespace Variable namespace
      * @param mixed $value Variable new value
+     *
+     * @deprecated
      */
     public function setInConfig($var, $namespace, $value)
     {
@@ -544,11 +552,11 @@ class Bot extends XmppClient
      * Adds new macro to bot.
      *
      * @param string $name Macros name
-     * @param callable $delegate Delegate to macros function.
+     * @param string|callable $macro Function or text represented by macro.
      */
-    public function addMacro($name, callable $delegate)
+    public function addMacro($name, $macro)
     {
-        $this->_macros[$name] = $delegate;
+        $this->_macros[$name] = $macro;
     }
 
     /**

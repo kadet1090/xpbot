@@ -2,17 +2,15 @@
 
 namespace XPBot;
 
-use XPBot\Exceptions\CommandException;
-use XPBot\Utils\Params;
 use Kadet\Xmpp\Stanza\Message;
 use Kadet\Xmpp\User;
+use XPBot\Exceptions\CommandException;
+use XPBot\Utils\Params;
 
 /**
  * Abstract command class.
  *
  * Base of all commands.
- *
- * @package XPBot
  */
 abstract class Command
 {

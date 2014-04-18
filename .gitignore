@@ -1,4 +1,4 @@
 .idea
-Config
-Logs
+/Config
+/Logs
 Documentation # only for now :)

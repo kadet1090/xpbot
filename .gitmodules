@@ -4,3 +4,6 @@
 [submodule "Kadet/Utils"]
 	path = Kadet/Utils
 	url = git@github.com:kadet1090/Utils.git
+[submodule "Kadet/XmlSerializer"]
+	path = Kadet/XmlSerializer
+	url = https://github.com/kadet1090/XmlSerializer.git
