@@ -2,17 +2,17 @@
 /**
  * Created by JetBrains PhpStorm.
  *
- * @author Kadet <kadet1090@gmail.com>
+ * @author  Kadet <kadet1090@gmail.com>
  * @package
  * @license WTFPL
  */
 namespace XPBot\Plugins\Ai;
 
+use Kadet\Xmpp\Stanza\Message;
 use Kadet\Xmpp\XmppClient;
 use XPBot\Plugin;
-use XPBot\Plugins\Ai\Lib\Chatter;
 
-use Kadet\Xmpp\Stanza\Message;
+use XPBot\Plugins\Ai\Lib\Chatter;
 
 class AiPlugin extends Plugin
 {
@@ -32,11 +32,12 @@ class AiPlugin extends Plugin
 
         if ($user->self) return;
 
-        $prompt = !empty($packet->sender->room->configuration->prompt) ?
+        $prompt = /*!empty($packet->sender->room->configuration->prompt) ?
             $packet->sender->room->configuration->prompt :
-            $this->_bot->config->MUCPrompt;
+            $this->_bot->config->MUCPrompt*/
+            '#';
 
-        if(preg_match('/^('.preg_quote($prompt).'|<.*?>|[0-9]{2}:[0-9]{2}:[0-9]{2})/', $packet->body)) return;
+        if (preg_match('/^(' . preg_quote($prompt) . '|<.*?>|[0-9]{2}:[0-9]{2}:[0-9]{2})/', $packet->body)) return;
 
         if (rand(0, 100) < $this->_bot->getFromConfig('replyrate', 'ai', 33))
             $packet->reply($this->chatter->generate($packet->body));

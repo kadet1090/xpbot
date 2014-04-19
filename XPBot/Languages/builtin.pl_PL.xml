@@ -44,7 +44,10 @@
         {%P}{%command} command komenda - wyświetla aliasy danej komendy,
         {%P}{%command} - wyświetla wszystkie aliasy.
     </phrase>
-    <phrase id="errAliasNotExists" ns="XPBot\Commands\Aliases">Taki alias nie istnieje.</phrase>
+    <phrase id="errAliasNotExists" ns="XPBot\Commands\Alias">Taki alias nie istnieje.</phrase>
+    <phrase id="commandAliases" ns="XPBot\Commands\Alias">
+        Aliasy komendy {%command}: {%aliases}
+    </phrase>
 
     <phrase id="shortHelp" ns="XPBot\Commands\Quit">Wyłącza bota</phrase>
     <phrase id="help" ns="XPBot\Commands\Quit">

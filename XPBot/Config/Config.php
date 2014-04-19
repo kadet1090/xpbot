@@ -1,6 +1,7 @@
 <?php
 /**
  * Copyright (C) 2014, Some right reserved.
+ *
  * @author  Kacper "Kadet" Donat <kadet1090@gmail.com>
  * @license http://creativecommons.org/licenses/by-sa/4.0/legalcode CC BY-SA
  *
@@ -56,6 +57,9 @@ class Config extends ConfigModule
         $result          = $this->_deserializer->deserializeFile($this->_file);
         $this->_children = $result->_children;
         $this->_offsets  = $result->_offsets;
+
+        if (!isset($this->storage))
+            $this->storage = new SimpleConfig();
     }
 
     public function save()

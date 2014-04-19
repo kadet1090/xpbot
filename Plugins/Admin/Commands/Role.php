@@ -9,10 +9,10 @@
 
 namespace XPBot\Plugins\Admin\Commands;
 
-use XPBot\Command;
-use XPBot\Exceptions\CommandException;
 use Kadet\Xmpp\Jid;
-use Kadet\Xmpp\Room;
+use XPBot\Command;
+use XPBot\Config\UsersConfig;
+use XPBot\Exceptions\CommandException;
 
 class Role extends Command
 {
@@ -23,6 +23,9 @@ class Role extends Command
         if (count($args) < 3)
             throw new commandException('Too few arguments.', __('errTooFewArguments', $this->_lang));
 
+        if (!in_array($args[1], ['visitor', 'none', 'moderator', 'participant']))
+            throw new commandException('Wrong role.', __('errWrongRole', $this->_lang));
+
         if (!isset($this->_author->room->users[$args[2]]) && !isset($args['a']))
             throw new commandException('This user is not present on that channel.', __('errUserNotPresent', $this->_lang));
 
@@ -30,24 +33,18 @@ class Role extends Command
             $this->_author->room->role($args[2], $args[1], $args[3]);
 
             if (isset($args['a'])) {
-                if (!isset($this->_author->room->configuration->auto))
-                    $this->_author->room->configuration->addChild('auto');
+                if (!isset($this->_bot->config->rooms[$this->_author->room->jid->bare()]->auto))
+                    $this->_bot->config->rooms[$this->_author->room->jid->bare()]->auto = new UsersConfig();
+
+                $auto = $this->_bot->config->rooms[$this->_author->room->jid->bare()]->auto;
 
                 $jid = isset($this->_author->room->users[$args[2]]) ?
                     $this->_author->room->users[$args[2]]->jid :
                     new Jid($args[2]);
 
-                $users = $this->_author->room->configuration->auto->xpath("//user[@jid='{$jid->bare()}']");
-                if ($users) {
-                    $user = $users[0];
-                } else {
-                    $user = $this->_author->room->configuration->auto->addChild('user');
-                    $user->addAttribute('jid', $jid->bare());
-                }
+                $auto[$jid->bare()]->role = $args[1];
 
-                $user['role'] = $args[1];
-
-                Room::save(); // save config
+                $this->_bot->config->save();
             }
         } catch (\InvalidArgumentException $exception) {
             if ($exception->getMessage() == 'affiliation')

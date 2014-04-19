@@ -8,6 +8,7 @@
 
 namespace XPBot\Plugins\Ai\Commands;
 
+use XPBot\Command;
 
 class Affiliate extends Command
 {

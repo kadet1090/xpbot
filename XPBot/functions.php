@@ -76,6 +76,7 @@ function getCaller()
  * Runs trim on every line of text.
  *
  * @param string $string String to be trimmed.
+ *
  * @return string Trimmed string.
  */
 function multiLineTrim($string)
@@ -90,13 +91,32 @@ function multiLineTrim($string)
  *
  * @return int       Number converted to int.
  */
-function parseNumber($number) {
+function parseNumber($number)
+{
     if (is_numeric($number)) return $number;
 
-    switch(substr($number, 0, 2)) {
-        case '0x': return intval(substr($number, 2), 16);
-        case '0b': return intval(substr($number, 2), 10);
-        case '0o': return intval(substr($number, 2), 8);
-        default:   return (int)$number;
+    switch (substr($number, 0, 2)) {
+        case '0x':
+            return intval(substr($number, 2), 16);
+        case '0b':
+            return intval(substr($number, 2), 10);
+        case '0o':
+            return intval(substr($number, 2), 8);
+        default:
+            return (int)$number;
     }
+}
+
+function restart()
+{
+    global $argv;
+
+    $cargs = [];
+    foreach ($argv as $arg)
+        $cargs[] = strpos($arg, ' ') !== false ? '"' . $arg . '"' : $arg;
+
+    if (substr(PHP_OS, 0, 3) == 'WIN')
+        die((new \COM("WScript.Shell"))->Run(PHP_BINARY . ' ' . implode(' ', $cargs), 0, false));
+    else
+        die(exec(PHP_BINARY . ' ' . implode(' ', $cargs) . ' > /dev/null &'));
 }

@@ -17,6 +17,11 @@ class Quit extends Command
 
     public function execute($args)
     {
+        if (isset($args['restart'])) {
+            if ($args[1]) Logger::info("Restarting bot because {$args[0]}.");
+            else Logger::info("Restarting bot.");
+            restart();
+        }
         if ($args[1]) Logger::info("Exiting bot because {$args[0]}.");
         else Logger::info("Exiting bot.");
         exit;

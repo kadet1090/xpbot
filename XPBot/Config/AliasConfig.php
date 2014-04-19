@@ -14,16 +14,18 @@
 
 namespace XPBot\Config;
 
-
-use Kadet\Utils\Property;
 use Kadet\XmlSerializer\XmlDeserializer;
 use Kadet\XmlSerializer\XmlSerializable;
 use Kadet\XmlSerializer\XmlSerializer;
+use Traversable;
 
-class ConfigModule implements \ArrayAccess, XmlSerializable
+class AliasConfig implements
+    XmlSerializable,
+    \ArrayAccess,
+    \IteratorAggregate
 {
-    protected $_offsets = [];
-    protected $_children = [];
+    public $aliases = [];
+
 
     /**
      * (PHP 5 &gt;= 5.0.0)<br/>
@@ -42,7 +44,7 @@ class ConfigModule implements \ArrayAccess, XmlSerializable
      */
     public function offsetExists($offset)
     {
-        return isset($this->_offsets[$offset]);
+        return isset($this->aliases[$offset]);
     }
 
     /**
@@ -59,7 +61,9 @@ class ConfigModule implements \ArrayAccess, XmlSerializable
      */
     public function offsetGet($offset)
     {
-        return $this->_offsets[$offset];
+        if (!isset($this[$offset])) return $offset;
+
+        return $this->aliases[$offset];
     }
 
     /**
@@ -79,7 +83,7 @@ class ConfigModule implements \ArrayAccess, XmlSerializable
      */
     public function offsetSet($offset, $value)
     {
-        $this->_offsets[$offset] = $value;
+        $this->aliases[$offset] = $value;
     }
 
     /**
@@ -96,59 +100,62 @@ class ConfigModule implements \ArrayAccess, XmlSerializable
      */
     public function offsetUnset($offset)
     {
-        unset($this->_offsets[$offset]);
+        if (!isset($this[$offset])) return;
+
+        unset($this->aliases[$offset]);
     }
 
-    public function __isset($var)
+    /**
+     * (PHP 5 &gt;= 5.0.0)<br/>
+     * Retrieve an external iterator
+     *
+     * @link http://php.net/manual/en/iteratoraggregate.getiterator.php
+     * @return Traversable An instance of an object implementing <b>Iterator</b> or
+     *       <b>Traversable</b>
+     */
+    public function getIterator()
     {
-        return isset($this->_children[$var]);
+        return new \ArrayIterator($this->aliases);
     }
 
-    public function __unset($var)
-    {
-        if (isset($this->$var))
-            unset($this->_children[$var]);
-    }
-
-    public function __get($var)
-    {
-        if (!isset($this->_children[$var]))
-            $this->_children[$var] = new ConfigModule();
-
-        return $this->_children[$var];
-    }
-
-    public function __set($var, $value)
-    {
-        $this->_children[$var] = $value;
-    }
-
+    /**
+     * Serializes object to XML node.
+     *
+     * @param \DOMElement   $node       Node to fill with serialized data.
+     * @param XmlSerializer $serializer XML serializer instance.
+     *
+     * @return \DOMElement Serialized node.
+     */
     public function toXml(\DOMElement $node, XmlSerializer $serializer)
     {
-        foreach ($this->_offsets as $offset => $value)
-            $node->setAttribute($offset, $value);
-
-        foreach ($this->_children as $name => $child) {
-            $element = $node->ownerDocument->createElement($name);
-            $element = $serializer->serializeElement($child, $element);
+        foreach ($this->aliases as $from => $to) {
+            $element = $node->ownerDocument->createElement('alias');
+            $element->setAttribute('from', $from);
+            $element->setAttribute('to', $to);
             $node->appendChild($element);
         }
 
         return $node;
     }
 
-    public static function fromXml(\DOMElement $node, XmlDeserializer $deserializer, &$result = null)
+    /**
+     * Deserializes object from XML node.
+     *
+     * @param \DOMElement     $node         Node to deserialize.
+     * @param XmlDeserializer $deserializer Xml Deserializer instance.
+     *
+     * @return mixed Deserialized object.
+     */
+    public static function fromXml(\DOMElement $node, XmlDeserializer $deserializer)
     {
-        if (!is_object($result) || get_class($result) !== __CLASS__)
-            $result = new ConfigModule();
+        $result = new AliasConfig();
 
-        foreach ($node->attributes as $attribute) {
-            if (strpos($attribute->nodeName, ':') === false)
-                $result[$attribute->nodeName] = $attribute->nodeValue;
+        $aliases = $node->getElementsByTagName('alias');
+        foreach ($aliases as $alias) {
+            if (!($alias instanceof \DOMElement)) continue;
+
+            $result[$alias->getAttribute('from')] = $alias->getAttribute('to');
         }
-
-        foreach ($node->childNodes as $child)
-            $result->{$child->nodeName} = $deserializer->deserializeElement($child);
 
         return $result;
     }

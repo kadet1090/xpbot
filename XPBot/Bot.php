@@ -9,7 +9,10 @@ use Kadet\Xmpp\Stanza\Message;
 use Kadet\Xmpp\User;
 use Kadet\Xmpp\Utils\XmlBranch;
 use Kadet\Xmpp\XmppClient;
+use XPBot\Config\AliasConfig;
 use XPBot\Config\Config;
+use XPBot\Config\RoomsConfig;
+use XPBot\Config\UsersConfig;
 use XPBot\Exceptions\CommandAmbiguousException;
 use XPBot\Exceptions\CommandException;
 use XPBot\Exceptions\NoPermissionException;
@@ -83,8 +86,14 @@ class Bot extends XmppClient
 
         $this->config = new Config($config);
 
-        //$this->users = simplexml_load_file('./Config/Users.xml');
-        // $this->aliases = new Ini('./Config/Aliases.ini', true);
+        if (!isset($this->config->rooms))
+            $this->config->rooms = new RoomsConfig();
+
+        if (!isset($this->config->users))
+            $this->config->users = new UsersConfig();
+
+        if (!isset($this->config->aliases))
+            $this->config->aliases = new AliasConfig();
 
         parent::__construct(
             new Jid("{$this->config->xmpp->login}@{$this->config->xmpp->server}/{$this->config->xmpp->resource}"),
@@ -128,22 +137,21 @@ class Bot extends XmppClient
         $user->jointime = time();
         $user->permission = $this->getAffiliationPermission($user->affiliation);
 
-        $users = $this->config->users->xpath("/user[@jid='{$user->jid->bare()}']");
-        if ($users && isset($users[0]['permission']))
-            $user->permission = (int)$users[0]['permission'];
+        if (isset($this->config->users[$user->jid->bare()]))
+            $user->permission = $this->config->users[$user->jid->bare()]->permission;
 
-        Logger::debug($user->nick . ' joined to ' . $room->jid->name . ' with permission ' . $user->permission);
+        Logger::info($user->nick . ' joined to ' . $room->jid->name . ' with permission ' . $user->permission);
     }
 
     public function _joinRooms(XmppClient $client)
     {
-        foreach ($this->config->rooms as $channel) {
-            if ($channel->autojoin != 'true') continue;
+        foreach ($this->config->rooms as $jid => $room) {
+            if ($room['autojoin'] != 'true') continue;
 
-            $nick = isset($channel['nick']) ? $channel->nick : $this->config->xmpp->nickname;
-            $channel = new Jid($channel['name'], $channel['server']);
+            $nick = isset($room['nick']) ? $room->nick : $this->config->xmpp->nickname;
+            $room = new Jid($jid);
 
-            $this->join($channel, $nick);
+            $this->join($room, $nick);
         }
     }
 
@@ -171,11 +179,11 @@ class Bot extends XmppClient
     /**
      * @ignore Because it should be private, but it is used in delegate.
      */
-    private function parseCommand($command, Message $message)
+    public function evaluateCommand($command, Message $message)
     {
         if (preg_match('/\`((?:(?>[^`]+)|(?R))*)\`/six', $command))
             $command = preg_replace_callback('/\`((?:(?>[^`]+)|(?R))*)\`/six', function ($matches) use ($message) {
-                return '"' . $this->parseCommand($matches[1], $message) . '"';
+                return '"' . $this->evaluateCommand($matches[1], $message) . '"';
             }, $command);
 
         $params  = new Params($command);
@@ -209,21 +217,21 @@ class Bot extends XmppClient
         if ($message->sender->self == true) return null;
         if (isset($message->sender->room) && $message->sender->room->subject === false) return; // from history
 
-        $prompt = !empty($message->sender->room->configuration->prompt) ?
-            $message->sender->room->configuration->prompt :
-            $this->config->MUCPrompt;
+        $prompt = isset($this->config->rooms[$message->sender->room->jid->bare()]->prompt) ?
+            $this->config->rooms[$message->sender->room->jid->bare()]->prompt :
+            $this->config->storage->get('muc-prompt', 'bot', '#');
 
         if (substr($message->body, 0, strlen($prompt)) != $prompt) return;
 
         Language::setGlobalVar('P', $prompt);
         $content = $message->body;
 
-        foreach ($this->_macros as $macro => $macro) {
-            $content = str_replace('!' . $macro, is_callable($macro) ? $macro($message, $this) : $macro, $content);
+        foreach ($this->_macros as $name => $macro) {
+            $content = str_replace('!' . $name, is_callable($macro) ? $macro($message, $this) : $macro, $content);
         }
 
         try {
-            $message->reply($this->parseCommand(substr($content, strlen($prompt)), $message));
+            $message->reply($this->evaluateCommand(substr($content, strlen($prompt)), $message));
         } catch (CommandAmbiguousException $e) {
             $str = __('commandAmbiguous', 'pl_PL', 'default', array('command' => $e->getCommand()));
 
@@ -236,7 +244,7 @@ class Bot extends XmppClient
             Logger::warning("'{$exception->getConsoleMessage()}' in {$exception->getCommand()} launched by {$message->sender->jid}");
         } catch (NoPermissionException $exception) {
             $message->reply($exception->getMessage());
-            Logger::warning("");
+            Logger::warning("{$message->from} has no permission to run {$exception->getCommand()} command.");
         }
     }
 
@@ -283,8 +291,8 @@ class Bot extends XmppClient
      */
     public function getCommand($name, $aliasing = true)
     {
-        if ($aliasing && isset($this->aliases[$name]))
-            $name = $this->aliases[$name];
+        if ($aliasing && isset($this->config->aliases[$name]))
+            $name = $this->config->aliases[$name];
 
         $name = explode('-', $name, 2);
         if (count($name) == 2) {
@@ -310,7 +318,8 @@ class Bot extends XmppClient
      */
     public function commandExists($command)
     {
-        $commands = $this->getCommand($command, false);
+        $commands = $this->getCommand($command);
+
         return ($commands && !is_array($commands));
     }
 
@@ -323,6 +332,9 @@ class Bot extends XmppClient
      */
     public function getFullyQualifiedCommand($command)
     {
+        if (isset($this->config->aliases[$command]))
+            $command = $this->config->aliases[$command];
+
         if (strstr($command, '-')) return $command; // Command is already fully qualified command.
 
         $iterator = new \RecursiveIteratorIterator(
@@ -358,7 +370,7 @@ class Bot extends XmppClient
     {
         $command = $this->getFullyQualifiedCommand($command);
 
-        return array_keys(array_filter($this->aliases->asArray(), function ($value) use ($command) {
+        return array_keys(array_filter($this->config->aliases->aliases, function ($value) use ($command) {
             return $value == $command;
         }));
     }
@@ -374,9 +386,7 @@ class Bot extends XmppClient
      */
     public function getFromConfig($var, $namespace, $default = null)
     {
-        $result = $this->config->xpath("//plugins/var[@name='$var' and @namespace='$namespace']");
-        if ($result) return (string)$result[0];
-        else return $default;
+        return $this->config->storage->get($var, $namespace, $default);
     }
 
     /**
@@ -390,19 +400,7 @@ class Bot extends XmppClient
      */
     public function setInConfig($var, $namespace, $value)
     {
-        if (!isset($this->config->plugins)) $this->config->addChild('plugins');
-
-        $result = $this->config->xpath("//plugins/var[@name='$var' and @namespace='$namespace']");
-
-        if ($result) {
-            $result[0]->{0} = $value;
-        } else {
-            $result = $this->config->plugins->addChild('var', $value);
-            $result->addAttribute('name', $var);
-            $result->addAttribute('namespace', $namespace);
-        }
-
-        $this->config->asXML('./Config/Config.xml');
+        $this->config->storage->set($var, $namespace, $value);
     }
 
     /**
@@ -410,15 +408,12 @@ class Bot extends XmppClient
      *
      * @param string $var Variable name
      * @param string $namespace Variable namespace
+     *
+     * @deprecated
      */
     public function removeFromConfig($var, $namespace)
     {
-        $result = $this->config->xpath("//plugins/var[@name='$var' and @namespace='$namespace']");
-
-        if ($result) {
-            unset($result[0][0]);
-            $this->config->asXML('./Config/Config.xml');
-        }
+        $this->config->storage->unset($var, $namespace);
     }
 
     /**

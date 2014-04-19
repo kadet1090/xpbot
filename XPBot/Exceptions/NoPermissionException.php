@@ -15,8 +15,9 @@ class NoPermissionException extends \Exception
 {
     private $_command;
 
-    public function __construct()
+    public function __construct($command)
     {
+        $this->_command = $command;
         parent::__construct('User has no permission to run this command.');
     }
 
