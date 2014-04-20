@@ -17,10 +17,11 @@ class Users extends Command
 
     public function execute($args)
     {
-        $pattern = (!empty($args[1]) ? $args[1] : $this->_bot->getFromConfig('defaultUserPattern', 'builtin', '%n - %a [%r] %s'));
-        $users = array();
+        $pattern = !empty($args[1]) ?
+            $args[1] :
+            $this->_bot->config->storage->get('defaultUserPattern', 'builtin', '%n - %a [%r] %s');
 
-        var_dump($this->_bot->users);
+        $users = array();
 
         foreach ($this->_author->room->users as $user) {
             $replace = array(

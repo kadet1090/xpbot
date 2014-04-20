@@ -3,8 +3,55 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "77610c8526db8fa30f6b5f06c615e2c1",
+    "hash": "37a8b34d7b07f4147c4138d6c734a2cf",
     "packages": [
+        {
+            "name": "kadet/socket-lib",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/kadet1090/SocketLib.git",
+                "reference": "74eff15b8c2b1cc68eccb7df256ff259a1e2b456"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/kadet1090/SocketLib/zipball/74eff15b8c2b1cc68eccb7df256ff259a1e2b456",
+                "reference": "74eff15b8c2b1cc68eccb7df256ff259a1e2b456",
+                "shasum": ""
+            },
+            "require": {
+                "kadet/utils": "dev-master",
+                "php": ">=5.4.0",
+                "psr/log": ">=1.0.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Kadet\\SocketLib\\": "."
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPLv3"
+            ],
+            "authors": [
+                {
+                    "name": "Kacper \"Kadet\" Donat",
+                    "email": "kadet1090@gmail.com",
+                    "homepage": "http://kadet.pipe-software.xaa.pl",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Event based socket library for php, supports (a)synchronous clients and servers.",
+            "homepage": "https://github.com/kadet1090/SocketLib",
+            "keywords": [
+                "Socket",
+                "client",
+                "event",
+                "server"
+            ],
+            "time": "2014-04-20 12:33:00"
+        },
         {
             "name": "kadet/utils",
             "version": "dev-master",
@@ -101,16 +148,17 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/kadet1090/Xmpp.git",
-                "reference": "4309714589b0fab6f9eaf524ee141242ff8edac9"
+                "reference": "d94e638d16d83f0d6423f11ffa7d7037f4fb695a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kadet1090/Xmpp/zipball/4309714589b0fab6f9eaf524ee141242ff8edac9",
-                "reference": "4309714589b0fab6f9eaf524ee141242ff8edac9",
+                "url": "https://api.github.com/repos/kadet1090/Xmpp/zipball/d94e638d16d83f0d6423f11ffa7d7037f4fb695a",
+                "reference": "d94e638d16d83f0d6423f11ffa7d7037f4fb695a",
                 "shasum": ""
             },
             "require": {
-                "kadet/utils": "*",
+                "kadet/socket-lib": "dev-master",
+                "kadet/utils": "dev-master",
                 "php": ">=5.4.0"
             },
             "type": "library",
@@ -140,7 +188,7 @@
                 "non-blocking",
                 "xmpp"
             ],
-            "time": "2014-04-19 23:50:34"
+            "time": "2014-04-20 14:44:24"
         },
         {
             "name": "psr/log",
@@ -187,7 +235,7 @@
     "aliases": [
 
     ],
-    "minimum-stability": "stable",
+    "minimum-stability": "dev",
     "stability-flags": {
         "kadet/xmpp": 20,
         "kadet/utils": 20,

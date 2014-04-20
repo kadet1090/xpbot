@@ -1,7 +1,6 @@
 <?php
 namespace XPBot;
 
-use Kadet\Utils\Logger;
 use Kadet\Xmpp\Jid;
 use Kadet\Xmpp\Room;
 use Kadet\Xmpp\Stanza\Iq;
@@ -30,7 +29,7 @@ class Bot extends XmppClient
     /**
      * Bot version string.
      */
-    const BOT_VERSION = 'Beta 0.7';
+    const BOT_VERSION = 'Beta 0.8';
 
     /**
      * Commands list.
@@ -56,23 +55,10 @@ class Bot extends XmppClient
     /**
      * Bots configuration.
      *
-     * @var \SimpleXMLElement
+     * @var Config
      */
     public $config;
 
-    /**
-     * User database, accessed by users[channel|roster][username].
-     *
-     * @var User[string][string]
-     */
-    public $users;
-
-    /**
-     * Command aliases.
-     *
-     * @var \Kadet\Utils\Ini
-     */
-    public $aliases;
 
     /**
      * @param string $config Config to use in bot.
@@ -140,7 +126,7 @@ class Bot extends XmppClient
         if (isset($this->config->users[$user->jid->bare()]))
             $user->permission = $this->config->users[$user->jid->bare()]->permission;
 
-        Logger::info($user->nick . ' joined to ' . $room->jid->name . ' with permission ' . $user->permission);
+        if (isset($this->logger)) $this->logger->info($user->nick . ' joined to ' . $room->jid->name . ' with permission ' . $user->permission);
     }
 
     public function _joinRooms(XmppClient $client)
@@ -241,10 +227,10 @@ class Bot extends XmppClient
             $message->reply($str);
         } catch (CommandException $exception) {
             $message->reply($exception->getMessage());
-            Logger::warning("'{$exception->getConsoleMessage()}' in {$exception->getCommand()} launched by {$message->sender->jid}");
+            if (isset($this->logger)) $this->logger->warning("'{$exception->getConsoleMessage()}' in {$exception->getCommand()} launched by {$message->sender->jid}");
         } catch (NoPermissionException $exception) {
             $message->reply($exception->getMessage());
-            Logger::warning("{$message->from} has no permission to run {$exception->getCommand()} command.");
+            if (isset($this->logger)) $this->logger->warning("{$message->from} has no permission to run {$exception->getCommand()} command.");
         }
     }
 
@@ -481,7 +467,8 @@ class Bot extends XmppClient
      */
     public function updatePermission(Jid $jid)
     {
-        $users = $this->users->xpath("//user[@jid='{$jid->bare()}']");
+        /// TODO: Change that shit
+        /*$users = $this->users->xpath("//user[@jid='{$jid->bare()}']");
         if ($users && isset($users[0]['permission']))
             $permission = (int)$users[0]['permission'];
 
@@ -490,7 +477,7 @@ class Bot extends XmppClient
                 if ($user->jid->bare() == $jid->bare())
                     $user->permission = isset($permission) ?
                         $permission :
-                        $this->getAffiliationPermission($user->affiliation);
+                        $this->getAffiliationPermission($user->affiliation);*/
     }
 
     private function _loadPlugins()
@@ -502,24 +489,24 @@ class Bot extends XmppClient
 
         foreach ($iterator as $file) {
             if (!file_exists($file->getPathname() . '/manifest.xml')) {
-                Logger::warning('Plugin on path "' . $file->getPathname() . '" hasn\'t manifest, skipping...');
+                if (isset($this->logger)) $this->logger->warning('Plugin on path "' . $file->getPathname() . '" hasn\'t manifest, skipping...');
                 continue;
             }
 
             $manifest = simplexml_load_file($file->getPathname() . '/manifest.xml');
             if (!isset($manifest->file)) {
-                Logger::warning('Plugin on path "' . $file->getPathname() . '" hasn\'t set file, skipping...');
+                if (isset($this->logger)) $this->logger->warning('Plugin on path "' . $file->getPathname() . '" hasn\'t set file, skipping...');
                 continue;
             }
 
             include $file->getPathname() . '/' . $manifest->file;
             if (!isset($manifest->class) || !class_exists($manifest->class)) {
-                Logger::warning('Plugin on path "' . $file->getPathname() . '" hasn\'t set class or specified class not exists, skipping...');
+                if (isset($this->logger)) $this->logger->warning('Plugin on path "' . $file->getPathname() . '" hasn\'t set class or specified class not exists, skipping...');
                 continue;
             }
 
             if (!is_subclass_of((string)$manifest->class, 'XPBot\\Plugin')) {
-                Logger::warning('Plugin on path "' . $file->getPathname() . '" is not a valid plugin, skipping...');
+                if (isset($this->logger)) $this->logger->warning('Plugin on path "' . $file->getPathname() . '" is not a valid plugin, skipping...');
                 continue;
             }
 
@@ -533,7 +520,8 @@ class Bot extends XmppClient
     private function _loadPlugin($file)
     {
         if (!file_exists($file->getPathname() . '/manifest.xml')) {
-            Logger::warning('Plugin on path "' . $file->getPathname() . '" hasn\'t manifest, skipping...');
+            if (isset($this->logger)) $this->logger->warning('Plugin on path "' . $file->getPathname() . '" hasn\'t manifest, skipping...');
+
             return false;
         }
     }
@@ -606,19 +594,22 @@ class Bot extends XmppClient
     {
         $message = 'PHP: ' . $message . ' in ' . str_replace(getcwd(), '.', $file) . ' on line ' . $line;
 
+        if (!isset($this->logger)) return true;
+
         switch ($level) {
             case E_WARNING:
-                Logger::warning($message);
+                $this->logger->warning($message);
                 break;
             case E_DEPRECATED:
             case E_NOTICE:
-                Logger::debug($message);
-                break;
+            $this->logger->debug($message);
+            break;
             case E_ERROR:
-                Logger::error($message);
+                $this->logger->error($message);
+
                 return false; // backtrace is corrupted.
             default:
-                Logger::warning($message);
+                $this->logger->warning($message);
                 break;
         }
 
@@ -640,7 +631,8 @@ class Bot extends XmppClient
             $backtrace[] = $str;
         }
 
-        Logger::debug('Cor... Callstack dump: ' . PHP_EOL . implode(PHP_EOL, $backtrace));
+        $this->logger->debug('Cor... Callstack dump: ' . PHP_EOL . implode(PHP_EOL, $backtrace));
+
         return true;
     }
 

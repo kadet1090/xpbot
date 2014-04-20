@@ -8,7 +8,6 @@
 
 namespace XPBot\Commands;
 
-use Kadet\Utils\Logger;
 use XPBot\Command;
 
 class Quit extends Command
@@ -18,12 +17,18 @@ class Quit extends Command
     public function execute($args)
     {
         if (isset($args['restart'])) {
-            if ($args[1]) Logger::info("Restarting bot because {$args[0]}.");
-            else Logger::info("Restarting bot.");
+            if ($args[1])
+                if (isset($this->_bot->logger)) $this->_bot->logger->info("Restarting bot because {$args[0]}.");
+                else
+                    if (isset($this->_bot->logger)) $this->_bot->logger->info("Restarting bot.");
+
             restart();
         }
-        if ($args[1]) Logger::info("Exiting bot because {$args[0]}.");
-        else Logger::info("Exiting bot.");
+        if ($args[1])
+            if (isset($this->_bot->logger)) $this->_bot->logger->info("Exiting bot because {$args[0]}.");
+            else
+                if (isset($this->_bot->logger)) $this->_bot->logger->info("Exiting bot.");
+
         exit;
     }
 }

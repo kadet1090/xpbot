@@ -1,4 +1,5 @@
 {
+    "minimum-stability": "dev",
     "require": {
         "kadet/xmpp": "dev-master",
         "kadet/utils": "dev-master",

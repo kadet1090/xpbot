@@ -9,9 +9,9 @@
 
 namespace XPBot\Commands;
 
+use Kadet\Xmpp\Jid;
 use XPBot\Command;
 use XPBot\Exceptions\CommandException;
-use Kadet\Xmpp\Jid;
 
 class Permission extends Command
 {
@@ -19,7 +19,7 @@ class Permission extends Command
 
     public function execute($args)
     {
-        if (!Jid::isJid($args[1]) && !isset($this->_author->room->users[$args[1]]))
+        if (isset($args[1]) && !Jid::isJid($args[1]) && !isset($this->_author->room->users[$args[1]]))
             throw new commandException('This user is not present on that channel.', __('errUserNotPresent', $this->_lang));
 
         if (isset($args[1]))
@@ -36,9 +36,9 @@ class Permission extends Command
     public function all()
     {
         $result = array();
-        foreach ($this->_bot->users->user as $user) {
-            if (isset($user['permission']))
-                $result[] = "{$user['jid']} - {$user['permission']}";
+        foreach ($this->_bot->config->users as $name => $user) {
+            if (isset($user->permission))
+                $result[] = "{$name} - {$user->permission}";
         }
 
         return implode(PHP_EOL, $result);
@@ -46,26 +46,22 @@ class Permission extends Command
 
     public function get($jid)
     {
-        $users = $this->_bot->users->xpath("//user[@jid='{$jid}']");
-        if ($users && isset($users[0]['permission']))
-            return (int)$users[0]['permission'];
+        if (isset($this->_bot->config->users[$jid]) && isset($this->_bot->config->users[$jid]->permission))
+            return (int)$this->_bot->config->users[$jid]->permission;
         else
             return __('errSpecifiedUserNotKnown', $this->_lang, __CLASS__);
     }
 
     public function set($jid, $permission = -1)
     {
-        $users = $this->_bot->users->xpath("//user[@jid='{$jid}']");
-        $user  = $users ? $users[0] : $this->_bot->users->addChild('user');
-
-        if (!isset($user["jid"])) $user->addAttribute('jid', $jid);
+        $user = $this->_bot->config->users[$jid];
 
         if ($permission != -1)
-            $user['permission'] = $permission;
+            $user->permission = $permission;
         else
-            unset($user['permission']);
+            unset($user->permission);
 
         $this->_bot->updatePermission(new Jid($jid));
-        $this->_bot->users->asXML('./Config/Users.xml');
+        $this->_bot->config->save();
     }
 }
