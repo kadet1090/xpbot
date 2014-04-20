@@ -1,4 +1,5 @@
 .idea
 /Config
 /Logs
+/vendor
 Documentation # only for now :)

@@ -1,0 +1,8 @@
+{
+    "require": {
+        "kadet/xmpp": "dev-master",
+        "kadet/utils": "dev-master",
+        "kadet/xml-serializer": "dev-master",
+        "psr/log": "1.0.0"
+    }
+}

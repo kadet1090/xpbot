@@ -1,9 +1,0 @@
-[submodule "Kadet/Xmpp"]
-	path = Kadet/Xmpp
-	url = git@github.com:kadet1090/Xmpp.git
-[submodule "Kadet/Utils"]
-	path = Kadet/Utils
-	url = git@github.com:kadet1090/Utils.git
-[submodule "Kadet/XmlSerializer"]
-	path = Kadet/XmlSerializer
-	url = https://github.com/kadet1090/XmlSerializer.git
