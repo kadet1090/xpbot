@@ -9,9 +9,9 @@
 
 namespace XPBot\Plugins\Base\Commands;
 
+use Kadet\Xmpp\Jid;
 use XPBot\Command;
 use XPBot\Exceptions\CommandException;
-use Kadet\Xmpp\Jid;
 
 class Version extends Command
 {
@@ -32,9 +32,9 @@ class Version extends Command
             if ($reply['type'] != 'result') return;
 
             $this->_author->room->message(__('reply', $this->_lang, __CLASS__, array(
-                'name'    => $reply->query->name,
-                'version' => $reply->query->version,
-                'os'      => (isset($reply->query->os) ? $reply->query->os : ''),
+                'name'    => $reply->query->name->content,
+                'version' => $reply->query->version->content,
+                'os'      => (isset($reply->query->os) ? $reply->query->os->content : ''),
                 'user'    => $args[1]
             )));
         });

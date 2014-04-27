@@ -95,6 +95,7 @@ class Bot extends XmppClient
                 usleep(100);
             }
         });
+
         $this->onMessage->add(array($this, '_parseMessage'));
         $this->onIq->add(array($this, '_parseIq'));
 

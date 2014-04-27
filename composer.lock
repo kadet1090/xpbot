@@ -58,12 +58,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/kadet1090/Utils.git",
-                "reference": "f646b791ec514e939b6540b1678c6370c807222a"
+                "reference": "4474a4ce84817e7669ddcf95d5d771c813e97179"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kadet1090/Utils/zipball/f646b791ec514e939b6540b1678c6370c807222a",
-                "reference": "f646b791ec514e939b6540b1678c6370c807222a",
+                "url": "https://api.github.com/repos/kadet1090/Utils/zipball/4474a4ce84817e7669ddcf95d5d771c813e97179",
+                "reference": "4474a4ce84817e7669ddcf95d5d771c813e97179",
                 "shasum": ""
             },
             "require": {
@@ -96,7 +96,7 @@
                 "utilities",
                 "utils"
             ],
-            "time": "2014-04-19 23:52:16"
+            "time": "2014-04-27 11:23:31"
         },
         {
             "name": "kadet/xml-serializer",
@@ -148,12 +148,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/kadet1090/Xmpp.git",
-                "reference": "d94e638d16d83f0d6423f11ffa7d7037f4fb695a"
+                "reference": "1678ffc4ea731c6a7226fd6af007a18f6620d41e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kadet1090/Xmpp/zipball/d94e638d16d83f0d6423f11ffa7d7037f4fb695a",
-                "reference": "d94e638d16d83f0d6423f11ffa7d7037f4fb695a",
+                "url": "https://api.github.com/repos/kadet1090/Xmpp/zipball/1678ffc4ea731c6a7226fd6af007a18f6620d41e",
+                "reference": "1678ffc4ea731c6a7226fd6af007a18f6620d41e",
                 "shasum": ""
             },
             "require": {
@@ -188,7 +188,7 @@
                 "non-blocking",
                 "xmpp"
             ],
-            "time": "2014-04-20 14:44:24"
+            "time": "2014-04-27 12:57:24"
         },
         {
             "name": "psr/log",

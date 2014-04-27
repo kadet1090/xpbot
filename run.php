@@ -14,4 +14,5 @@ $autoloader = new \Kadet\Utils\AutoLoader('XPBot\\', './XPBot/');
 $autoloader->register();
 
 $client = new \XPBot\Bot();
+$client->logger = new \Kadet\SocketLib\Utils\Logger(['default' => 'bot.log', 'debug' => 'debug.log'], DEBUG_MODE);
 $client->connect();

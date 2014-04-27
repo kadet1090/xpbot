@@ -16,18 +16,16 @@ class Quit extends Command
 
     public function execute($args)
     {
-        if (isset($args['restart'])) {
+        if (isset($args['restart']) || isset($args['r'])) {
             if ($args[1])
                 if (isset($this->_bot->logger)) $this->_bot->logger->info("Restarting bot because {$args[0]}.");
-                else
-                    if (isset($this->_bot->logger)) $this->_bot->logger->info("Restarting bot.");
+                else if (isset($this->_bot->logger)) $this->_bot->logger->info("Restarting bot.");
 
             restart();
         }
         if ($args[1])
             if (isset($this->_bot->logger)) $this->_bot->logger->info("Exiting bot because {$args[0]}.");
-            else
-                if (isset($this->_bot->logger)) $this->_bot->logger->info("Exiting bot.");
+            else if (isset($this->_bot->logger)) $this->_bot->logger->info("Exiting bot.");
 
         exit;
     }
