@@ -72,6 +72,8 @@ class Bot extends XmppClient
 
         $this->config = new Config($config);
 
+        $this->checkConfig();
+
         if (!isset($this->config->rooms))
             $this->config->rooms = new RoomsConfig();
 
@@ -84,8 +86,8 @@ class Bot extends XmppClient
         parent::__construct(
             new Jid("{$this->config->xmpp->login}@{$this->config->xmpp->server}/{$this->config->xmpp->resource}"),
             (string)$this->config->xmpp->password,
-            (string)$this->config->xmpp->port,
-            (string)$this->config->xmpp->timeout
+            isset($this->config->xmpp->port) ? (int)$this->config->xmpp->port : 5222,
+            isset($this->config->xmpp->timeout) ? (int)$this->config->xmpp->timeout : 30
         );
 
         $this->_loadPlugins();
@@ -642,5 +644,48 @@ class Bot extends XmppClient
         $error = error_get_last();
         if ($error['type'] == E_ERROR) // OMG SO MUCH FAIL
             $this->_errorHandler(E_ERROR, $error['message'], $error['file'], $error['line']);
+    }
+
+    // todo: write better generator
+    private function checkConfig()
+    {
+        if (!isset(
+        $this->config->xmpp->login,
+        $this->config->xmpp->server,
+        $this->config->xmpp->resource,
+        $this->config->xmpp->password,
+        $this->config->xmpp->nickname
+        )
+        )
+            echo 'Configuration is incomplete, please provide required data.' . PHP_EOL;
+
+        if (!isset($this->config->xmpp->login)) {
+            echo "XMPP Login: ";
+            $this->config->xmpp->login = trim(fgets(STDIN));
+        }
+
+        if (!isset($this->config->xmpp->server)) {
+            echo "XMPP server: ";
+            $this->config->xmpp->server = trim(fgets(STDIN));
+        }
+
+        if (!isset($this->config->xmpp->resource)) {
+            echo "XMPP resource [XPBot]: ";
+            $this->config->xmpp->resource = trim(fgets(STDIN));
+            if (empty($this->config->xmpp->resource))
+                $this->config->xmpp->resource = 'XPBot';
+        }
+
+        if (!isset($this->config->xmpp->password)) {
+            echo "XMPP password: ";
+            $this->config->xmpp->password = trim(fgets(STDIN));
+        }
+
+        if (!isset($this->config->xmpp->nickname)) {
+            echo "XMPP nickname: ";
+            $this->config->xmpp->nickname = trim(fgets(STDIN));
+        }
+
+        $this->config->save();
     }
 }

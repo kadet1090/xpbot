@@ -54,9 +54,12 @@ class Config extends ConfigModule
 
         $this->_deserializer = new XmlDeserializer();
 
-        $result          = $this->_deserializer->deserializeFile($this->_file);
-        $this->_children = $result->_children;
-        $this->_offsets  = $result->_offsets;
+        if (file_exists($this->_file)) {
+            $result          = $this->_deserializer->deserializeFile($this->_file);
+            $this->_children = $result->_children;
+            $this->_offsets  = $result->_offsets;
+        } else
+            $this->save();
 
         if (!isset($this->storage))
             $this->storage = new SimpleConfig();
@@ -65,6 +68,8 @@ class Config extends ConfigModule
     public function save()
     {
         $this->onSave->run($this);
+        if (!file_exists(dirname($this->_file)))
+            mkdir(dirname($this->_file), 0777, true);
         file_put_contents($this->_file, $this->_serializer->serialize($this));
     }
 } 
