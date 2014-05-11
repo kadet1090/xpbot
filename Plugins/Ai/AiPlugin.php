@@ -10,12 +10,15 @@ namespace XPBot\Plugins\Ai;
 
 use Kadet\Xmpp\Stanza\Message;
 use Kadet\Xmpp\XmppClient;
-use XPBot\Plugin;
 
+use XPBot\Plugin;
 use XPBot\Plugins\Ai\Lib\Chatter;
 
 class AiPlugin extends Plugin
 {
+    /**
+     * @var Chatter
+     */
     private $chatter;
 
     public function load()
@@ -23,6 +26,7 @@ class AiPlugin extends Plugin
         $this->chatter = new Chatter($this->_bot);
         $this->chatter->loadDictionary('./Config/default.txt');
         $this->_bot->onMessage->add(array($this, 'parse'));
+
     }
 
     public function parse(XmppClient $client, Message $packet)

@@ -1,76 +1,96 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phrases lang="pl_PL">
-    <phrase id="shortHelp">Ta komenda nie została udokumentowana</phrase>
-    <phrase id="help">Ta komenda nie została udokumentowana</phrase>
-    <phrase id="done">Wykonano.</phrase>
-    <phrase id="commandAmbiguous">Komenda {%command} nie jest jednoznaczna, wybierz jedną z poniższych:</phrase>
-    <phrase id="errCommandNotExists">Nie ma takiej komendy.</phrase>
-    <phrase id="errNoPermission">Nie masz uprawnień.</phrase>
-    <phrase id="errModuleNotExists">Moduł {%module} nie istnieje, może nie został zainstalowany?</phrase>
-    <phrase id="errArgumentInvalid">Podany argument nie jest prawidłowy.</phrase>
-    <phrase id="errTooFewArguments">Podano za mało argumentów.</phrase>
-    <phrase id="errInvalidAction">Nieprawidłowa akcja.</phrase>
-    <phrase id="errUserNotPresent">Użytkownik jest aktualnie niedostępny.</phrase>
+  <phrase id="shortHelp">Ta komenda nie została udokumentowana</phrase>
+  <phrase id="help">Ta komenda nie została udokumentowana</phrase>
+  <phrase id="done">Wykonano.</phrase>
+  <phrase id="commandAmbiguous">Komenda {%command} nie jest jednoznaczna, wybierz jedną z poniższych:</phrase>
+  <phrase id="errCommandNotExists">Nie ma takiej komendy.</phrase>
+  <phrase id="errNoPermission">Nie masz uprawnień.</phrase>
+  <phrase id="errModuleNotExists">Moduł {%module} nie istnieje, może nie został zainstalowany?</phrase>
+  <phrase id="errArgumentInvalid">Podany argument nie jest prawidłowy.</phrase>
+  <phrase id="errTooFewArguments">Podano za mało argumentów.</phrase>
+  <phrase id="errInvalidAction">Nieprawidłowa akcja.</phrase>
+  <phrase id="errUserNotPresent">Użytkownik jest aktualnie niedostępny.</phrase>
 
-    <phrase id="shortHelp" ns="XPBot\Commands\Help">Wyświetla pomoc bota</phrase>
-    <phrase id="help" ns="XPBot\Commands\Help">
-        Wyświetla pomoc bota, oraz listę wszystkich dostępnych komend.
+  <phrase id="shortHelp" ns="XPBot\Commands\Help">Wyświetla pomoc bota</phrase>
+  <phrase id="help" ns="XPBot\Commands\Help">
+    Wyświetla pomoc bota, oraz listę wszystkich dostępnych komend.
 
-        {%P}{%command} [komenda lub moduł]
+    {%P}{%command} [komenda lub moduł]
 
-        Dodatkowo możesz użyć następujących przełączników:
+    Dodatkowo możesz użyć następujących przełączników:
 
-        -m - Wyświetla listę modułów.
-        -m nazwa - Wyświetla komendy z danego modułu,
-        -a - wyświetla wszystkie komendy, nawet te, do których nie mamy uprawnień,
-        -l - dodatkowo wypisuje wymagany poziom uprawnień.
+    -m - Wyświetla listę modułów.
+    -m nazwa - Wyświetla komendy z danego modułu,
+    -a - wyświetla wszystkie komendy, nawet te, do których nie mamy uprawnień,
+    -l - dodatkowo wypisuje wymagany poziom uprawnień.
 
-        -r regex - Wyświetla wszystkie komendy pasujące do danego regexa,
-    </phrase>
-    <phrase id="commands" ns="XPBot\Commands\Help">
-        Aby uruchomić daną komendę wpisz {%P}komenda lub {%P}moduł-komenda.
-        Jeżeli nie wiesz jak obsługuje się daną komendę po prostu wpisz {%P}help komenda.
+    -r regex - Wyświetla wszystkie komendy pasujące do danego regexa,
+  </phrase>
+  <phrase id="commands" ns="XPBot\Commands\Help">
+    Aby uruchomić daną komendę wpisz {%P}komenda lub {%P}moduł-komenda.
+    Jeżeli nie wiesz jak obsługuje się daną komendę po prostu wpisz {%P}[%command} komenda.
 
-        {%commands}
-    </phrase>
-    <phrase id="modules" ns="XPBot\Commands\Help">Dostępne moduły: {%modules}</phrase>
+    {%commands}
+  </phrase>
+  <phrase id="modules" ns="XPBot\Commands\Help">Dostępne moduły: {%modules}</phrase>
 
-    <phrase id="shortHelp" ns="XPBot\Commands\Alias">Zarządza aliasami komend</phrase>
-    <phrase id="help" ns="XPBot\Commands\Alias">
-        Zarządza aliasami komend w bocie.
+  <phrase id="shortHelp" ns="XPBot\Commands\Alias">Zarządza aliasami komend</phrase>
+  <phrase id="help" ns="XPBot\Commands\Alias">
+    Zarządza aliasami komend w bocie.
 
-        {%P}{%command} add alias komenda - dodaje nowy alias,
-        {%P}{%command} remove alias - usuwa dany alias,
-        {%P}{%command} command komenda - wyświetla aliasy danej komendy,
-        {%P}{%command} - wyświetla wszystkie aliasy.
-    </phrase>
-    <phrase id="errAliasNotExists" ns="XPBot\Commands\Alias">Taki alias nie istnieje.</phrase>
-    <phrase id="commandAliases" ns="XPBot\Commands\Alias">
-        Aliasy komendy {%command}: {%aliases}
-    </phrase>
+    {%P}{%command} add alias komenda - dodaje nowy alias,
+    {%P}{%command} remove alias - usuwa dany alias,
+    {%P}{%command} of komenda - wyświetla aliasy danej komendy,
+    {%P}{%command} - wyświetla wszystkie aliasy.
+  </phrase>
+  <phrase id="errAliasNotExists" ns="XPBot\Commands\Alias">Taki alias nie istnieje.</phrase>
+  <phrase id="commandAliases" ns="XPBot\Commands\Alias">
+    Aliasy komendy {%command}: {%aliases}
+  </phrase>
 
-    <phrase id="shortHelp" ns="XPBot\Commands\Quit">Wyłącza bota</phrase>
-    <phrase id="help" ns="XPBot\Commands\Quit">
-        Wyłącza bota.
+  <phrase id="shortHelp" ns="XPBot\Commands\Quit">Wyłącza lub restartuje bota</phrase>
+  <phrase id="help" ns="XPBot\Commands\Quit">
+    Wyłącza lub restartuje bota.
 
-        {%P}{%command} [wiadomość]
-    </phrase>
+    {%P}{%command} [wiadomość] -r|--restart
+  </phrase>
 
-    <phrase id="shortHelp" ns="XPBot\Commands\About">Informcje o bocie</phrase>
-    <phrase id="help" ns="XPBot\Commands\About">
-        Informacje o bocie.
+  <phrase id="shortHelp" ns="XPBot\Commands\Config">Zarządza konfiguracją</phrase>
+  <phrase id="help" ns="XPBot\Commands\Config">
+    Zarządza podstawową konfiguracją bota.
 
-        {%P}{%command}
-    </phrase>
-    <phrase id="about">
-        Xmpp Php BOT {%version}
-        Bot stworzony przez Kadeta w PHP.
-        Napisany przy pomocy świetnego IDE - PhpStorma,
-        na mniej świetnym systemie Windowsie.
+    {%P}{%command} - wyświetli wszystkie wartości zdefiniowane w konfiguracji
+    {%P}{%command} moduł:zmienna - wyświetla wartość zmiennej z konfiguracji
+    {%P}{%command} moduł:zmienna wartość - ustala wartość zmiennej w konfiguracji na podaną wartość
+  </phrase>
 
-        Kontakt z autorem:
-        jabber: kadet1090@aqq.eu (pamiętaj aby najpierw poprosić o autoryzację :)
-        gg: 12881099
-        e-mail: kadet1090@gmail.com
-    </phrase>
+  <phrase id="shortHelp" ns="XPBot\Commands\Permission">Zarządza uprawnieniami użytkowników</phrase>
+  <phrase id="help" ns="XPBot\Commands\Permission">
+    Pozwala zarządzać uprawnieniami użytkowników.
+
+    {%P}{%command} get użytkownik - Wyświetla wszystkie uprawnienia użykownika.
+    {%P}{%command} grant użytkownik uprawnienie - przydziela uprawnienie użytkownikowi
+    {%P}{%command} revoke użytkownik uprawnienie - odbiera uprwanienie użytkownikowi
+
+    Uprawnienia, które zostały użytkownikowi zabrane zostają poprzedzone znakiem tyldy ~.
+  </phrase>
+
+  <phrase id="shortHelp" ns="XPBot\Commands\About">Informcje o bocie</phrase>
+  <phrase id="help" ns="XPBot\Commands\About">
+    Informacje o bocie.
+
+    {%P}{%command}
+  </phrase>
+  <phrase id="about">
+    Xmpp Php Bot {%version}
+    Bot stworzony przez Kadeta w PHP.
+    Napisany przy pomocy świetnego IDE - PhpStorma,
+    na mniej świetnym Windowsie.
+
+    Kontakt z autorem:
+    jabber: kadet@jid.pl (pamiętaj aby najpierw poprosić o autoryzację :)
+    gg: 12881099
+    e-mail: kadet1090@gmail.com
+  </phrase>
 </phrases>
