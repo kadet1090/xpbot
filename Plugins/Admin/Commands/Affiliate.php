@@ -9,9 +9,10 @@
 
 namespace XPBot\Plugins\Admin\Commands;
 
+use Kadet\Xmpp\Jid;
+use Kadet\Xmpp\Stanza\Iq;
 use XPBot\Command;
 use XPBot\Exceptions\CommandException;
-use Kadet\Xmpp\Jid;
 
 class Affiliate extends Command
 {
@@ -38,13 +39,17 @@ class Affiliate extends Command
             if ($exception->getMessage() == 'affiliation')
                 throw new commandException('Wrong affiliation.', __('errWrongAffiliation', $this->_lang));
 
+            if ($exception->getMessage() == 'who')
+                throw new commandException('Wrong user.', __('errWrongUser', $this->_lang));
         }
     }
 
     private function _list($args)
     {
         try {
-            $this->_author->room->affiliationList($args[1], function ($packet) use ($args) {
+            $this->_author->room->affiliationList($args[1], function (Iq $packet) use ($args) {
+                if ($packet->type == 'error') return __('Error', $this->_lang);
+
                 $users = array();
                 foreach ($packet->query->item as $user)
                     $users[] = $args['j'] ? $user['jid'] : strstr($user['jid'], '@', true) . (!empty($user->reason) && $args['r'] ? " - {$user->reason}" : '');

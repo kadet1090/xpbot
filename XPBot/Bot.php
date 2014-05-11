@@ -114,7 +114,6 @@ class Bot extends XmppClient
         $this->registerCommand('XPBot\\Commands\\Config', 'builtin', 'config');
         $this->registerCommand('XPBot\\Commands\\Help', 'builtin', 'help');
         $this->registerCommand('XPBot\\Commands\\Permission', 'builtin', 'permission');
-        $this->registerCommand('XPBot\\Commands\\Plugin', 'builtin', 'plugin');
         $this->registerCommand('XPBot\\Commands\\Quit', 'builtin', 'quit');
 
         Language::loadDir(dirname(__FILE__) . '/Languages/');
