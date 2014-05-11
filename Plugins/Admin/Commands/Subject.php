@@ -22,9 +22,17 @@ class Subject extends Command
         if (isset($args[1]))
             $this->_author->room->setSubject($args[1]);
         elseif (isset($args['a']) && is_string($args['a']))
-            $this->_author->room->setSubject($this->_author->room->subject . ' | ' . $args['a']);
+            $this->_author->room->setSubject(
+                $this->_author->room->subject .
+                $this->_bot->config->storage->get('separator', 'admin', ' | ') .
+                $args['a']
+            );
         elseif (isset($args['p']) && is_string($args['p']))
-            $this->_author->room->setSubject($args['p'] . ' | ' . $this->_author->room->subject);
+            $this->_author->room->setSubject(
+                $args['p'] .
+                $this->_bot->config->storage->get('separator', 'admin', ' | ') .
+                $this->_author->room->subject
+            );
         else
             return $this->_author->room->subject;
     }

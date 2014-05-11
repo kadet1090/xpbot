@@ -23,32 +23,34 @@ class Role extends Command
         if (count($args) < 3)
             throw new commandException('Too few arguments.', __('errTooFewArguments', $this->_lang));
 
-        if (!in_array($args[1], ['visitor', 'none', 'moderator', 'participant']))
-            throw new commandException('Wrong role.', __('errWrongRole', $this->_lang));
-
         if (!isset($this->_author->room->users[$args[2]]) && !isset($args['a']))
             throw new commandException('This user is not present on that channel.', __('errUserNotPresent', $this->_lang));
 
         try {
             $this->_author->room->role($args[2], $args[1], $args[3]);
 
-            if (isset($args['a'])) {
-                if (!isset($this->_bot->config->rooms[$this->_author->room->jid->bare()]->auto))
-                    $this->_bot->config->rooms[$this->_author->room->jid->bare()]->auto = new UsersConfig();
+            if (isset($args['a']))
+                $this->auto($args[1], $args[2]);
 
-                $auto = $this->_bot->config->rooms[$this->_author->room->jid->bare()]->auto;
-
-                $jid = isset($this->_author->room->users[$args[2]]) ?
-                    $this->_author->room->users[$args[2]]->jid :
-                    new Jid($args[2]);
-
-                $auto[$jid->bare()]->role = $args[1];
-
-                $this->_bot->config->save();
-            }
         } catch (\InvalidArgumentException $exception) {
-            if ($exception->getMessage() == 'affiliation')
-                throw new commandException('Wrong affiliation.', __('errWrongAffiliation', $this->_lang));
+            if ($exception->getMessage() == 'role')
+                throw new commandException('Wrong role.', __('errWrongRole', $this->_lang));
         }
+    }
+
+    private function auto($role, $user)
+    {
+        if (!isset($this->_bot->config->rooms[$this->_author->room->jid->bare()]->auto))
+            $this->_bot->config->rooms[$this->_author->room->jid->bare()]->auto = new UsersConfig();
+
+        $auto = $this->_bot->config->rooms[$this->_author->room->jid->bare()]->auto;
+
+        $jid = isset($this->_author->room->users[$user]) ?
+            $this->_author->room->users[$user]->jid :
+            new Jid($user);
+
+        $auto[$jid->bare()]->role = $role;
+
+        $this->_bot->config->save();
     }
 }
