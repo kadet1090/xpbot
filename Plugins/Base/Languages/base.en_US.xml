@@ -1,93 +1,93 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phrases lang="en_US">
-    <phrase id="shortHelp" ns="XPBot\Plugins\Base\Commands\Ping">Checks users response time</phrase>
-    <phrase id="help" ns="XPBot\Plugins\Base\Commands\Ping">
-        Checks users response time.
+  <phrase id="shortHelp" ns="XPBot\Plugins\Base\Commands\Ping">Checks users response time</phrase>
+  <phrase id="help" ns="XPBot\Plugins\Base\Commands\Ping">
+    Checks users response time.
 
-        {%P}{%command} user
-    </phrase>
-    <phrase id="ping" ns="XPBot\Plugins\Base\Commands\Ping">{%user} response time is {%time}ms.</phrase>
+    {%P}{%command} user
+  </phrase>
+  <phrase id="ping" ns="XPBot\Plugins\Base\Commands\Ping">{%user} response time is {%time}ms.</phrase>
 
-    <phrase id="shortHelp" ns="XPBot\Plugins\Base\Commands\Version">Checks users IM version.</phrase>
-    <phrase id="help" ns="XPBot\Plugins\Base\Commands\Version">
-        Checks users instant messenger version
+  <phrase id="shortHelp" ns="XPBot\Plugins\Base\Commands\Version">Checks users IM version.</phrase>
+  <phrase id="help" ns="XPBot\Plugins\Base\Commands\Version">
+    Checks users instant messenger version
 
-        {%P}{%command} user
-    </phrase>
-    <phrase id="reply" ns="XPBot\Plugins\Base\Commands\Version">
-        {%user} is using {%name} {%version}
-        {%os}
-    </phrase>
+    {%P}{%command} user
+  </phrase>
+  <phrase id="reply" ns="XPBot\Plugins\Base\Commands\Version">
+    {%user} is using {%name} {%version}
+    {%os}
+  </phrase>
 
-    <phrase id="shortHelp" ns="XPBot\Plugins\Base\Commands\Subject">Manages room subject.</phrase>
-    <phrase id="help" ns="XPBot\Plugins\Base\Commands\Subject">
-        Manages room subject.
+  <phrase id="shortHelp" ns="XPBot\Plugins\Base\Commands\Subject">Manages room subject.</phrase>
+  <phrase id="help" ns="XPBot\Plugins\Base\Commands\Subject">
+    Manages room subject.
 
-        {%P}{%command} [-a|-p] [temat]
+    {%P}{%command} [-a|-p] [topic]
 
-        -a człon - Appends subject chunk after '|',
-        -p człon - Prepends subject chunk before and separates it by '|'.
+    -a chunk - Appends subject chunk after '|',
+    -p chunk - Prepends subject chunk before and separates it by '|'.
 
-        If no arguments given - displays room subject.
-    </phrase>
+    If no arguments given - displays room subject.
+  </phrase>
 
-    <phrase id="shortHelp" ns="XPBot\Plugins\Base\Commands\Clear">Clears room log.</phrase>
-    <phrase id="help" ns="XPBot\Plugins\Base\Commands\Clear">
-        Clears room log, so new users can't see any old messages.
+  <phrase id="shortHelp" ns="XPBot\Plugins\Base\Commands\Clear">Clears room log.</phrase>
+  <phrase id="help" ns="XPBot\Plugins\Base\Commands\Clear">
+    Clears room log, so new users can't see any old messages.
 
-        {%P}{%command} [count] [-m message] [-s silence mode]
+    {%P}{%command} [count] [-m message] [-s silence mode]
 
-        Configuration variables:
-        base:defaultClearCount "5"
-        base:defaultClearMessage "\0"
-    </phrase>
+    Configuration variables:
+    base:defaultClearCount "5"
+    base:defaultClearMessage "\0"
+  </phrase>
 
-    <phrase id="shortHelp" ns="XPBot\Plugins\Base\Commands\Join">Joins to specified room.</phrase>
-    <phrase id="help" ns="XPBot\Plugins\Base\Commands\Join">
-        Tells bot to join specified room.
+  <phrase id="shortHelp" ns="XPBot\Plugins\Base\Commands\Join">Joins to specified room.</phrase>
+  <phrase id="help" ns="XPBot\Plugins\Base\Commands\Join">
+    Tells bot to join specified room.
 
-        {%P}{%command} room [nick]
-    </phrase>
+    {%P}{%command} room [nick]
+  </phrase>
 
-    <phrase id="shortHelp" ns="XPBot\Plugins\Base\Commands\Leave">Leaves specified room</phrase>
-    <phrase id="help" ns="XPBot\Plugins\Base\Commands\Leave">
-        Tells bot to leave specified room.
+  <phrase id="shortHelp" ns="XPBot\Plugins\Base\Commands\Leave">Leaves specified room</phrase>
+  <phrase id="help" ns="XPBot\Plugins\Base\Commands\Leave">
+    Tells bot to leave specified room.
 
-        {%P}{%command} [room=this room]
-    </phrase>
+    {%P}{%command} [room=this room]
+  </phrase>
 
-    <phrase id="shortHelp" ns="XPBot\Plugins\Base\Commands\Say">'Says' given message</phrase>
-    <phrase id="help" ns="XPBot\Plugins\Base\Commands\Say">
-        Sends message with specified message.
+  <phrase id="shortHelp" ns="XPBot\Plugins\Base\Commands\Say">'Says' given message</phrase>
+  <phrase id="help" ns="XPBot\Plugins\Base\Commands\Say">
+    Sends message with specified message.
 
-        {%P}{%command} message
-    </phrase>
+    {%P}{%command} message
+  </phrase>
 
-    <phrase id="shortHelp" ns="XPBot\Plugins\Base\Commands\Users">Lists users on room</phrase>
-    <phrase id="help" ns="XPBot\Plugins\Base\Commands\Users">
-        Lists users on room using specified pattern.
+  <phrase id="shortHelp" ns="XPBot\Plugins\Base\Commands\Users">Lists users on room</phrase>
+  <phrase id="help" ns="XPBot\Plugins\Base\Commands\Users">
+    Lists users on room using specified pattern.
 
-        {%P}{%command} [pattern]
+    {%P}{%command} [pattern]
 
-        Tags that you can use in pattern:
-        %c - Room,
-        %n - Nick,
-        %a - Affiliation,
-        %r - Role,
-        %p - Access Level,
-        %j - Jid,
-        %s - Show status,
-        %d - Text status,
-        %t - Time that the user has spent on a channel.
+    Tags that you can use in pattern:
+    %c - Room,
+    %n - Nick,
+    %a - Affiliation,
+    %r - Role,
+    %p - Access Level,
+    %j - Jid,
+    %s - Show status,
+    %d - Text status,
+    %t - Time that the user has spent on a channel.
 
-        Example:
-        {%P}{%command} "%n - %s"
+    Example:
+    {%P}{%command} "%n - %s"
 
-        Will give result like that:
-        Admin - Available
-        Bot	- Available
+    Will give result like that:
+    Admin - Available
+    Bot - Available
 
-        Configuration variables:
-        base:defaultUserPattern "%n - %a [%r] %s"
-    </phrase>
+    Configuration variables:
+    base:defaultUserPattern "%n - %a [%r] %s"
+  </phrase>
 </phrases>

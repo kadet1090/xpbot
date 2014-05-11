@@ -11,6 +11,7 @@
   <phrase id="errTooFewArguments">Podano za mało argumentów.</phrase>
   <phrase id="errInvalidAction">Nieprawidłowa akcja.</phrase>
   <phrase id="errUserNotPresent">Użytkownik jest aktualnie niedostępny.</phrase>
+  <phrase id="errWrongUser">Podano nieprawidłowego użytkownika.</phrase>
 
   <phrase id="shortHelp" ns="XPBot\Commands\Help">Wyświetla pomoc bota</phrase>
   <phrase id="help" ns="XPBot\Commands\Help">
@@ -29,7 +30,7 @@
   </phrase>
   <phrase id="commands" ns="XPBot\Commands\Help">
     Aby uruchomić daną komendę wpisz {%P}komenda lub {%P}moduł-komenda.
-    Jeżeli nie wiesz jak obsługuje się daną komendę po prostu wpisz {%P}[%command} komenda.
+    Jeżeli nie wiesz jak obsługuje się daną komendę po prostu wpisz {%P}help komenda.
 
     {%commands}
   </phrase>
@@ -92,5 +93,7 @@
     jabber: kadet@jid.pl (pamiętaj aby najpierw poprosić o autoryzację :)
     gg: 12881099
     e-mail: kadet1090@gmail.com
+
+    Dodatkowe informacje: http://xpbot.kadet.ga/about
   </phrase>
 </phrases>
