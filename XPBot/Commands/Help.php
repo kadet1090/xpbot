@@ -62,7 +62,7 @@ class Help extends Command
         $commands = $commands[$module];
         $str      = '';
         foreach ($commands as $command => $class) {
-            if (!$this->_all && !$class::hasPermission($this->_author)) continue;
+            if (!$this->_all && !$this->_author->config->permissions->has("execute/$module/$command")) continue;
             $aliases = $this->_bot->getCommandAliases($module.'-'.$command);
 
             if (preg_match($this->_regex, $command))

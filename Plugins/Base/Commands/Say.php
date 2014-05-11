@@ -9,9 +9,9 @@
 
 namespace XPBot\Plugins\Base\Commands;
 
+use Kadet\Xmpp\Jid;
 use XPBot\Command;
 use XPBot\Exceptions\CommandException;
-use Kadet\Xmpp\Jid;
 
 class Say extends Command
 {
@@ -21,7 +21,7 @@ class Say extends Command
             throw new commandException('Too few arguments.', __('errTooFewArguments', $this->_lang));
 
         if (isset($args['r'])) {
-            if ($this->_author->permission < 6)
+            if ($this->_author->config->permission->has('base/say-to'))
                 throw new CommandException('User has no permission to do that.', __('errNoPermission', 'pl'));
 
             $jid = isset($this->_author->room->users[$args['r']]) ?

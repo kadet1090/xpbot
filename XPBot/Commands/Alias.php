@@ -54,7 +54,7 @@ class Alias extends Command
         $this->_bot->config->save();
     }
 
-    private function command($args)
+    private function of($args)
     {
         if (!isset($args[2]))
             throw new commandException('Too few arguments.', __('errTooFewArguments', $this->_lang));
@@ -89,6 +89,6 @@ class Alias extends Command
 
     public function __call($name, $arguments)
     {
-        throw new commandException('Invalid action.', __('errInvalidAction', $this->_lang));
+        throw new CommandException('Invalid action.', __('errInvalidAction', $this->_lang));
     }
 }

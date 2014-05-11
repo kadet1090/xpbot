@@ -36,30 +36,35 @@ abstract class Command
 
     /**
      * Jabber client.
+     *
      * @var \Kadet\Xmpp\XmppClient
      */
     protected $_bot;
 
     /**
      * Packet of message that contains command
+     *
      * @var \Kadet\Xmpp\Stanza\Message
      */
     protected $_packet;
 
     /**
      * Commands language
+     *
      * @var string
      */
     protected $_lang;
 
     /**
      * User who launched this command.
+     *
      * @var User
      */
     protected $_author;
 
     /**
      * Command type, chat or groupchat.
+     *
      * @var User
      */
     protected $_type;
@@ -116,19 +121,5 @@ abstract class Command
     public static function getShortHelp($lang)
     {
         return \__('shortHelp', $lang, get_called_class());
-    }
-
-    /**
-     * Checks if user has permission to execute command.
-     *
-     * @param User $user
-     *
-     * @return bool
-     */
-    public static function hasPermission(User $user)
-    {
-        $class = get_called_class();
-
-        return $user->permission >= $class::PERMISSION;
     }
 }

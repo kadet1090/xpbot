@@ -10,19 +10,24 @@ use Kadet\Xmpp\Utils\XmlBranch;
 use Kadet\Xmpp\XmppClient;
 use XPBot\Config\AliasConfig;
 use XPBot\Config\Config;
+use XPBot\Config\ConfigModule;
 use XPBot\Config\RoomsConfig;
 use XPBot\Config\UsersConfig;
 use XPBot\Exceptions\CommandAmbiguousException;
 use XPBot\Exceptions\CommandException;
 use XPBot\Exceptions\NoPermissionException;
+use XPBot\Permissions\CascadingPermissionSystem;
+use XPBot\Permissions\LevelPermissionSystem;
+use XPBot\Permissions\PermissionSystemInterface;
 use XPBot\Utils\Language;
 use XPBot\Utils\Params;
 
 /**
  * Class Bot
+ *
  * @package XPBot
  *
- * @todo over 500 LoC, refactor
+ * @todo    over 500 LoC, refactor
  */
 class Bot extends XmppClient
 {
@@ -105,6 +110,7 @@ class Bot extends XmppClient
         $this->onJoin->add(array($this, '_onJoin'));
 
         $this->registerCommand('XPBot\\Commands\\Alias', 'builtin', 'alias');
+        $this->registerCommand('XPBot\\Commands\\About', 'builtin', 'about');
         $this->registerCommand('XPBot\\Commands\\Config', 'builtin', 'config');
         $this->registerCommand('XPBot\\Commands\\Help', 'builtin', 'help');
         $this->registerCommand('XPBot\\Commands\\Permission', 'builtin', 'permission');
@@ -124,12 +130,26 @@ class Bot extends XmppClient
     public function _onJoin(XmppClient $client, Room $room, User $user, $broadcast)
     {
         $user->jointime = time();
-        $user->permission = $this->getAffiliationPermission($user->affiliation);
 
-        if (isset($this->config->users[$user->jid->bare()]))
-            $user->permission = $this->config->users[$user->jid->bare()]->permission;
+        if (!isset($this->config->users[$user->jid->bare()])) {
+            if (!isset($this->config->users[$room->jid->bare() . ':' . $user->jid->bare()]))
+                $this->config->users[$room->jid->bare() . ':' . $user->jid->bare()] = new ConfigModule;
 
-        if (isset($this->logger)) $this->logger->info($user->nick . ' joined to ' . $room->jid->name . ' with permission ' . $user->permission);
+            $user->config = $this->config->users[$room->jid->bare() . ':' . $user->jid->bare()];
+        } else {
+            $user->config = $this->config->users[$user->jid->bare()];
+        }
+
+
+        if (!isset($user->config->permissions) || !($user->config->permissions instanceof PermissionSystemInterface)) {
+            $user->config->permissions = new CascadingPermissionSystem();
+            $this->config->save();
+        }
+
+        if ($user->config->permissions instanceof CascadingPermissionSystem)
+            $user->config->permissions->inherit(new LevelPermissionSystem($this->getAffiliationPermission($user->affiliation)), true);
+
+        if (isset($this->logger)) $this->logger->info($user->nick . ' joined to ' . $room->jid->name);
     }
 
     public function _joinRooms(XmppClient $client)
@@ -165,11 +185,9 @@ class Bot extends XmppClient
         }
     }
 
-    /**
-     * @ignore Because it should be private, but it is used in delegate.
-     */
     public function evaluateCommand($command, Message $message)
     {
+        $start = microtime(true);
         if (preg_match('/\`((?:(?>[^`]+)|(?R))*)\`/six', $command))
             $command = preg_replace_callback('/\`((?:(?>[^`]+)|(?R))*)\`/six', function ($matches) use ($message) {
                 return '"' . $this->evaluateCommand($matches[1], $message) . '"';
@@ -189,12 +207,18 @@ class Bot extends XmppClient
             ($message->type == "chat" && !$command::CHAT)
         ) return null;
 
-        if (!$command::hasPermission($message->sender))
+        $fqn = $this->getFullyQualifiedCommand($params[0]);
+
+        if (!$message->sender->config->permissions->has('execute/' . str_replace('-', '/', $fqn)))
             throw new NoPermissionException($params[0]);
 
         $command = new $command($this, $message->sender, 'pl_PL', $message);
 
-        return $command->execute($params);
+
+        $result = $command->execute($params);
+        if ($this->logger) $this->logger->info("Executing {$fqn} command by {$message->from}, time taken: " . round(microtime(true) - $start, 4) . 's');
+
+        return $result;
     }
 
     /**
@@ -224,16 +248,20 @@ class Bot extends XmppClient
         } catch (CommandAmbiguousException $e) {
             $str = __('commandAmbiguous', 'pl_PL', 'default', array('command' => $e->getCommand()));
 
-            foreach ($e->getReferences() as $package => $class) {
+            foreach ($e->getReferences() as $package => $class)
                 $str .= "\t$package-{$e->getCommand()} - $class\n";
-            }
+
             $message->reply($str);
         } catch (CommandException $exception) {
             $message->reply($exception->getMessage());
-            if (isset($this->logger)) $this->logger->warning("'{$exception->getConsoleMessage()}' in {$exception->getCommand()} launched by {$message->sender->jid}");
+
+            if (isset($this->logger))
+                $this->logger->warning("'{$exception->getConsoleMessage()}' in {$exception->getCommand()} launched by {$message->sender->jid}");
         } catch (NoPermissionException $exception) {
             $message->reply($exception->getMessage());
-            if (isset($this->logger)) $this->logger->warning("{$message->from} has no permission to run {$exception->getCommand()} command.");
+
+            if (isset($this->logger))
+                $this->logger->warning("{$message->from} has no permission to run {$exception->getCommand()} command.");
         }
     }
 
@@ -242,8 +270,8 @@ class Bot extends XmppClient
      *
      * @deprecated
      *
-     * @param string $dir Dir to search.
-     * @param string $package Commands package.
+     * @param string $dir       Dir to search.
+     * @param string $package   Commands package.
      * @param string $namespace Commands namespace.
      */
     public function findCommands($dir, $package, $namespace)
@@ -273,8 +301,8 @@ class Bot extends XmppClient
     /**
      * Gets command class.
      *
-     * @param string $name Command name.
-     * @param bool $aliasing Check aliases too?
+     * @param string $name     Command name.
+     * @param bool   $aliasing Check aliases too?
      *
      * @return array|bool|string Command class list if name is ambiguous or class.
      */
@@ -289,10 +317,10 @@ class Bot extends XmppClient
                 return false;
 
             $search = $this->_commands[$name[0]];
-            $name = $name[1];
+            $name   = $name[1];
         } else {
             $search = $this->_commands;
-            $name = $name[0];
+            $name   = $name[0];
         }
 
         return arrayDeepSearch($search, $name);
@@ -331,7 +359,7 @@ class Bot extends XmppClient
         );
 
         $results = array();
-        $parent = '';
+        $parent  = '';
         foreach ($iterator as $key => $value) {
             if ($iterator->callHasChildren()) {
                 $parent = $key;
@@ -339,13 +367,8 @@ class Bot extends XmppClient
             }
 
             if ($key == $command)
-                $results[$parent] = $value;
+                return $parent . '-' . $command;
         }
-
-        if (count($results) == 1)
-            return $parent . '-' . $command;
-
-        return false;
     }
 
     /**
@@ -365,9 +388,9 @@ class Bot extends XmppClient
     }
 
     /**
-     * @param string $var Variable name
-     * @param string $namespace Variable namespace
-     * @param null|mixed $default Value to return if variable doesn't exist.
+     * @param string     $var       Variable name
+     * @param string     $namespace Variable namespace
+     * @param null|mixed $default   Value to return if variable doesn't exist.
      *
      * @return mixed
      *
@@ -381,9 +404,9 @@ class Bot extends XmppClient
     /**
      * Sets variable in config to given value.
      *
-     * @param string $var Variable name
+     * @param string $var       Variable name
      * @param string $namespace Variable namespace
-     * @param mixed $value Variable new value
+     * @param mixed  $value     Variable new value
      *
      * @deprecated
      */
@@ -395,7 +418,7 @@ class Bot extends XmppClient
     /**
      * Removes configuration value.
      *
-     * @param string $var Variable name
+     * @param string $var       Variable name
      * @param string $namespace Variable namespace
      *
      * @deprecated
@@ -408,21 +431,23 @@ class Bot extends XmppClient
     /**
      * Registers command in bot.
      *
-     * @param string $class Class name with namespace.
-     * @param string $package Command package (eg builtin)
+     * @param string      $class   Class name with namespace.
+     * @param string      $package Command package (eg builtin)
      * @param string|null $command Command name, if null class name will be used.
      *
      * @throws \InvalidArgumentException
      */
     public function registerCommand($class, $package, $command = null)
     {
-        if (!class_exists($class))
+        if (!class_exists($class) || !is_subclass_of($class, 'XPBot\\Command'))
             throw new \InvalidArgumentException('class');
 
         if (empty($command)) {
-            $chunks = explode('\\', $class);
+            $chunks  = explode('\\', $class);
             $command = end($chunks);
         }
+
+        LevelPermissionSystem::set("execute/{$package}/{$command}", $class::PERMISSION);
 
         $this->_commands[$package][strtolower($command)] = $class;
     }
@@ -537,7 +562,7 @@ class Bot extends XmppClient
     /**
      * Adds new macro to bot.
      *
-     * @param string $name Macros name
+     * @param string          $name  Macros name
      * @param string|callable $macro Function or text represented by macro.
      */
     public function addMacro($name, $macro)
@@ -558,7 +583,8 @@ class Bot extends XmppClient
     // MACROS
     /**
      * @param Message $packet
-     * @param Bot $bot
+     * @param Bot     $bot
+     *
      * @return bool|string
      *
      * @ignore
@@ -566,12 +592,14 @@ class Bot extends XmppClient
     public static function getNick($packet, Bot $bot)
     {
         if ($packet->sender) return $packet->sender->nick;
+
         return false;
     }
 
     /**
      * @param \SimpleXMLElement $packet
-     * @param Bot $bot
+     * @param Bot               $bot
+     *
      * @return bool|string
      *
      * @ignore
@@ -583,7 +611,8 @@ class Bot extends XmppClient
 
     /**
      * @param \SimpleXMLElement $packet
-     * @param Bot $bot
+     * @param Bot               $bot
+     *
      * @return bool|string
      *
      * @ignore
@@ -605,8 +634,8 @@ class Bot extends XmppClient
                 break;
             case E_DEPRECATED:
             case E_NOTICE:
-            $this->logger->debug($message);
-            break;
+                $this->logger->debug($message);
+                break;
             case E_ERROR:
                 $this->logger->error($message);
 

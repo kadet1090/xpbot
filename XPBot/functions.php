@@ -120,3 +120,36 @@ function restart()
     else
         die(exec(PHP_BINARY . ' ' . implode(' ', $cargs) . ' > /dev/null &'));
 }
+
+function array_filter_keys(array $input, callable $callback)
+{
+    return array_intersect_key($input, array_flip(array_filter(array_keys($input), $callback)));
+}
+
+/** @todo rename */
+function arrayGetMatching($array, $phrase, $delimiter = '/')
+{
+    $result = array_filter_keys($array, function ($perm) use ($phrase) {
+        return fnmatch($perm, $phrase);
+    });
+
+    uksort($result, function ($a, $b) use ($delimiter) {
+        $ac = substr_count($a, $delimiter);
+        $bc = substr_count($b, $delimiter);
+
+        if ($ac != $bc)
+            return ($ac > $bc) ? -1 : 1;
+
+        $ac = strlen($a);
+        $bc = strlen($b);
+
+        if ($ac != $bc)
+            return ($ac > $bc) ? -1 : 1;
+
+        return 0;
+    });
+
+    if (empty($result)) return null;
+
+    return reset($result);
+}

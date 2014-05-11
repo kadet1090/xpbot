@@ -2,7 +2,7 @@
 /**
  * Created by JetBrains PhpStorm.
  *
- * @author Kadet <kadet1090@gmail.com>
+ * @author  Kadet <kadet1090@gmail.com>
  * @package
  * @license WTFPL
  */
@@ -18,7 +18,6 @@ class About extends Command
 
     public function execute($args)
     {
-        echo __('about', $this->_lang);
         return __('about', $this->_lang, 'default', array(
             'version' => Bot::BOT_VERSION,
         ));

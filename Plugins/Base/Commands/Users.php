@@ -2,7 +2,7 @@
 /**
  * Created by JetBrains PhpStorm.
  *
- * @author Kadet <kadet1090@gmail.com>
+ * @author  Kadet <kadet1090@gmail.com>
  * @package
  * @license WTFPL
  */
@@ -32,13 +32,13 @@ class Users extends Command
                 '%s' => $user->show,
                 '%j' => $user->jid,
                 '%t' => time() - $user->jointime,
-                '%p' => $user->permission,
                 '%d' => str_replace("\n", '', $user->status),
                 '%f' => date("H:i:s d.m.Y", $user->jointime)
             );
 
             $users[] = str_replace(array_keys($replace), array_values($replace), $pattern);
         }
+
         return implode("\n", $users);
     }
 }

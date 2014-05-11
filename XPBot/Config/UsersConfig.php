@@ -21,6 +21,9 @@ use Kadet\XmlSerializer\XmlSerializer;
 
 class UsersConfig implements XmlSerializable, \ArrayAccess, \IteratorAggregate
 {
+    /**
+     * @var ConfigModule[]
+     */
     protected $_users = [];
 
 
@@ -128,9 +131,11 @@ class UsersConfig implements XmlSerializable, \ArrayAccess, \IteratorAggregate
     {
         foreach ($this->_users as $name => $data) {
             $element = $node->ownerDocument->createElement('user');
-            $element->setAttribute('name', $name);
             $element = $serializer->serializeElement($data, $element);
 
+            if (!$element->hasChildNodes()) continue;
+
+            $element->setAttribute('name', $name);
             $node->appendChild($element);
         }
 
@@ -154,6 +159,7 @@ class UsersConfig implements XmlSerializable, \ArrayAccess, \IteratorAggregate
             if (!($user instanceof \DOMElement)) continue;
 
             $result->_users[$user->getAttribute('name')] = $deserializer->deserializeElement($user);
+            unset($result->_users[$user->getAttribute('name')]['name']);
         }
 
         return $result;

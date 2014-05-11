@@ -20,7 +20,7 @@ use Kadet\XmlSerializer\XmlDeserializer;
 use Kadet\XmlSerializer\XmlSerializable;
 use Kadet\XmlSerializer\XmlSerializer;
 
-class ConfigModule implements \ArrayAccess, XmlSerializable
+class ConfigModule implements \ArrayAccess, XmlSerializable, \Countable
 {
     protected $_offsets = [];
     protected $_children = [];
@@ -131,7 +131,8 @@ class ConfigModule implements \ArrayAccess, XmlSerializable
         foreach ($this->_children as $name => $child) {
             $element = $node->ownerDocument->createElement($name);
             $element = $serializer->serializeElement($child, $element);
-            $node->appendChild($element);
+            if ($element !== false)
+                $node->appendChild($element);
         }
 
         return $node;
@@ -151,5 +152,20 @@ class ConfigModule implements \ArrayAccess, XmlSerializable
             $result->{$child->nodeName} = $deserializer->deserializeElement($child);
 
         return $result;
+    }
+
+    /**
+     * (PHP 5 &gt;= 5.1.0)<br/>
+     * Count elements of an object
+     *
+     * @link http://php.net/manual/en/countable.count.php
+     * @return int The custom count as an integer.
+     *       </p>
+     *       <p>
+     *       The return value is cast to an integer.
+     */
+    public function count()
+    {
+        return count($this->_children) + count($this->_offsets);
     }
 }
