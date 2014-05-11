@@ -34,7 +34,7 @@ class Bot extends XmppClient
     /**
      * Bot version string.
      */
-    const BOT_VERSION = 'Beta 0.8';
+    const BOT_VERSION = '0.8';
 
     /**
      * Commands list.
